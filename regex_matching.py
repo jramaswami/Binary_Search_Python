@@ -20,13 +20,14 @@ def solve0(pptr, sptr, pattern, string):
         return solve0(pptr+1, sptr+1, pattern, string)
 
     if pptr < len(pattern) and pattern[pptr] == '*':
+        # Is this the end of the string?
+        if sptr >= len(string):
+            return solve0(pptr+1, sptr, pattern, string)
+
         if pattern[pptr-1] == '.':
             # Ignore or consume
             return solve0(pptr+1, sptr, pattern, string) or solve0(pptr, sptr+1, pattern, string)
         else:
-            if sptr >= len(string):
-                return solve0(pptr+1, sptr, pattern, string)
-
             if pattern[pptr-1] == string[sptr]:
                 # Ignore or consume
                 return solve0(pptr+1, sptr, pattern, string) or solve0(pptr, sptr+1, pattern, string)
@@ -90,3 +91,8 @@ def test_8():
     s = "a"
     assert solver.solve(pattern, s) == True
 
+def test_9():
+    solver = Solution()
+    pattern = ".*c"
+    s = "ab"
+    assert solver.solve(pattern, s) == False
