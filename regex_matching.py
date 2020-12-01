@@ -16,7 +16,7 @@ def solve0(pptr, sptr, pattern, string):
     if pptr < len(pattern) and sptr < len(string) and pattern[pptr] == string[sptr]:
         return solve0(pptr+1, sptr+1, pattern, string)
     
-    if pptr < len(pattern) and pattern[pptr] == '.':
+    if sptr < len(string) and pptr < len(pattern) and pattern[pptr] == '.':
         return solve0(pptr+1, sptr+1, pattern, string)
 
     if pptr < len(pattern) and pattern[pptr] == '*':
@@ -95,4 +95,10 @@ def test_9():
     solver = Solution()
     pattern = ".*c"
     s = "ab"
+    assert solver.solve(pattern, s) == False
+
+def test_10():
+    solver = Solution()
+    pattern = "......."
+    s = "abcd"
     assert solver.solve(pattern, s) == False
