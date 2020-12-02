@@ -3,22 +3,40 @@ binarysearch.com :: Painting Houses
 https://binarysearch.com/problems/Painting-Houses
 """
 from math import inf
+import heapq
 
 
 class Solution:
     def solve(self, matrix):
-        dp = [[inf for _ in row] for row in matrix]
-        dp[0] = list(matrix[0])
-        for i in range(len(matrix)-1):
-            for j in range(len(matrix[i])):
-                for k in range(len(matrix[i])):
-                    if j == k:
-                        continue
-                    dp[i+1][k] = min(dp[i+1][k], dp[i][j] + matrix[i+1][k])
+        # Use dijkstra's algorithm to solve
+        # Set up queue
+        queue = []
+        for col, val in enumerate(matrix[0]):
+            heapq.heappush(queue, (val, (0, col)))
 
-        for row in dp:
+        # Set up distances
+        dist = [[inf for _ in row] for row in matrix]
+        dist[0] = list(matrix[0])
+        soln = inf
+
+        # Run through queue
+        while queue:
+            val, (row, col) = heapq.heappop(queue)
+            for col0 in range(len(matrix[0])):
+                if col == col0:
+                    continue
+                
+                if row + 1 >= len(matrix):
+                    soln = min(soln, dist[row][col])
+                else:
+                    d = dist[row][col] + matrix[row+1][col0]
+                    if d < dist[row+1][col0]:
+                        dist[row+1][col0] = d
+                        heapq.heappush(queue, (d, (row+1, col0)))
+
+        for row in dist:
             print(row)
-        return min(dp[-1])
+        return soln
 
 
 def test_1():
