@@ -3,40 +3,49 @@ binarysearch.com :: Painting Houses
 https://binarysearch.com/problems/Painting-Houses
 """
 from math import inf
-import heapq
+from collections import namedtuple
+
+
+Min = namedtuple('Min', ['val', 'index'])
 
 
 class Solution:
     def solve(self, matrix):
-        # Use dijkstra's algorithm to solve
-        # Set up queue
-        queue = []
+        
+        # Find the minimum two values for row 0
+        min0, min1 = Min(inf, inf), Min(inf, inf)
         for col, val in enumerate(matrix[0]):
-            heapq.heappush(queue, (val, (0, col)))
+            if val < min0.val:
+                min0, min1 = Min(val, col), min0
+            elif val < min1.val:
+                min0, min1 = min0, Min(val, col)
 
-        # Set up distances
-        dist = [[inf for _ in row] for row in matrix]
-        dist[0] = list(matrix[0])
-        soln = inf
+        # For each of the remaining rows ...
+        for row in range(1, len(matrix)):
+            # These will be the two lowest costs for this row.
+            new_min0, new_min1 = Min(inf, inf), Min(inf, inf)
+            # For each column see what the minimum cost is to reach that col
+            # from the row above.
+            for col, val in enumerate(matrix[row]):
+                val0 = val + min0.val
+                # You cannot use the value from the column above, so if the
+                # lowest cost for the row above uses this column, then you
+                # must pick the second lowest cost.
+                if col == min0.index:
+                    val0 = val + min1.val
 
-        # Run through queue
-        while queue:
-            val, (row, col) = heapq.heappop(queue)
-            for col0 in range(len(matrix[0])):
-                if col == col0:
-                    continue
-                
-                if row + 1 >= len(matrix):
-                    soln = min(soln, dist[row][col])
-                else:
-                    d = dist[row][col] + matrix[row+1][col0]
-                    if d < dist[row+1][col0]:
-                        dist[row+1][col0] = d
-                        heapq.heappush(queue, (d, (row+1, col0)))
+                # Update the minimums for the whole row.
+                if val0 < new_min0.val:
+                    new_min0, new_min1 = Min(val0, col), new_min0
+                elif val0 < new_min1.val:
+                    new_min0, new_min1 = new_min0, Min(val0, col)
 
-        for row in dist:
-            print(row)
-        return soln
+            # Now swap these minimums to be the minimums for the next row.
+            min0, min1 = new_min0, new_min1
+
+        # Return the lowest cost.
+        return min0.val
+
 
 
 def test_1():
