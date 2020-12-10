@@ -5,7 +5,7 @@ https://binarysearch.com/problems/Packing-Boxes
 class Solution:
     def solve(self, nums):
         if not nums:
-            return [[]]
+            return []
         boxes = [[nums[0]]]
         for n in nums[1:]:
             if boxes[-1][-1] == n:
@@ -44,8 +44,6 @@ def test_3():
 
 def test_4():
     nums = []
-    expected = [
-        []
-    ]
+    expected = []
     solver = Solution()
     assert solver.solve(nums) == expected
