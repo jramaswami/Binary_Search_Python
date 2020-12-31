@@ -2,6 +2,10 @@
 binarysearch.com :: Update List to Make It Strictly Increasing
 jramaswami
 """
+"""
+binarysearch.com :: Update List to Make It Strictly Increasing
+jramaswami
+"""
 from math import inf
 from bisect import bisect_left, bisect_right
 from collections import deque
@@ -17,32 +21,36 @@ def find_gt(a, x):
 
 
 class Solution:
+    def solve0(self, curr_index, prev_value, ops):
+        """Recursive solution."""
+        if curr_index >= len(self.A):
+            return ops
+
+        if (curr_index, prev_value) in self.memo:
+            return self.memo[(curr_index, prev_value)]
+
+        curr_value = self.A[curr_index]
+        result = inf
+        if curr_value > prev_value:
+            result = min(result, self.solve0(curr_index + 1, curr_value, ops))
+
+        curr_value0 = find_gt(self.B, prev_value)
+        if curr_value0 is not None and ops + 1 <= len(self.B):
+            result = min(result, self.solve0(curr_index + 1, curr_value0, ops + 1))
+
+        self.memo[(curr_index, prev_value)] = result
+        return result
+
+
     def solve(self, A, B):
-        B = sorted(set(B))
-        # Initial value can be unchanged or the least value in B.
-        queue = deque([(1, A[0], 0), (1, B[0], 1)])
-        soln = inf
-        while queue:
-            curr_index, prev_value, ops = queue.popleft()
-            if curr_index >= len(A):
-                soln = min(soln, ops)
-            else:
-                curr_value = A[curr_index]
-                # Invariant curr value > prev value.  
-                # Is it possible to make no changes?
-                if curr_value > prev_value:
-                    queue.append((curr_index + 1, curr_value, ops))
-
-                # Current value can be changed to next value more than the
-                # previous value, if there is one left.
-                curr_value0 = find_gt(B, prev_value)
-                if curr_value0 is not None and ops + 1 <= len(B):
-                    queue.append((curr_index + 1, curr_value0, ops + 1))
-
-        if soln == inf:
+        self.A = A
+        self.B = sorted(set(B))
+        self.memo = dict()
+        result = self.solve0(0, -inf, 0)
+        if result == inf:
             return -1
         else:
-            return soln
+            return result
 
 
 def test_1():
