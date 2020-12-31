@@ -2,13 +2,8 @@
 binarysearch.com :: Update List to Make It Strictly Increasing
 jramaswami
 """
-"""
-binarysearch.com :: Update List to Make It Strictly Increasing
-jramaswami
-"""
 from math import inf
 from bisect import bisect_left, bisect_right
-from collections import deque
 
 
 # From Python docs.
@@ -16,41 +11,43 @@ def find_gt(a, x):
     'Find leftmost value greater than x'
     i = bisect_right(a, x)
     if i != len(a):
-        return a[i]
+        return i
     return None
 
 
 class Solution:
-    def solve0(self, curr_index, prev_value, ops):
-        """Recursive solution."""
-        if curr_index >= len(self.A):
-            return ops
-
-        if (curr_index, prev_value) in self.memo:
-            return self.memo[(curr_index, prev_value)]
-
-        curr_value = self.A[curr_index]
-        result = inf
-        if curr_value > prev_value:
-            result = min(result, self.solve0(curr_index + 1, curr_value, ops))
-
-        curr_value0 = find_gt(self.B, prev_value)
-        if curr_value0 is not None and ops + 1 <= len(self.B):
-            result = min(result, self.solve0(curr_index + 1, curr_value0, ops + 1))
-
-        self.memo[(curr_index, prev_value)] = result
-        return result
-
-
     def solve(self, A, B):
-        self.A = A
-        self.B = sorted(set(B))
-        self.memo = dict()
-        result = self.solve0(0, -inf, 0)
-        if result == inf:
+        B = sorted(set(B))
+        dp = [[inf for _ in A] for _ in range(len(B)+1)]
+        # Col-wise index
+        for curr_index in range(len(A)):
+            # Row-wise index
+            curr_val = A[curr_index]
+            for prev_index in range(len(B)+1):
+                ops = 0
+                if curr_index > 0:
+                    ops = dp[prev_index][curr_index-1]
+
+                if curr_index == 0:
+                    prev_val = -inf
+                elif prev_index == len(B):
+                    prev_val = A[curr_index-1]
+                else:
+                    prev_val = B[prev_index]
+
+                if curr_val > prev_val:
+                    # We do not have to change it.
+                    dp[len(B)][curr_index] = min(dp[len(B)][curr_index], ops)
+                # We can change it to the next highest value
+                index0 = find_gt(B, prev_val)
+                if index0 is not None and ops + 1 <= len(B):
+                    dp[index0][curr_index] = min(dp[index0][curr_index], ops + 1)
+
+        soln =  min(row[-1] for row in dp)
+        if soln == inf: 
             return -1
         else:
-            return result
+            return soln
 
 
 def test_1():
