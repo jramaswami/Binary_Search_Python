@@ -5,37 +5,32 @@ jramaswami
 from collections import defaultdict
 
 
-def dfs(wd, acc, first_letter, visited, words, starts_with):
-    result = 0
-    if first_letter == words[wd][-1]:
-        result = acc
-
-    found = False
-    last_letter = words[wd][-1]
-    for wd0 in starts_with[last_letter]:
-        if not visited[wd0] and wd < wd0:
-            visited[wd0] = True
-            found = True
-            result = max(result, dfs(wd0, acc + len(words[wd0]), first_letter, visited, words, starts_with))
-            visited[wd0] = False
-
-    return result
-
-
 class Solution:
     def solve(self, words):
-        starts_with = defaultdict(list)
-        for i, wd in enumerate(words):
-            starts_with[wd[0]].append(i)
+        # +----> ends with
+        # |
+        # |      DP matrix
+        # v
+        # starts with
+        dp = [[0 for _ in range(26)] for _ in range(26)]
+        ord_a = ord('a')
+        for wd in words:
+            # This word can concatenate onto any words that ends with
+            # the character it starts with.
+            s_index = ord(wd[0]) - ord_a
+            e_index = ord(wd[-1]) - ord_a
+            for s in range(26):
+                if dp[s][s_index]:
+                    dp[s][e_index] = max(dp[s][e_index], dp[s][s_index] + len(wd))
+            # This word can also be by itself.
+            dp[s_index][e_index] = max(dp[s_index][e_index], len(wd))
 
-        visited = [False for _ in words]
-        result = 0
-        for wd, _ in enumerate(words):
-            visited[wd] = True
-            result = max(result, dfs(wd, len(words[wd]), words[wd][0], visited, words, starts_with))
-            visited[wd] = False
-
-        return result
+        # To solve this we look where the string starts and ends with the
+        # same character.
+        soln = 0
+        for i in range(26):
+            soln = max(soln, dp[i][i])
+        return soln
 
 
 def test_1():
