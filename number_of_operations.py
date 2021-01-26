@@ -3,37 +3,52 @@ binarysearch.com :: Number of Operations to Decrement Target to Zero
 jramaswami
 """
 from math import inf
+from collections import deque
 
 
 class Solution:
     def solve(self, nums, target):
+        # Edge cases.
         if target == 0:
             return 0
-
         if nums == []:
             return -1
-        
+
         N = len(nums)
-        prefix = [0 for _ in range(N+1)]
-        for i in range(1, N+1):
-            prefix[i] = prefix[i-1] + nums[i-1]
+        target0 = sum(nums) - target
 
-        suffix = [0 for _ in range(N)]
-        suffix[-1] = nums[-1]
-        for i in range(len(nums)-2, -1, -1):
-            suffix[i] = nums[i] + suffix[i+1]
-        suffix.append(0)
+        # If the entire thing sums to target, then return length.
+        if target0 == 0:
+            return N
 
+        # If there isn't enough in the entire array, then we can't do it.
+        if target0 < 0:
+            return -1
+
+        ssum = nums[0]
+        sublist = deque()
+        sublist.append(nums[0])
         soln = inf
-        for left, _ in enumerate(prefix):
-            for right in range(len(suffix)-1, left-1, -1):
-                if prefix[left] + suffix[right] == target:
-                    S = left + (N - right)
-                    soln = min(soln, S)
-                elif prefix[left] + suffix[right] > target:
-                    break
 
-        return (-1 if soln == inf else soln)
+        # Check with just the first number.
+        if ssum == target0:
+            soln = min(soln, N - len(sublist))
+
+        for right in nums[1:]:
+            # Add next number
+            ssum += right
+            sublist.append(right)
+
+            # If we have gone above target number, remove from left
+            while ssum > target0:
+                ssum -= sublist[0]
+                sublist.popleft()
+
+            # If the current subarray sums to target0, then the ends
+            # sum to target.
+            if ssum == target0:
+                soln = min(soln, N - len(sublist))
+        return -1 if soln == inf else soln
 
 
 def test_1():
@@ -61,3 +76,7 @@ def test_5():
     target = 1
     assert Solution().solve(nums, target) == 1
 
+def test_6():
+    nums = [1, 2]
+    target = 2
+    assert Solution().solve(nums, target) == 1
