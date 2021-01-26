@@ -30,6 +30,8 @@ class Solution:
                 if prefix[left] + suffix[right] == target:
                     S = left + (N - right)
                     soln = min(soln, S)
+                elif prefix[left] + suffix[right] > target:
+                    break
 
         return (-1 if soln == inf else soln)
 
