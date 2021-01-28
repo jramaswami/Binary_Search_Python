@@ -10,9 +10,7 @@ class Solution:
         dp = [0 for _ in range(100)]
         for a in reversed(nums):
             a0 = a % k
-            for b in range(100):
-                if (a0 + b) % k == 0:
-                    soln += dp[b]
+            soln += dp[(k - a0) % k]
             dp[a0] += 1
         return soln
 
