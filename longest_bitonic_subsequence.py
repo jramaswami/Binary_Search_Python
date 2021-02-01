@@ -8,13 +8,13 @@ class Solution:
         for i in range(len(nums)):
             for j in range(i+1, len(nums)):
                 if nums[i] < nums[j]:
-                    longest_increasing[j] = longest_increasing[i] + 1
+                    longest_increasing[j] = max(longest_increasing[j], longest_increasing[i] + 1)
 
         longest_decreasing = [1 for _ in nums]
         for i in range(len(nums)-1, -1, -1):
             for j in range(i - 1, -1, -1):
                 if nums[j] > nums[i]:
-                    longest_decreasing[j] = longest_decreasing[i]  + 1
+                    longest_decreasing[j] = max(longest_decreasing[j], longest_decreasing[i]  + 1)
 
         max_incr = [0 for _ in longest_increasing]
         max_incr[0] = longest_increasing[0]
