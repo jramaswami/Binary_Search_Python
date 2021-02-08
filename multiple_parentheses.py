@@ -4,22 +4,13 @@ jramaswami
 """
 class Solution:
     def solve(self, s):
-        delta = 0
-        length = 0
         soln = 0
+        stack = []
         for i, c in enumerate(s):
-            if c == ')':
-                delta -= 1
+            if c == ')' and stack:
+                soln = max(soln, i - stack[-1] + 1)
             elif c == '(':
-                delta += 1
-            length += 1
-
-            if delta < 0:
-                length = 0
-                delta = 0
-            elif delta == 0:
-                soln = max(soln, length)
-
+                stack.append(i)
         return soln
 
 def test_1():
