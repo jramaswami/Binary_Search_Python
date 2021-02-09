@@ -16,10 +16,12 @@ class Solution:
             if a < b:
                 longest_decreasing[i-1] = longest_decreasing[i] + 1
 
-        print(longest_increasing)
-        print(longest_decreasing)
-        return max(i + d - 1 if i > 1 and d > 1 else 0 for i, d in zip(longest_increasing, longest_decreasing))
-
+        soln = 0
+        for i, (n, incr) in enumerate(zip(nums[:-1], longest_increasing[:-1])):
+            if n > nums[i+1]:
+                print(i, n, nums[i+1], incr, longest_decreasing[i+1], incr + longest_decreasing[i+1])
+                soln = max(incr + longest_decreasing[i+1], soln)
+        return soln
 
 
 def test_1():
@@ -33,3 +35,7 @@ def test_2():
 def test_3():
     nums = [1, 2, 0]
     assert Solution().solve(nums) == 3
+
+def test_4():
+    nums = [1, 0]
+    assert Solution().solve(nums) == 0
