@@ -16,16 +16,9 @@ class Solution:
             if a < b:
                 longest_decreasing[i-1] = longest_decreasing[i] + 1
 
-        print(nums)
         print(longest_increasing)
         print(longest_decreasing)
-
-        soln = 0
-        for i, (n, incr) in enumerate(zip(nums[:-1], longest_increasing[:-1])):
-            if incr > 1 and n > nums[i+1]:
-                print(i, n, nums[i+1], incr, longest_decreasing[i+1], incr + longest_decreasing[i+1])
-                soln = max(incr + longest_decreasing[i+1], soln)
-        return soln
+        return max(i + d - 1 if i > 1 and d > 1 else 0 for i, d in zip(longest_increasing, longest_decreasing))
 
 
 def test_1():
