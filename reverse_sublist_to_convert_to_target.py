@@ -4,25 +4,7 @@ jramaswami
 """
 class Solution:
     def solve(self, nums, target):
-        print(nums)
-        print(target)
-        i = 0
-        while i < len(nums) and i < len(target):
-            # If they nums[i] and target[i] do not match, find nums[i]
-            # in target[i] and reverse the array between the two.
-            if nums[i] != target[i]:
-                print('mismatch @', i, nums[i], target[i], 'looking for', nums[i])
-                j = i
-                while j < len(target) and target[j] != nums[i]:
-                    j += 1
-                nums[i:j+1] = reversed(nums[i:j+1])
-                print(f"reversed [{i}:{j+1}], {nums}")
-                i = j + 1
-            else:
-                i += 1
-        print(nums)
-        print(target)
-        return nums == target
+        return sorted(nums) == sorted(target)
 
 
 def test_1():
