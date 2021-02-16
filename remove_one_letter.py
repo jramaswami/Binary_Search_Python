@@ -2,32 +2,33 @@
 binarysearch.com :: Remove One Letter
 jramaswami
 """
-from collections import Counter
-from string import ascii_lowercase
-
-
 class Solution:
     def solve(self, s0, s1):
         """
         Given two strings s0 and s1, return whether you can obtain s1 by 
         removing 1 letter from s0.
         """
-        ctr0 = Counter(s0)
-        ctr1 = Counter(s1)
-        delta = 0
-        for c in ascii_lowercase:
-            freq0 = ctr0.get(c, 0)
-            freq1 = ctr1.get(c, 0)
-
-            # We will remove a letter from s0 so there can be no letters
-            # in s1 that have a greater frequency.
-            if freq0 < freq1:
-                return False
-
-            delta += freq0 - freq1
-
-        # There can be only one extra letter in s1.
-        return delta == 1
+        if len(s0) == len(s1) + 1:
+            i = 0
+            j = 0
+            removed = False
+            while i < len(s0) and j < len(s1):
+                if s0[i] != s1[j]:
+                    # If we have already removed a letter from S0, return False
+                    if removed:
+                        return False
+                    # Remove letter from s0 and remember that we did so.
+                    # We do this by incrementing the index for s0 without
+                    # incrementind the index for s1.
+                    i += 1
+                    removed = True
+                else:
+                    # Increment both indices
+                    i += 1
+                    j += 1
+            return True
+        else:
+            return False
 
 
 def test_1():
@@ -59,7 +60,14 @@ def test_5():
     s1 = ""
     assert Solution().solve(s0, s1) == True
 
+
 def test_6():
     s0 = "nnx"
     s1 = "xn"
+    assert Solution().solve(s0, s1) == False
+
+
+def test_7():
+    s0 = "aabb"
+    s1 = "aba"
     assert Solution().solve(s0, s1) == False
