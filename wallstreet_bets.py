@@ -2,17 +2,15 @@
 binarysearch.com :: Wallstreet Bets
 jramaswami
 """
-import heapq
-
 class Solution:
     def solve(self, prices):
         Q = []
         soln = [0 for _ in prices]
         for i, p in enumerate(prices):
-            while Q and Q[0][0] < p:
-                p0, i0 = heapq.heappop(Q)
+            while Q and Q[-1][0] < p:
+                p0, i0 = Q.pop()
                 soln[i0] = i - i0
-            heapq.heappush(Q, (p, i))
+            Q.append((p, i))
         return soln
 
 def test_1():
