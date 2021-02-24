@@ -12,7 +12,7 @@ class Solution:
         odd_sum = 0
         even_sum = 0
         for negi, n in enumerate(reversed(nums), start=-(len(nums) - 1)):
-            if n % 2:
+            if abs(negi) % 2:
                 odd_sum += n
             else:
                 even_sum += n
