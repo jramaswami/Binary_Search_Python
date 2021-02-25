@@ -9,10 +9,9 @@ class Solution:
 
         soln = 0
         while people and tasks:
-            while tasks[-1] > people[-1]:
+            if tasks[-1] > people[-1]:
                 tasks.pop()
-            
-            if tasks:
+            else:
                 tasks.pop()
                 people.pop()
                 soln += 1
