@@ -2,6 +2,9 @@
 binarysearch.com :: Stepping Numbers
 jramaswami
 """
+from functools import reduce
+
+
 MOD = pow(10, 9) + 7
 
 
@@ -10,22 +13,25 @@ class Solution:
         if N == 1:
             return 10
 
-        matrix = [[0 for _ in range(10)] for _ in range(N)]
         # Can start number with digits 1-9
-        matrix[0] = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        prev_row = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        curr_row = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         for row in range(1, N):
             for digit in range(10):
                 # -1
                 if digit - 1 >= 0:
-                    matrix[row][digit - 1] = (matrix[row][digit - 1] + matrix[row-1][digit]) % MOD
+                    curr_row[digit - 1] = (curr_row[digit - 1] + prev_row[digit]) % MOD
                 # +1
                 if digit + 1 <= 9:
-                    matrix[row][digit + 1] = (matrix[row][digit + 1] + matrix[row-1][digit]) % MOD
+                    curr_row[digit + 1] = (curr_row[digit + 1] + prev_row[digit]) % MOD
+            prev_row, curr_row = curr_row, prev_row
+            # Reset curr_row
+            for i in range(10):
+                curr_row[i] = 0
 
-        soln = 0
-        for k in matrix[-1]:
-            soln = (soln + k) % MOD
-        return soln
+
+        return reduce(lambda a, x: (a + x) % MOD, prev_row, 0)
+
 
 
 def test_1():
