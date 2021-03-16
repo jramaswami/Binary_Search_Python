@@ -10,14 +10,24 @@ class Solution:
         queue = deque()
         parity_freqs = defaultdict(int)
         color_freqs = defaultdict(int)
+        node_count = 0
         queue.append((0, root))
         while queue:
             level, node = queue.popleft()
             if node:
+                node_count += 1
                 parity_freqs[level % 2] += 1
                 color_freqs[node.val] += 1
                 queue.append((level + 1, node.left))
                 queue.append((level + 1, node.right))
+
+        if node_count == 0:
+            return True
+        if node_count == 1:
+            return True
+        
+        if node_count > 1 and len(color_freqs) < 2:
+            return False
 
         color0, color1 = list(color_freqs)
         if parity_freqs[0] == color_freqs[color0] and parity_freqs[1] == color_freqs[color1]:
@@ -42,3 +52,12 @@ def test_2():
 def test_3():
     root = None
     assert Solution().solve(root) == True
+
+def test_4():
+    root = make_tree([0, null, null])
+    assert Solution().solve(root) == True
+
+def test_5():
+    root = make_tree([6, [6, null, null], null])
+    assert Solution().solve(root) == False
+
