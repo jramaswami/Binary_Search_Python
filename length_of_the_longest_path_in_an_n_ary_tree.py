@@ -5,62 +5,56 @@ jramaswami
 from collections import defaultdict, deque
 from heapq import nlargest
 
-# TODO: For any given node the longest path in the tree rooted at that node is:
-#       (1) 1 if the node has no children.
-#       (2) The longest path to a leaf node in the tree if the node has
-#           one child.
-#       (3) The sum of the longest two paths to a leaf node for all of the
-#           children + 1 for the root node.
-#
-#       Should be able to recursively or bottom-up.
- 
+# For any given node the longest path in the tree rooted at that node is:
+# (1) 1 if the node has no children.
+# (2) The longest path to a leaf node in the tree if the node has
+#     one child.
+# (3) The sum of the longest two paths to a leaf node for all of the
+#     children + 1 for the root node.
+
+def solve0(node, adj):
+    """Recursive solution."""
+    number_of_children = len(adj[node])
+    if number_of_children == 0:
+        return 1, 1
+    elif number_of_children == 1:
+        longest_path_so_far, longest_path_to_leaf = solve0(adj[node][0], adj)
+        return (max(longest_path_so_far, 1 + longest_path_to_leaf),
+                1 + longest_path_to_leaf)
+    else:
+        lps = []
+        longest_path_so_far = 0
+        for child in adj[node]:
+            longest_path_so_far0, longest_path_to_leaf0 = solve0(child, adj)
+            longest_path_so_far = max(longest_path_so_far, longest_path_so_far0)
+            lps.append(longest_path_to_leaf0)
+
+        # To longest paths to leaves.  Make a v path including this node.
+        lp1, lp2 = nlargest(2, lps)
+        vpath = lp1 + lp2 + 1
+        longest_path_so_far = max(longest_path_so_far, lp1 + 1, vpath)
+        return (longest_path_so_far, lp1 + 1)
+
 
 class Solution:
     def solve(self, edges):
         indegree = defaultdict(int)
-        outdegree = defaultdict(int)
         nodes = set()
         adj = defaultdict(list)
         for u, v in edges:
             nodes.add(u)
             nodes.add(v)
             indegree[v] += 1
-            outdegree[u] += 1
             adj[u].append(v)
 
         # Find the root and how many leaf nodes.
-        leaf_nodes = 0
         for u in nodes:
             if indegree[u] == 0:
                 root = u
 
-            if outdegree[u] == 0:
-                leaf_nodes += 1
+        longest_path, _ = solve0(root, adj)
+        return longest_path
 
-        # Walk tree chart depth
-        depth = dict()
-        queue = deque()
-        queue.append(root)
-        depth[root] = 0
-        while queue:
-            u = queue.popleft()
-            for v in adj[u]:
-                if v not in depth:
-                    depth[v] = depth[u] + 1
-                    queue.append(v)
-
-        print('root', root, 'leaf_nodes', leaf_nodes)
-        # If there is a single leaf node, then the longest path is from
-        # that leaf node to the root.
-        if leaf_nodes == 1:
-            return max(depth.values()) + 1
-
-        # If depth is k then there are k + 1 nodes in the path
-        # So the path from leaf to leaf is depth[1] + 1 + depth[2] + 1.
-        # But we are double counting the root, so subtract 1.
-        # depth[1] + 1 + depth[2]
-        soln = sum(nlargest(2, depth.values())) + 1
-        return soln
 
 
 def test_1():
