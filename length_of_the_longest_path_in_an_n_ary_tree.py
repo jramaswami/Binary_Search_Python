@@ -9,15 +9,24 @@ from heapq import nlargest
 class Solution:
     def solve(self, edges):
         indegree = defaultdict(int)
+        outdegree = defaultdict(int)
+        nodes = set()
         adj = defaultdict(list)
         for u, v in edges:
-            adj[u].append(v)
+            nodes.add(u)
+            nodes.add(v)
             indegree[v] += 1
+            outdegree[u] += 1
+            adj[u].append(v)
 
-        # Find the root
-        for u in adj:
+        # Find the root and how many leaf nodes.
+        leaf_nodes = 0
+        for u in nodes:
             if indegree[u] == 0:
                 root = u
+
+            if outdegree[u] == 0:
+                leaf_nodes += 1
 
         # Walk tree chart depth
         depth = dict()
@@ -30,6 +39,12 @@ class Solution:
                 if v not in depth:
                     depth[v] = depth[u] + 1
                     queue.append(v)
+
+        print('root', root, 'leaf_nodes', leaf_nodes)
+        # If there is a single leaf node, then the longest path is from
+        # that leaf node to the root.
+        if leaf_nodes == 1:
+            return max(depth.values()) + 1
 
         # If depth is k then there are k + 1 nodes in the path
         # So the path from leaf to leaf is depth[1] + 1 + depth[2] + 1.
@@ -49,8 +64,17 @@ def test_1():
     assert Solution().solve(edges) == 4
 
 def test_2():
+    """What if the tree is a straight line?"""
     edges = [
         [0, 1],
         [1, 2]
+    ]
+    assert Solution().solve(edges) == 3
+
+def test_3():
+    edges = [
+        [0, 1],
+        [1, 2],
+        [1, 3]
     ]
     assert Solution().solve(edges) == 3
