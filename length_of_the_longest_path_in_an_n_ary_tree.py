@@ -5,6 +5,15 @@ jramaswami
 from collections import defaultdict, deque
 from heapq import nlargest
 
+# TODO: For any given node the longest path in the tree rooted at that node is:
+#       (1) 1 if the node has no children.
+#       (2) The longest path to a leaf node in the tree if the node has
+#           one child.
+#       (3) The sum of the longest two paths to a leaf node for all of the
+#           children + 1 for the root node.
+#
+#       Should be able to recursively or bottom-up.
+ 
 
 class Solution:
     def solve(self, edges):
