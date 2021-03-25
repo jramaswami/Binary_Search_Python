@@ -7,39 +7,24 @@ from collections import defaultdict
 
 class Solution:
     def solve(self, intervals, types):
-        # First gather starts and stops by time.
-        starts = defaultdict(int)
-        stops = defaultdict(int)
-
+        # First gather events by time.
+        events = defaultdict(int)
         for start, stop in intervals:
-            starts[start] += 1
-            stops[stop] += 1
-
-        # Create a list of events and sort by time, then by stop/start.
-        START = 1
-        STOP = -1
-        events = []
-        for etime, ecount in starts.items():
-            events.append((etime, START, ecount))
-        for etime, ecount in stops.items():
-            events.append((etime, STOP, ecount))
+            events[start] += 1
+            events[stop] -= 1
 
         # Process events.  Each event is a new solution inteval.
-        events.sort()
-        soln = []
         curr_start = -1
         curr_jobs = 0
-        for etime, etype, ecount in events:
+        soln = []
+        for etime in sorted(events):
             # Create new inteval
             soln.append([curr_start, etime, curr_jobs])
             curr_start = etime
-            if etype == START:
-                curr_jobs += ecount
-            else:
-                curr_jobs -= ecount
+            curr_jobs += events[etime]
 
-        # Remove entry caused by initial start.
-        return soln[1:]
+        # Remove zero job intervals.
+        return [t for t in soln if t[-1]]
 
 
 def test_1():
@@ -52,4 +37,21 @@ def test_2():
     intervals = [[1, 4], [2, 3], [3, 4]]
     types = ["standup", "scrum retro", "scrum planning"]
     expected = [[1, 2, 1], [2, 3, 2], [3, 4, 2]]
-    assert Solution().solve(intervals,types) == expected
+    result = Solution().solve(intervals,types)
+    assert result == expected
+
+def test_3():
+    """WA"""
+    intervals = [[1, 4], [2, 3], [3, 4]]
+    types = ["standup", "scrum retro", "scrum planning"]
+    expected = [[1, 2, 1], [2, 3, 2], [3, 4, 2]]
+    result = Solution().solve(intervals,types)
+    assert result == expected
+
+def test_4():
+    """WA"""
+    intervals = [[103, 150], [53, 65], [86, 135], [171, 231]]
+    types = ["y", "y", "j", "j"]
+    expected = [[53, 65, 1], [86, 103, 1], [103, 135, 2], [135, 150, 1], [171, 231, 1]]
+    result = Solution().solve(intervals,types)
+    assert result == expected
