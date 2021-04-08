@@ -14,7 +14,7 @@ class Solution:
         ctr = Counter(nums)
         soln = 0
         removed = 0
-        for k in sorted(ctr, reverse=True):
+        for f, k in sorted(((f, k) for k, f in ctr.items()), reverse=True):
             soln += 1
             removed += ctr[k]
             if removed >= to_be_removed:
@@ -35,5 +35,6 @@ def test_3():
     assert Solution().solve(nums) == 3
 
 def test_4():
+    """WA"""
     nums = [0, 2, 0]
     assert Solution().solve(nums) == 1
