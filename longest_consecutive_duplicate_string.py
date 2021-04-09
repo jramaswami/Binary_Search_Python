@@ -14,6 +14,7 @@ class Solution:
             else:
                 curr_streak = 1
                 curr_char = c
+        longest = max(curr_streak, longest)
         return longest
 
 
@@ -25,5 +26,4 @@ def test_2():
 
 def test_3():
     """WA"""
-    assert Solution().solve("a") == 3
-
+    assert Solution().solve("a") == 1
