@@ -13,13 +13,8 @@ class Solution:
                 vote_totals[v][i] -= 1
 
         vote_totals0 = [(v, k) for k, v in vote_totals.items()]
-        print(vote_totals0)
-        soln = []
-        for _ in enumerate(votes[0]):
-            vote_totals0.sort(reverse=True)
-            _, c = vote_totals0.pop()
-            soln.append(c)
-        return "".join(soln)
+        vote_totals0.sort()
+        return "".join(t[1] for t in vote_totals0)
 
 
 
