@@ -4,14 +4,28 @@ jramaswami
 """
 class Solution:
     def solve(self, A, B, C, D, target):
-        """Brute force.  Probably too slow."""
+        """Brute force with a little optimazation."""
+        A.sort()
+        B.sort()
+        C.sort()
+        D.sort()
         soln = 0
         for a in A:
+            if a > target:
+                break
+
             for b in B:
+                if a + b > target:
+                    break
+
                 for c in C:
+                    if a + b + c > target:
+                        break
+
                     for d in D:
                         if a + b + c + d <= target:
                             soln += 1
+
         return soln
 
 
