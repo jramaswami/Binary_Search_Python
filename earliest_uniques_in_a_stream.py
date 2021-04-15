@@ -15,9 +15,9 @@ class EarliestUnique:
         self.freqs[num] += 1
 
     def earliestUnique(self):
-        while self.freqs[self.nums[0]] > 1:
+        while self.nums and self.freqs[self.nums[0]] > 1:
             self.nums.popleft()
-        return self.nums[0]
+        return self.nums[0] if self.nums else -1
 
 
 def test_1():
@@ -31,8 +31,8 @@ def test_1():
 
 def test_2():
     """RTE"""
-    methods = ["constructor","add","earliestUnique","add","earliestUnique"]
-    arguments = [[[1,2,3]],[1],[],[2],[]]
+    methods = ["constructor", "earliestUnique", "add", "earliestUnique"]
+    arguments = [[[3, 1, 1]], [], [3], []]
     expected = [None, 3, None, -1]
     eu = EarliestUnique(*arguments[0])
     for meth, args, exp in zip(methods[1:], arguments[1:], expected[1:]):
