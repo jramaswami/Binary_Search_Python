@@ -10,7 +10,7 @@ class Solution:
         for left, b in enumerate(nums0):
             if b is not None:
                 for right, a in enumerate(nums0):
-                    if left != right and a is not None and b - a <= target:
+                    if left != right and a is not None and b - a >= target:
                         soln += 1
                         nums0[right] = None
                         nums0[left] = None
@@ -27,6 +27,13 @@ def test_1():
 
 def test_2():
     """WA"""
-    nums = [1, 3, 5, 9, 10]
+    nums = [0, 1, 2, 3]
     target = 3
     assert Solution().solve(nums, target) == 1
+
+
+def test_3():
+    """WA"""
+    nums = [0, 1, 2, 2]
+    target = 1
+    assert Solution().solve(nums, target) == 2
