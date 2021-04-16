@@ -6,13 +6,13 @@ class Solution:
     def solve(self, nums, target):
         nums0 = sorted(nums)
         soln = 0
-        partition = len(nums) // 2
-        for left, b in enumerate(nums[:len(nums) // 2]):
-            for right, a in enumerate(nums[partition:], start=partition):
-                if a - b >= target:
-                    soln += 1
-                    partition = right + 1
-                    break
+        right = len(nums) // 2
+        for left, b in enumerate(nums0[:len(nums0) // 2]):
+            while right < len(nums0) and nums0[right] - b < target:
+                right += 1
+            if right < len(nums0) and nums0[right] - b >= target:
+                right += 1
+                soln += 1
         return soln
 
 
