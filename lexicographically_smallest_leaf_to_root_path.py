@@ -5,14 +5,21 @@ jramaswami
 class Solution:
     def solve(self, root):
         if root is None:
-            return []
-        return min(self.solve(root.left), self.solve(root.right)) + [root.val]
+            return None
+        left = self.solve(root.left)
+        right = self.solve(root.right)
 
+        if left is None and right is None:
+            return [root.val]
+        elif left is None:
+            return right + [root.val]
+        elif right is None:
+            return left + [root.val]
+        return min(left, right) + [root.val]
 
 #
 # Testing
 #
-
 from bscom_trees import *
 
 
