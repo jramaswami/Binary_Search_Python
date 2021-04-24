@@ -2,20 +2,28 @@
 binarysearch.com :: Lexicographically Smallest Leaf to Root Path
 jramaswami
 """
+from math import inf
+
+
 class Solution:
     def solve(self, root):
-        if root is None:
-            return None
-        left = self.solve(root.left)
-        right = self.solve(root.right)
+        def solve0(node, acc):
+            acc.append(node.val)
+            if node.left is None and node.right is None:
+                T = acc[::-1]
+            else:
+                L = [inf]
+                R = [inf]
+                if node.left:
+                    L = solve0(node.left, acc)
+                if node.right:
+                    R = solve0(node.right, acc)
+                T = min(L, R)
+            acc.pop()
+            return T
 
-        if left is None and right is None:
-            return [root.val]
-        elif left is None:
-            return right + [root.val]
-        elif right is None:
-            return left + [root.val]
-        return min(left, right) + [root.val]
+        acc = []
+        return solve0(root, acc)
 
 #
 # Testing
