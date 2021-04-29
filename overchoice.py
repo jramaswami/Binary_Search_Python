@@ -24,7 +24,7 @@ class Solution:
             else:
                 j = i
                 # Find the first bracket
-                while s[j] != "[" and j < len(s):
+                while j < len(s) and s[j] != "[":
                     j += 1
 
                 for x in soln:
