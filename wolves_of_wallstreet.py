@@ -4,23 +4,10 @@ jramaswami
 """
 class Solution:
     def solve(self, prices):
-        i = 0
         soln = 0
-        while i < len(prices):
-            # Find valley
-            while i + 1 < len(prices) and prices[i] > prices[i + 1]:
-                i += 1
-            if i < len(prices):
-                buy = prices[i]
-                i += 1
-
-            # Find peak
-            while i + 1 < len(prices) and prices[i] < prices[i + 1]:
-                i += 1
-            if i < len(prices):
-                sell = prices[i]
-                soln += sell - buy
-                i += 1
+        for left, right in zip(prices[:-1], prices[1:]):
+            if left < right:
+                soln += right - left
         return soln
 
 
