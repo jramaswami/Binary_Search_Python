@@ -6,7 +6,7 @@ class Solution:
     def solve(self, nums):
         if nums == []:
             return 0
-        nums0 = sorted(nums)
+        nums0 = sorted(set(nums))
         curr = 1
         soln = 1
         for a, b in zip(nums0[:-1], nums0[1:]):
