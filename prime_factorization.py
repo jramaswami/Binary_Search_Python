@@ -7,31 +7,19 @@ from math import sqrt
 
 class Solution:
     def solve(self, n):
-        # Sieve of Eratosthenes
-        sqrt_n = 1 + int(sqrt(n))
-        sieve = [True for _ in range(sqrt_n + 1)]
-        sieve[0] = sieve[1] = False
-        soln = []
         p = 2
-        if sieve[p]:
-            # If p is prime, then add it as many times as it divides n.
-            while n % p == 0:
-                n //= p
-                soln.append(p)
-            # Mark multiples of p as not prime.
-            for k in range(p + p, sqrt_n + 1, p):
-                sieve[k] = False
+        soln = []
+        sqrt_n = 1 + int(sqrt(n))
+        
+        p = 2
+        while n % p == 0:
+            soln.append(p)
+            n //= p
 
         for p in range(3, sqrt_n, 2):
-            if sieve[p]:
-                # If p is prime, then add it as many times as it divides n.
-                while n % p == 0:
-                    n //= p
-                    soln.append(p)
-                # Mark multiples of p as not prime.
-                for k in range(p + p, sqrt_n + 1, p):
-                    sieve[k] = False
-
+            while n % p == 0:
+                soln.append(p)
+                n //= p
         if n > 1:
             soln.append(n)
         return soln
