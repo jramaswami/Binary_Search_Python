@@ -9,7 +9,7 @@ def euclidean_distance_squared(p1, p2):
     """Return the square of the euclideand distance."""
     dx = p1[0] - p2[0]
     dy = p1[1] - p2[1]
-    return (dx * dx) + (dy + dy)
+    return (dx * dx) + (dy * dy)
 
 
 class Solution:
