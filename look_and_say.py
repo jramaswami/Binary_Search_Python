@@ -2,23 +2,16 @@
 binarysearch.com :: Look and Say
 jramaswami
 """
+from itertools import groupby
 
 
 def look_and_say(s):
     """Return the look and say for the string s."""
-    prev = s[0]
-    freq = 1
     soln = []
-    for curr in s[1:]:
-        if curr != prev:
-            soln.append(str(freq))
-            soln.append(prev)
-            prev = curr
-            freq = 1
-        else:
-            freq += 1
-    soln.append(str(freq))
-    soln.append(prev)
+    for key, grp in groupby(s):
+        L = sum(1 for _ in grp)
+        soln.append(str(L))
+        soln.append(key)
     return "".join(soln)
 
 
