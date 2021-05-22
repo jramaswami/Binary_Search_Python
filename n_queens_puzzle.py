@@ -39,7 +39,6 @@ def peaceful(queens):
 
 def solveable(queens, curr_file, n):
     """Return if board is solvable."""
-    print(f"solvable({queens=} {n=}")
     if len(queens) == n:
         return True
 
