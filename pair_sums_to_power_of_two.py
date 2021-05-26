@@ -9,6 +9,9 @@ from collections import Counter
 
 class Solution:
     def solve(self, nums):
+        if nums == []:
+            return 0
+
         limit = 2 * max(nums)
         ctr = Counter(nums)
 
@@ -16,7 +19,7 @@ class Solution:
         for n, freq_n in ctr.items():
             p = 1
             while p <= limit:
-                if n < p:
+                if n <= p:
                     r = p - n
                     if r == n:
                         # Same as freq_n choose 2 = (1/2) * (freq_n - 1) * freq_n
@@ -59,3 +62,13 @@ def test_5():
     """WA"""
     nums = []
     assert Solution().solve(nums) == 0
+
+
+def test_6():
+    nums = [14, 9, 1, 1, 18, 18, 11, 0, 17, 16, 8, 12, 6, 15, 14, 15, 14, 12,
+            4, 13, 20, 19, 15, 19, 7, 6, 8, 2, 14, 13, 20, 2, 20, 14, 20, 16,
+            5, 3, 7, 5, 8, 10, 2, 10, 3, 7, 10, 13, 14, 1, 6, 12, 14, 18, 1, 8,
+            18, 19, 13, 2, 5, 13, 14, 2, 12, 3, 20, 2, 18, 13, 12, 3, 20, 3,
+            18, 11, 15, 6, 13, 16, 17, 16, 4, 20, 11, 14, 4, 2, 2, 17, 14, 19,
+            1, 14, 15, 9, 15, 10, 0, 5]
+    assert Solution().solve(nums) == 542
