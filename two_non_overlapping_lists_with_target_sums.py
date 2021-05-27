@@ -5,6 +5,30 @@ jramaswami
 
 
 from math import inf
+from collections import namedtuple
+
+
+Interval = namedtuple('Interval', ['length', 'start', 'end'])
+
+
+def intervals_overlap(interval1, interval2):
+    """Return True if intervals overlap."""
+    # |-----|
+    #    |-----|
+    #
+    # |----------|
+    #   |-----|
+    if interval1.start <= interval2.start <= interval1.end:
+        return True
+    #   |-----|
+    #|-----|
+    if interval1.start <= interval2.end <= interval1.end:
+        return True
+    #    |-----|
+    # |-----------|
+    if interval2.start <= interval1.start <= interval2.end:
+        return True
+    return False
 
 
 class Solution:
@@ -12,23 +36,32 @@ class Solution:
         sums = dict()
         curr_sum = 0
         sums[0] = -1
-        best1 = inf
-        best2 = inf
+        intervals = []
         for j, n in enumerate(nums):
             curr_sum += n
             delta = curr_sum - k
             if delta in sums:
                 i = sums[delta]
                 length = j - i
-                if length <= best1:
-                    best1, best2 = length, best1
-                elif length < best2:
-                    best2 = length
+                intervals.append(Interval(length, i+1, j))
             sums[curr_sum] = j
 
-        if best1 == inf or best2 == inf:
-            return -1
-        return best1 + best2
+        intervals.sort()
+        soln = inf
+        for i, a in enumerate(intervals):
+            # If twice the length of the current interval is greater than
+            # the current solution we can stop because (1) The current
+            # interval was already paired with a smaller interval or
+            # (2) the current interval must be paired with a larger interval
+            # which will not beat the current solution.
+            if 2 * a.length > soln:
+                break
+            for j, b in enumerate(intervals[i+1:], start=i+1):
+                if not intervals_overlap(a, b):
+
+                    soln = min(soln, a.length + b.length)
+        return -1 if soln == inf else soln
+
 
 
 def test_1():
@@ -60,3 +93,15 @@ def test_5():
     nums = [1, 0]
     k = 1
     assert Solution().solve(nums, k) == -1
+
+
+def test_6():
+    nums = [4, 2, -3, 1, -2, -1, 0, 2, -2, 3]
+    k = 2
+    assert Solution().solve(nums, k) == 2
+
+
+def test_7():
+    nums = [-1, -3, 5, -2, 5, 3, -1, -5, 5, 3, -1, -4, 4, -5, 5, -5, -2, -1]
+    k = 0
+    assert Solution().solve(nums, k) == 4
