@@ -4,37 +4,25 @@ jramaswami
 """
 
 
-from collections import deque
-
-
-def collect_inorder(node, acc):
-    """In order traversal collection of nodes into acc."""
+def enlarge_dfs(node, acc):
+    """DFS to enlarge node."""
     if node is None:
-        return
-    collect_inorder(node.left, acc)
-    acc.append(node.val)
-    collect_inorder(node.right, acc)
-
-
-def enlarge_inorder(node, new_vals):
-    """In order traversal enlargement of nodes."""
-    if node is None:
-        return None
-    enlarge_inorder(node.left, new_vals)
-    node.val = new_vals.popleft()
-    enlarge_inorder(node.right, new_vals)
+        return 0
+    
+    # All nodes above and to the right of current node are larger than current
+    # node:
+    #       acc = sum of values above current node.
+    #       delta = sum of values to the right of current node.
+    delta = enlarge_dfs(node.right, acc)
+    node.val = node.val + acc + delta
+    enlarge_dfs(node.left, node.val)
+    # Return the value of only the nodes current node and nodes to the right.
+    return node.val - acc
 
 
 class Solution:
     def solve(self, root):
-        inorder_traversal = []
-        collect_inorder(root, inorder_traversal)
-        suffix_sums = deque(inorder_traversal)
-        prev = 0
-        for i in range(len(suffix_sums) - 1, -1, -1):
-            suffix_sums[i] = prev + inorder_traversal[i]
-            prev += inorder_traversal[i]
-        enlarge_inorder(root, suffix_sums)
+        enlarge_dfs(root, 0)
         return root
 
 #
@@ -50,3 +38,9 @@ def test_1():
     expected = make_tree([9, [14, [15, null, null], [12, null, null]], [5, null, null]])
     assert Solution().solve(root) == expected
 
+
+def test_2():
+    """WA"""
+    root = make_tree([0, null, [2, [1, null, null], null]])
+    expected = make_tree([3, null, [2, [3, null, null], null]])
+    assert Solution().solve(root) == expected
