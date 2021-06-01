@@ -13,11 +13,12 @@ def enlarge_dfs(node, acc):
     # node:
     #       acc = sum of values above current node.
     #       delta = sum of values to the right of current node.
-    delta = enlarge_dfs(node.right, acc)
-    node.val = node.val + acc + delta
-    enlarge_dfs(node.left, node.val)
-    # Return the value of only the nodes current node and nodes to the right.
-    return node.val - acc
+    delta_right = enlarge_dfs(node.right, acc)
+    node.val = node.val + acc + delta_right
+    delta_left = enlarge_dfs(node.left, node.val)
+    # Return the value of only the nodes current node and nodes to the right
+    # and below me.
+    return node.val - acc + delta_left
 
 
 class Solution:
