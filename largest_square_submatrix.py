@@ -21,10 +21,10 @@ class SubmatrixSums:
             return 0
         return self.sums[row][col]
 
-    def max_square(self, row, col):
+    def max_square(self, row, col, best_so_far):
         """Return the max square with top left corner at (row, col)"""
-        delta = 0
-        soln = 0
+        delta = best_so_far - 1
+        soln = best_so_far
         while row + delta < len(self.sums) and col + delta < len(self.sums[0]):
             # Find the submatrix sum from (row, col) to (row0, col0) exclusive
             row0 = row + delta
@@ -52,7 +52,7 @@ class Solution:
         soln = 0
         for r, row in enumerate(matrix):
             for c, _ in enumerate(row):
-                soln = max(soln, submatrix_sums.max_square(r, c))
+                soln = max(soln, submatrix_sums.max_square(r, c, 0))
         return soln
 
 
