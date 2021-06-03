@@ -24,28 +24,16 @@ class Solution:
                 col_dp[r][c] = curr
 
         square = [list(row) for row in matrix]
-        soln = 1
+        soln = 0
         for r, row in enumerate(row_dp):
             for c, _ in enumerate(row):
                 if r == 0 or c == 0:
-                    continue
-                prev_square = square[r-1][c-1]
+                    prev_square = 0
+                else:
+                    prev_square = square[r-1][c-1]
                 min_square = min(prev_square + 1, row_dp[r][c], col_dp[r][c])
                 square[r][c] = min_square
                 soln = max(soln, square[r][c] ** 2)
-
-        # print('matrix')
-        # for row in matrix:
-        #     print(row)
-        # print('row dp')
-        # for row in row_dp:
-        #     print(row)
-        # print('col dp')
-        # for row in col_dp:
-        #     print(row)
-        # print('square')
-        # for row in square:
-        #     print(row)
 
         return soln
 
@@ -206,6 +194,17 @@ def test_6():
     """WA"""
     matrix = [[0]]
     assert Solution().solve(matrix) == 0
+
+
+def test_7():
+    matrix = [[0, 0, 0], [0, 0, 0], [0, 1, 0], [0, 0, 0]]
+    assert Solution().solve(matrix) == 1
+
+
+def test_8():
+    """WA"""
+    matrix = [[1], [1]]
+    assert Solution().solve(matrix) == 1
 
 
 def generate_random_matrix(size):
