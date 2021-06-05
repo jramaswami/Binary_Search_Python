@@ -22,17 +22,19 @@ class Solution:
         
         soln = []
         for words, length in lines:
-            spaces, extra_spaces = divmod(k - length, len(words) - 1)
-            # print(f"{words=} {length=} {k - length=} {spaces=} {extra_spaces=}")
-            new_line = [words[0]]
-            for word in words[1:]:
-                if extra_spaces:
-                    new_line.append(" " * (spaces + 1))
-                    extra_spaces -= 1
-                else:
-                    new_line.append(" " * spaces)
-                new_line.append(word)
-            soln.append("".join(new_line))
+            if len(words) == 1:
+                soln.append(words[0] +  " " * (k - length))
+            else:
+                spaces, extra_spaces = divmod(k - length, len(words) - 1)
+                new_line = [words[0]]
+                for word in words[1:]:
+                    if extra_spaces:
+                        new_line.append(" " * (spaces + 1))
+                        extra_spaces -= 1
+                    else:
+                        new_line.append(" " * spaces)
+                    new_line.append(word)
+                soln.append("".join(new_line))
 
         return soln
             
@@ -54,7 +56,7 @@ def test_2():
 
 def test_3():
     """RTE"""
-    words = ["There", "should", "be", "at", "least", "one", "space", "between", "each", "word"]
-    k = 16
-    expected = ["abc ", "de fg", "bfq ", "fdgre"]
+    words = ["abc", "de", "fg", "bfq", "fdgre"]
+    k = 5
+    expected = ["abc  ", "de fg", "bfq  ", "fdgre"]
     assert Solution().solve(words, k) == expected
