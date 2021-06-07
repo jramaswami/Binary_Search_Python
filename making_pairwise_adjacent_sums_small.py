@@ -6,13 +6,22 @@ jramaswami
 
 class Solution:
     def solve(self, nums, k):
+        MOD = pow(10, 9) + 7
         soln = 0
+        nums0 = list(nums)
         for i, _ in enumerate(nums[:-1]):
-            delta = nums[i] + nums[i+1] - k
-            if delta > 0:
-                nums[i+1] -= delta 
-                soln += delta
-        return soln
+            while nums[i] + nums[i+1] > k:
+                delta = nums[i] + nums[i+1] - k
+                if nums[i+1] > 0:
+                    delta_actual = min(nums[i+1], delta)
+                    soln = (soln + delta_actual) % MOD
+                    nums[i+1] -= delta_actual
+                else:
+                    delta_actual = min(nums[i], delta)
+                    soln = (soln + delta_actual) % MOD
+                    nums[i] -= delta_actual
+
+        return soln % MOD
 
 
 def test_1():
@@ -44,4 +53,3 @@ def test_5():
     nums = [3, 2, 1, 0, 4]
     k = 0
     assert Solution().solve(nums, k) == 10
-
