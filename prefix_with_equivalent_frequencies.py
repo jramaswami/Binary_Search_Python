@@ -13,7 +13,7 @@ class Solution:
         frequency_counts = defaultdict(set)
         soln = 0
         for i, n in enumerate(nums):
-            if frequency[n]:
+            if n in frequency:
                 frequency_counts[frequency[n]].remove(n)
                 if not frequency_counts[frequency[n]]:
                     del frequency_counts[frequency[n]]
@@ -31,6 +31,8 @@ class Solution:
             elif len(frequency_counts) == 1:
                 max_key = max(frequency_counts.keys())
                 if len(frequency_counts[max_key]) == 1:
+                    soln = max(soln, i + 1)
+                if max_key == 1:
                     soln = max(soln, i + 1)
 
         return soln
