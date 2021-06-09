@@ -22,12 +22,16 @@ class Solution:
             if len(frequency_counts) == 2:
                 max_key = max(frequency_counts.keys())
                 min_key = min(frequency_counts.keys())
-                if (min_key + 1 == max_key
-                and (len(frequency_counts[max_key]) == 1 
-                     or len(frequency_counts[min_key]) == 1)):
-                    soln = max(soln, i + 1)
+                if len(frequency_counts[max_key]) == 1 or len(frequency_counts[min_key]) == 1:
+                    if min_key + 1 == max_key:
+                        soln = max(soln, i + 1)
+                    elif min_key == 1 and len(frequency_counts[min_key]) == 1:
+                        soln = max(soln, i + 1)
+
             elif len(frequency_counts) == 1:
-                soln = max(soln, i + 1)
+                max_key = max(frequency_counts.keys())
+                if len(frequency_counts[max_key]) == 1:
+                    soln = max(soln, i + 1)
 
         return soln
 
@@ -58,6 +62,18 @@ def test_5():
     """WA"""
     nums = [5, 5, 5, 3, 4, 5]
     assert Solution().solve(nums) == 4
+
+
+def test_6():
+    """WA"""
+    nums = [4, 4, 5, 4, 5, 5]
+    assert Solution().solve(nums) == 5
+
+
+def test_7():
+    """WA"""
+    nums = [1, 0]
+    assert Solution().solve(nums) == 2
 
 
 def main():
