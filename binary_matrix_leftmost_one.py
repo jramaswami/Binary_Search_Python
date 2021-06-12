@@ -10,7 +10,7 @@ class Solution:
         if not matrix:
             return -1
 
-        i = len(matrix)
+        i = len(matrix[0])
         for row in matrix:
             while i - 1 >= 0 and row[i-1] == 1:
                 i -= 1
