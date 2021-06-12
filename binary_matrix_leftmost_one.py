@@ -6,11 +6,15 @@ jramaswami
 
 class Solution:
     def solve(self, matrix):
+        # Edge case: nothing in the matrix.
+        if not matrix:
+            return -1
+
         i = len(matrix)
         for row in matrix:
             while i - 1 >= 0 and row[i-1] == 1:
                 i -= 1
-        if i < len(matrix):
+        if i < len(matrix[0]):
             return i
         return -1
 
@@ -50,3 +54,16 @@ def test_4():
     """WA"""
     matrix = [[0, 1]]
     assert Solution().solve(matrix) == 1
+
+
+def test_5():
+    """WA"""
+    matrix = []
+    assert Solution().solve(matrix) == -1
+
+
+def test_6():
+    """WA"""
+    matrix = [[0, 0]]
+    assert Solution().solve(matrix) == -1
+
