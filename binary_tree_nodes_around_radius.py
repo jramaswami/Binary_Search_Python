@@ -4,34 +4,44 @@ jramaswami
 """
 
 
-from collections import deque
-from math import inf
+from collections import deque, defaultdict
 
 
-def path_to_target(node, target, radius, acc):
+def tree_to_undirected_graph(root):
     """
-    Use dfs to find the path from root to target as well as the distance
-    from each one to the target.  Only include nodes that are within the
-    radius from target.
+    Transform the tree into an undirected graph using BFS.  Return adjacency
+    list in form a dictionary.
     """
-    if node is None:
-        return inf
+    adj = defaultdict(list)
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        if node.left is not None:
+            adj[node.val].append(node.left.val)
+            adj[node.left.val].append(node.val)
+            queue.append(node.left)
+        if node.right is not None:
+            adj[node.val].append(node.right.val)
+            adj[node.right.val].append(node.val)
+            queue.append(node.right)
+    return adj
 
-    if node.val == target:
-        acc.append((node, 0))
-        return 0
 
-    left_dist = 1 + path_to_target(node.left, target, radius, acc)
-    right_dist = 1 + path_to_target(node.right, target, radius, acc)
-    if left_dist <= radius:
-        acc.append((node, left_dist))
-        return left_dist
-
-    if right_dist <= radius:
-        acc.append((node, right_dist))
-        return right_dist
-
-    return inf
+def collect_nodes(graph, target, radius):
+    """Use BFS to collect nodes that are radius away from target."""
+    soln = []
+    queue = deque([(target, 0)])
+    visited = set([target])
+    while queue:
+        node, dist = queue.popleft()
+        if dist == radius:
+            soln.append(node)
+        else:
+            for neighbor in graph[node]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append((neighbor, dist + 1))
+    return soln
 
 
 class Solution:
@@ -42,25 +52,8 @@ class Solution:
     """
     def solve(self, root, target, radius):
         """Solve problem."""
-        queue = deque()
-        path_to_target(root, target, radius, queue)
-        visited = set()
-        for node, _ in queue:
-            visited.add(node.val)
-
-        # BFS to find elements within radius
-        soln = []
-        while queue:
-            node, dist = queue.popleft()
-            if dist == radius:
-                soln.append(node.val)
-            else:
-                if node.left and node.left.val not in visited:
-                    queue.append((node.left, dist + 1))
-                    visited.add(node.left.val)
-                if node.right and node.right.val not in visited:
-                    queue.append((node.right, dist + 1))
-                    visited.add(node.right.val)
+        graph = tree_to_undirected_graph(root)
+        soln = collect_nodes(graph, target, radius)
         return sorted(soln)
 
 
