@@ -4,39 +4,34 @@ jramaswami
 """
 
 
-from collections import defaultdict
+from collections import deque
 from math import inf
 
 
-def dfs_second_pass(node, parent, radius, distance, acc):
+def path_to_target(node, target, radius, acc):
     """
-    Traverse tree again, gathering nodes with matching radius.  The distance
-    for nodes not in path from root to target is also computed.
-    """
-    if node is None:
-        return
-    distance[node.val] = min(distance[node.val], 1 + distance[parent])
-    dfs_second_pass(node.left, node.val, radius, distance, acc)
-    dfs_second_pass(node.right, node.val, radius, distance, acc)
-    if distance[node.val] == radius:
-        acc.append(node.val)
-
-
-def dfs_first_pass(node, target, distance):
-    """
-    Find the target and while recursing up set the distance to the target node.
+    Use dfs to find the path from root to target as well as the distance
+    from each one to the target.  Only include nodes that are within the
+    radius from target.
     """
     if node is None:
         return inf
 
     if node.val == target:
-        distance[node.val] = 0
-    else:
-        distance[node.val] = 1 + min(dfs_first_pass(
-                                        node.left, target, distance),
-                                     dfs_first_pass(
-                                        node.right, target, distance))
-    return distance[node.val]
+        acc.append((node, 0))
+        return 0
+
+    left_dist = 1 + path_to_target(node.left, target, radius, acc)
+    right_dist = 1 + path_to_target(node.right, target, radius, acc)
+    if left_dist <= radius:
+        acc.append((node, left_dist))
+        return left_dist
+
+    if right_dist <= radius:
+        acc.append((node, right_dist))
+        return right_dist
+
+    return inf
 
 
 class Solution:
@@ -47,11 +42,25 @@ class Solution:
     """
     def solve(self, root, target, radius):
         """Solve problem."""
-        distance = defaultdict(lambda: inf)
-        distance[-1] = inf
-        dfs_first_pass(root, target, distance)
+        queue = deque()
+        path_to_target(root, target, radius, queue)
+        visited = set()
+        for node, _ in queue:
+            visited.add(node.val)
+
+        # BFS to find elements within radius
         soln = []
-        dfs_second_pass(root, -1, radius, distance, soln)
+        while queue:
+            node, dist = queue.popleft()
+            if dist == radius:
+                soln.append(node.val)
+            else:
+                if node.left and node.left.val not in visited:
+                    queue.append((node.left, dist + 1))
+                    visited.add(node.left.val)
+                if node.right and node.right.val not in visited:
+                    queue.append((node.right, dist + 1))
+                    visited.add(node.right.val)
         return sorted(soln)
 
 
@@ -74,4 +83,13 @@ def test_2():
     target = 0
     radius = 0
     expected = [0]
+    assert Solution().solve(make_tree(root), target, radius) == expected
+
+
+def test_3():
+    """WA"""
+    root = [1, [0, null, null], null]
+    target = 0
+    radius = 1
+    expected = [1]
     assert Solution().solve(make_tree(root), target, radius) == expected
