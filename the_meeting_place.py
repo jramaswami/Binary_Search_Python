@@ -35,18 +35,25 @@ class Solution:
 
         person_starts = [(r, c) for r, row in enumerate(matrix)
                                 for c, v in enumerate(row) if v == 2]
-        distance = [[inf if v == 1 else 0 for v in row] for row in matrix]
+        distance = [[inf for v in row] for row in matrix]
         for row, col in person_starts:
             visited = [[False for _ in row] for row in matrix]
             visited[row][col] = True
+            if distance[row][col] == inf:
+                distance[row][col] = 0
             queue = deque([(row, col, 0)])
             while queue:
                 r, c, d = queue.popleft()
                 for r0, c0 in neighborhood(r, c):
                     if matrix[r0][c0] != 1 and not visited[r0][c0]:
                         visited[r0][c0] = True
+                        if distance[r0][c0] == inf:
+                            distance[r0][c0] = 0
                         distance[r0][c0] += (1 + d)
                         queue.append((r0, c0, d + 1))
+
+        for row in distance:
+            print(row)
 
         return min(min(row) for row in distance)
 
@@ -70,3 +77,14 @@ def test_2():
         [2, 1, 0, 1, 1]
     ]
     assert Solution().solve(matrix) == 12
+
+def test_3():
+    """WA"""
+    matrix = [
+        [0, 0, 1, 0, 0, 1, 2, 1],
+        [0, 0, 0, 1, 1, 0, 1, 1],
+        [0, 0, 1, 0, 1, 0, 0, 1],
+        [1, 1, 0, 1, 1, 1, 0, 1],
+        [1, 1, 1, 1, 1, 0, 0, 1]
+    ]
+    assert Solution().solve(matrix) == 0
