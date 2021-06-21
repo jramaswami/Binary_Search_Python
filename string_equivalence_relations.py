@@ -40,7 +40,7 @@ class Solution:
         for s, t in zip(a, b):
             union_sets(s, t)
 
-        return "".join(minlex[c] for c in target)
+        return "".join(minlex[find_set(c)] for c in target)
 
 
 def test_1():
