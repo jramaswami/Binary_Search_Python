@@ -5,7 +5,7 @@ jramaswami
 
 
 class Solution:
-    def solve(self, nums):
+    def solve(self, nums0):
         def sign(n):
             if n < 0:
                 return -1
@@ -14,7 +14,15 @@ class Solution:
             else:
                 return 0
 
-        # Corner case
+        if nums0 == []:
+            return 0
+
+        # Remove zero signs
+        nums = [nums0[0]]
+        for n in nums0[1:]:
+            if n != nums[-1]:
+                nums.append(n)
+
         if len(nums) < 2:
             return len(nums)
 
