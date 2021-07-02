@@ -4,7 +4,6 @@ jramaswami
 """
 
 
-from math import inf
 from bisect import bisect_right
 
 
@@ -42,7 +41,7 @@ class Solution:
 
         lo = 0
         hi = nums[-1] - nums[0]
-        soln = inf
+        soln = hi
         while hi - lo > EPS:
             r = (lo + hi) / 2
             # Can r cover the entire space?
