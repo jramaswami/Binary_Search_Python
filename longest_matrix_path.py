@@ -37,7 +37,11 @@ class Solution:
                     return steps
                 return 0
 
-        return dfs(0, -1, -1, -1, 0)
+        soln = 0
+        for c in range(len(matrix[0])):
+            if matrix[0][c] == 0:
+                soln = max(soln, dfs(0, c, -1, -1, 1))
+        return soln
 
 
 def test_1():
