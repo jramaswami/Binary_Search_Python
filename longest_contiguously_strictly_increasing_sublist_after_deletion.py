@@ -6,32 +6,39 @@ jramaswami
 
 class Solution:
     def solve(self, nums):
-        # Corner case
+
+        # Base case if there are 0 or 1 items in the array.
         if len(nums) < 2:
             return len(nums)
 
-        no_del_start = [0 for _ in nums]
-        del_start = [0 for _ in nums]
-        del_next = [-1 for _ in nums]
+        longest_l2r = [1 for _ in nums]
+        longest_r2l = [1 for _ in nums]
 
+        # Find the longest increasing sequence that ends at each index, going
+        # from left to right.  O(N)
         soln = 0
-        for i, _ in enumerate(nums[1:], start=1):
-            if nums[i] <= nums[i-1]:
-                # Non-increasing
-                no_del_start[i] = i
-                del_start[i] = del_next[i-1] + 1
-                del_next[i] = i-1
-            else:
-                # Who is being deleted?
-                no_del_start[i] = no_del_start[i-1]
-                del_start[i] = del_start[i-1]
-                del_next[i] = del_next[i-1]
-            soln = max(soln, (i - del_start[i]), (i - no_del_start[i] + 1))
+        for i in range(1, len(nums)):
+            if nums[i] > nums[i-1]:
+                longest_l2r[i] = longest_l2r[i-1] + 1
+            soln = max(soln, longest_l2r[i])
 
-        print(nums)
-        print(no_del_start)
-        print(del_start)
-        print(del_next)
+        # Find the longest increasing sequence that ends at the index but go
+        # from right to left for each index.  O(N)
+        for i in range(len(nums) - 2, -1, -1):
+            if nums[i] < nums[i+1]:
+                longest_r2l[i] = longest_r2l[i+1] + 1
+            soln = max(soln, longest_r2l[i])
+
+        # Find the longest sequence you can put together if you skip the
+        # element at index i.  Note that nums[i-1] must be less than nums[i]
+        # to join the left and right sequences. O(N)
+        for i in range(1, len(nums)-1):
+            if nums[i-1] < nums[i+1]:
+                left = longest_l2r[i-1]
+                right = longest_r2l[i+1]
+                soln = max(soln, left + right)
+
+        # Overall 3*O(N) = O(N)
         return soln
 
 
@@ -43,7 +50,7 @@ def test_1():
 
 def test_2():
     nums = [8, 3, 10, 9, 3, 6, 10, 4, 6, 5]
-    expected = 4
+    expected = 3
     assert Solution().solve(nums) == expected
 
 
