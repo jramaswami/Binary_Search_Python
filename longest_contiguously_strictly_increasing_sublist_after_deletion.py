@@ -6,6 +6,10 @@ jramaswami
 
 class Solution:
     def solve(self, nums):
+        # Corner case
+        if len(nums) < 2:
+            return len(nums)
+
         no_del_start = [0 for _ in nums]
         del_start = [0 for _ in nums]
         del_next = [-1 for _ in nums]
@@ -18,11 +22,16 @@ class Solution:
                 del_start[i] = del_next[i-1] + 1
                 del_next[i] = i-1
             else:
+                # Who is being deleted?
                 no_del_start[i] = no_del_start[i-1]
                 del_start[i] = del_start[i-1]
                 del_next[i] = del_next[i-1]
             soln = max(soln, (i - del_start[i]), (i - no_del_start[i] + 1))
 
+        print(nums)
+        print(no_del_start)
+        print(del_start)
+        print(del_next)
         return soln
 
 
@@ -78,4 +87,11 @@ def test_9():
     """WA"""
     nums = [1]
     expected = 1
+    assert Solution().solve(nums) == expected
+
+
+def test_10():
+    """WA"""
+    nums = [1, 2, 0, 1]
+    expected = 2
     assert Solution().solve(nums) == expected
