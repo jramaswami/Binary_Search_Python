@@ -30,9 +30,9 @@ class Solution:
         while lo <= hi:
             mid = lo + ((hi - lo) // 2)
             p = count_lte(mid, matrix)
-            # There are p + 1 items less than k. (Include itself.)
+            # There are p + 1 items less than k.
             if p <= k:
-                lo = lo + 1
+                lo = mid + 1
             else:
                 soln = min(soln, mid)
                 hi = mid - 1
