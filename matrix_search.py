@@ -4,29 +4,39 @@ jramaswami
 """
 
 
+from math import inf
+
+
 class Solution:
     def solve(self, matrix, k):
-        k += 1
-        r = len(matrix) - 1
-        c = len(matrix[r]) - 1
-        p = (r + 1) * (c + 1)
-        while p != k:
-            print(f"{r=} {c=} {p=}")
-            # If moving to the left and up will point to p0th item.
-            p0 = r * c
 
-            if k <= p0:
-                # If k <= p0 then go ahead and move up and left.
-                r -= 1
-                c -= 1
-                p = p0
+        def count_lte(n, matrix):
+            """Count the number of items in the matrix <= n."""
+            result = 0
+            c = len(matrix[0]) - 1
+            # For each row.
+            for r, row in enumerate(matrix):
+                # Move left to the first item <= n
+                while c >= 0 and row[c] > n:
+                    c -= 1
+                # Add to the result the number of items in this row <= n
+                result += (c + 1)
+            return result
+
+        # Binary search for the element with k items less than it.
+        lo = matrix[0][0]
+        hi = matrix[-1][-1]
+        soln = hi
+        while lo <= hi:
+            mid = lo + ((hi - lo) // 2)
+            p = count_lte(mid, matrix)
+            # There are p + 1 items less than k. (Include itself.)
+            if p <= k:
+                lo = lo + 1
             else:
-                # If k > p0 then the kth item is in this row. But it is to the
-                # left.
-                p -= 1
-                c -= 1
-
-        return matrix[r][c]
+                soln = min(soln, mid)
+                hi = mid - 1
+        return soln
 
 
 def test_1():
@@ -58,4 +68,17 @@ def test_3():
     ]
     k = 2
     expected = 3
+    assert Solution().solve(matrix, k) == expected
+
+
+def test_4():
+    matrix = [
+        [1, 3, 30, 33],
+        [2, 3, 31, 40],
+        [5, 5, 32, 50]
+    ]
+    k = 4
+    expected = 5
+    for row in matrix:
+        print(row)
     assert Solution().solve(matrix, k) == expected
