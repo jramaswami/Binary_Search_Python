@@ -4,6 +4,9 @@ jramaswami
 """
 
 
+from collections import deque
+
+
 class Solution:
     def solve(self, mailboxes):
         # Corner case: empty mailboxes
@@ -11,9 +14,18 @@ class Solution:
             return []
 
         soln = []
-        col_limit = max(len(m) for m in mailboxes)
-        for c in range(col_limit):
-            soln.extend(m[c] for m in mailboxes if c < len(m) and m[c] != 'junk')
+
+        # Initialize queue
+        Q = deque()
+        for i, _ in enumerate(mailboxes):
+            Q.append((i, 0))
+
+        while Q:
+            i, j = Q.popleft()
+            if mailboxes[i][j] != 'junk':
+                soln.append(mailboxes[i][j])
+            if j + 1 < len(mailboxes[i]):
+                Q.append((i, j+1))
         return soln
 
 
