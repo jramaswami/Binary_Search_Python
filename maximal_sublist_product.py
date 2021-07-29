@@ -26,6 +26,7 @@ class Solution:
             curr_product *= n
             product.append(curr_product)
             if curr_product == 0:
+                soln = max(soln, curr_product)
                 # No product including this index will be anything but zero.
                 # Since we are moving from left to right, start over at the
                 # next index.
