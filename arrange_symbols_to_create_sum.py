@@ -20,8 +20,8 @@ class Solution:
         # -1000 + 1000 = 0, so add 1000 to all sums.
         offset = sum(nums)
         dp = [[0 for _ in range((2 * offset) + 5)] for _ in nums]
-        dp[0][offset + nums[0]] = 1
-        dp[0][offset - nums[0]] = 1
+        dp[0][offset + nums[0]] += 1
+        dp[0][offset - nums[0]] += 1
         for r, n in enumerate(nums[1:], start=1):
             for c, _ in enumerate(dp[r]):
                 if dp[r-1][c]:
@@ -59,7 +59,7 @@ def test_4():
     """RTE"""
     nums = []
     target = 0
-    expected = 0
+    expected = 1
     assert Solution().solve(nums, target) == expected
 
 
