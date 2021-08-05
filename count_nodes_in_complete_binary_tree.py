@@ -31,6 +31,10 @@ class Solution:
         # First get the height of the tree by going left.  O(log N)
         ht = get_height(root, 0)
 
+        # Corner case
+        if ht == 1:
+            return 1
+
         # The bottom row will have 2^(ht-1) nodes in it.
         length = pow(2, ht - 1)
 
@@ -42,8 +46,7 @@ class Solution:
         # leaf nodes.  Each search requires O(lg N) to traverse tree to leaf.
         lo = 0
         hi = length - 1
-        soln_index = 0
-        soln_value = None
+        rightmost_val = 0
         path_bits = ht - 2
         while lo <= hi:
             mid = lo + ((hi - lo) // 2)
@@ -53,11 +56,12 @@ class Solution:
                 hi = mid - 1
             else:
                 # Move right
-                if mid > soln_index:
-                    soln_index = mid
-                    soln_value = node.val
+                rightmost_val = max(rightmost_val, mid)
                 lo = mid + 1
-        return soln_value
+
+        missing_values = length - rightmost_val
+        return pow(2, ht) - missing_values
+
 
 #
 # Testing
@@ -82,5 +86,11 @@ def test_2():
 def test_3():
     """WA"""
     root = [0, null, null]
-    expected = 0
+    expected = 1
+    assert Solution().solve(make_tree(root)) == expected
+
+
+def test_4():
+    root = [0, [1, null, null], [2, null, null]]
+    expected = 3
     assert Solution().solve(make_tree(root)) == expected
