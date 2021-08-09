@@ -6,6 +6,9 @@ jramaswami
 
 class Solution:
     def solve(self, intervals):
+        # Corner case: empty intervals
+        if intervals == []:
+            return 0
 
         def overlaps(L1, R1, L2, R2):
             """Return True if intervals overlap."""
