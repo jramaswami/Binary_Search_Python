@@ -10,18 +10,15 @@ class Solution:
         if intervals == []:
             return 0
 
-        def overlaps(L1, R1, L2, R2):
-            """Return True if intervals overlap."""
-            return max(L1, L2) < min(R1, R2)
+        intervals.sort(key=lambda T: (T[1], T[0]))
 
-        intervals.sort()
-        dp = [1 for _ in intervals]
-        for i, (L1, R1) in enumerate(intervals):
-            for j, (L2, R2) in enumerate(intervals[:i]):
-                if not overlaps(L1, R1, L2, R2):
-                    dp[i] = max(dp[i], dp[j] + 1)
-
-        return len(intervals) - max(dp)
+        last_end = -1
+        interval_count = 0
+        for L, R in intervals:
+            if L >= last_end:
+                last_end = R
+                interval_count += 1
+        return len(intervals) - interval_count
 
 
 
