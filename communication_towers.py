@@ -44,7 +44,7 @@ class Solution:
     def solve(self, matrix):
         uf = UnionFind()
         towers = []
-        W = len(matrix[0])
+        W = len(matrix)
         for r, row in enumerate(matrix):
             for c, tower in enumerate(row):
                 if tower:
@@ -52,6 +52,7 @@ class Solution:
                     uf.make_set(W + c)
                     uf.union_set(r, W + c)
         return len(uf)
+
 
 
 def test_1():
