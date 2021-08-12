@@ -14,13 +14,14 @@ class Solution:
             odd = n % 2
             # You can always have this as our subsequence.
             dp[i][odd] = max(dp[i][odd], 1)
+            if odd >= k:
+                soln = max(soln, dp[i][odd])
             for j, m in enumerate(nums[:i]):
                 if m < n:
                     for p in dp[j]:
                         dp[i][p+odd] = max(dp[i][p+odd], dp[j][p] + 1)
                         if p+odd >= k:
                             soln =  max(soln, dp[i][p+odd])
-
         return soln
 
 
@@ -43,4 +44,11 @@ def test_3():
     nums = [0]
     k = 0
     expected = 1
+    assert Solution().solve(nums, k) == expected
+
+
+def test_4():
+    nums = [0, 2, 4, 6, 8, 10]
+    k = 0
+    expected = len(nums)
     assert Solution().solve(nums, k) == expected
