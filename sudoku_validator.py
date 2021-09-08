@@ -30,7 +30,15 @@ class Solution:
         # Validate a section.
         def valid_section(g):
             """Return True if section is valid."""
-            return len(set(g)) == 9
+            valid_numbers = set()
+            for n in g:
+                if 1 <= n <= 9:
+                    valid_numbers.add(n)
+                else:
+                    # Invalid number.
+                    return False
+            return len(valid_numbers) == 9
+
 
         # Functions to validate rows, cols, and boxes.
         def all_rows_valid():
