@@ -45,8 +45,8 @@ class SegmentTree:
             self.merge(i)
 
     def count_less_than(self, node, target):
-        # Find the index for the first element greater than target.
-        i = bisect.bisect_right(self.tree[node], target)
+        # Find the index for the first element less than target.
+        i = bisect.bisect_left(self.tree[node], target)
         return i
 
     def query(self, left, right, target):
