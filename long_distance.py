@@ -40,8 +40,7 @@ class Solution:
                 j += 1
                 k += 1
 
-            for k in range(lo, hi+1):
-                nums0[k] = aux[k]
+            nums0[lo:hi+1] = aux[lo:hi+1]
 
         def merge_sort(lo, hi):
             if lo >= hi:
@@ -71,3 +70,9 @@ def test_3():
     nums = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
     expected = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
     assert Solution().solve(nums) == expected
+
+
+# def test_5():
+#     nums = list(reversed(range(100000)))
+#     expected = list(reversed(range(100000)))
+#     assert Solution().solve(nums) == expected
