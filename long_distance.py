@@ -3,75 +3,58 @@ binarysearch.com :: Long Distance
 jramaswami
 """
 
-import bisect
-
-
-class SegmentTree:
-
-    def __init__(self, nums):
-        self.tree = [[] for _ in range(2 * len(nums))]
-        self.nums = nums
-        self.build()
-
-    def merge(self, merge_node_index):
-        left_child_index = merge_node_index * 2
-        right_child_index = left_child_index + 1
-        left_node = self.tree[left_child_index]
-        right_node = self.tree[right_child_index]
-        merge_node = self.tree[merge_node_index]
-        i = 0
-        j = 0
-        while i < len(left_node) and j < len(right_node):
-            if left_node[i] < right_node[j]:
-                merge_node.append(left_node[i])
-                i += 1
-            else:
-                merge_node.append(right_node[j])
-                j += 1
-        while i < len(left_node):
-            merge_node.append(left_node[i])
-            i += 1
-        while j < len(right_node):
-            merge_node.append(right_node[j])
-            j += 1
-
-    def build(self):
-        # Fill bottom of tree.
-        for i, n in enumerate(self.nums):
-            self.tree[i + len(self.nums)] = [n]
-
-        # Fill upper levels of tree.
-        for i in range(len(self.nums)-1, 0, -1):
-            self.merge(i)
-
-    def count_less_than(self, node, target):
-        # Find the index for the first element less than target.
-        i = bisect.bisect_left(self.tree[node], target)
-        return i
-
-    def query(self, left, right, target):
-        left += len(self.nums)
-        right += len(self.nums)
-        result = 0
-        while left <= right:
-            if left % 2 == 1:
-                result += self.count_less_than(left, target)
-                left += 1
-            if right % 2 == 0:
-                result += self.count_less_than(right, target)
-                right -= 1
-            left //= 2
-            right //= 2
-        return result
-
 
 class Solution:
 
     def solve(self, nums):
-        st = SegmentTree(nums)
-        soln = [st.query(i+1, len(nums)-1, n) for i, n in enumerate(nums)]
-        return soln
 
+        nums0 = [(v, i) for i, v in enumerate(nums)]
+        aux = list(nums)
+        soln = [0 for _ in nums]
+
+        def merge(lo, mid, hi):
+            i = lo
+            j = mid + 1
+            k = lo
+
+            inversions = 0
+            while i <= mid and j <= hi:
+                if nums0[i][0] <= nums0[j][0]:
+                    aux[k] = nums0[i]
+                    soln[nums0[i][1]] += inversions
+                    i += 1
+                    k += 1
+                else:
+                    # This is an inversion for every item still in the left.
+                    inversions += 1
+                    aux[k] = nums0[j]
+                    j += 1
+                    k += 1
+
+            while i <= mid:
+                soln[nums0[i][1]] += inversions
+                aux[k] = nums0[i]
+                i += 1
+                k += 1
+
+            while j <= hi:
+                aux[k] = nums0[j]
+                j += 1
+                k += 1
+
+            for k in range(lo, hi+1):
+                nums0[k] = aux[k]
+
+        def merge_sort(lo, hi):
+            if lo >= hi:
+                return
+            mid = lo + ((hi - lo) // 2)
+            merge_sort(lo, mid)
+            merge_sort(mid + 1, hi)
+            merge(lo, mid, hi)
+
+        merge_sort(0, len(nums)-1)
+        return soln
 
 
 def test_1():
