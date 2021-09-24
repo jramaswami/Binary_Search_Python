@@ -3,26 +3,21 @@ binarysearch.com :: Number of Fractions that Sum to 1
 jramaswami
 """
 
-from fractions import Fraction
-from bisect import bisect_left
+
+from collections import defaultdict
+from math import gcd
 
 
 class Solution:
 
     def solve(self, fractions):
-
-        ONE = Fraction(1, 1)
-        fractions0 = [Fraction(*f) for f in fractions]
-        # O(n log n)
-        fractions0.sort()
+        visited = defaultdict(lambda: defaultdict(int))
         soln = 0
-        # O(n log n)
-        while fractions0:
-            fract = fractions0.pop()
-            i = bisect_left(fractions0, ONE - fract)
-            while i < len(fractions0) and fractions0[i] + fract == ONE:
-                soln += 1
-                i += 1
+        for num, den in fractions:
+            g = gcd(num, den)
+            num, den = num // g, den // g
+            soln += visited[den][den - num]
+            visited[den][num] += 1
         return soln
 
 
