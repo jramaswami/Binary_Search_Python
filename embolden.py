@@ -7,12 +7,12 @@ class Solution:
 
     def solve(self, text, patterns):
         bold = [0 for _ in text]
-        for pattern in patterns:
+        for pattern in set(patterns):
             index = text.find(pattern)
             while index >= 0:
                 for i in range(index, index + len(pattern)):
                     bold[i] = 1
-                index = text.find(pattern, index + len(pattern))
+                index = text.find(pattern, index + 1)
 
         soln = []
         for i, c in enumerate(text):
@@ -46,6 +46,7 @@ def test_2():
 
 
 def test_3():
+    """WA"""
     text = "cbbabcacbbccbacbaccbbcabcabbbccbcbbcaaabcacbaabaabaccacaaccbbbaaaabcbccaacbcacabbcbacbbcbbccccbababc"
     patterns = ["bba", "bbb", "baa", "baa", "aba", "bab", "abb", "abb", "bbb", "aab"]
     expected = "c<b>bbab</b>cacbbccbacbaccbbcabc<b>abbb</b>ccbcbbca<b>aab</b>cac<b>baabaaba</b>ccacaacc<b>bbbaaaab</b>cbccaacbcac<b>abb</b>cbacbbcbbcccc<b>babab</b>c"
