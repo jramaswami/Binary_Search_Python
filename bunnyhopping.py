@@ -4,27 +4,30 @@ jramaswami
 """
 
 import heapq
-from math import inf
+from collections import namedtuple
+
+
+QItem = namedtuple('QItem', ['cost', 'index'])
 
 
 class Solution:
 
     def solve(self, nums, k):
-        dist = [inf for _ in nums]
-        dist[0] = nums[0]
-        Q = []
-        heapq.heappush(Q, (dist[0], 0))
-        while Q:
-            d, i = heapq.heappop(Q)
-            if dist[i] != d:
-                continue
-            for off in range(1, k+1):
-                j = i + off
-                if j < len(nums) and dist[i] + nums[j] < dist[j]:
-                    dist[j] = dist[i] + nums[j]
-                    heapq.heappush(Q, (dist[j], j))
-        return dist[-1]
+        Q = [QItem(nums[0], 0)]
+        cost = [0 for _ in nums]
+        for i, n in enumerate(nums[1:], start=1):
+            # Remove any items outside the window
+            while Q and Q[0].index < i - k:
+                cost[Q[0].index] = Q[0].cost
+                heapq.heappop(Q)
+            # Add shortest path to current index.
+            heapq.heappush(Q, QItem(n + Q[0].cost, i))
 
+        while Q:
+            cost[Q[0].index] = Q[0].cost
+            heapq.heappop(Q)
+
+        return cost[-1]
 
 
 def test_1():
@@ -35,6 +38,7 @@ def test_1():
 
 
 def main():
+    """Timing"""
     import random
     nums = [random.randint(1, 1000) for _ in range(100000)]
     k = random.randint(1, len(nums))
