@@ -49,7 +49,11 @@ class Solution:
             else:
                 # If the target sum is not zero, then we can just count
                 # every window ending at current end if the curr_sum
-                # equals the target_sum
+                # equals the target_sum.  Unlike before, though, we must
+                # handle trailing zeros.
+                while window[-1] == 0:
+                    soln += 1
+                    window.pop()
                 while curr_sum == target_sum:
                     soln += 1
                     curr_sum -= window[0]
@@ -96,7 +100,15 @@ def test_5():
 
 def test_6():
     """WA"""
-    nums = [0, 0, 0, 1, 0]
-    target = 0
-    expected = 1
+    nums = [1, 0]
+    target = 1
+    expected = 2
+    assert Solution().solve(nums, target) == expected
+
+
+def test_7():
+    """WA"""
+    nums = [0, 1, 0]
+    target = 1
+    expected = 4
     assert Solution().solve(nums, target) == expected
