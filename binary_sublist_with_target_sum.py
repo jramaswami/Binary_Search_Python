@@ -4,62 +4,26 @@ jramaswami
 """
 
 
-from collections import deque
+from collections import defaultdict
 
 
 class Solution:
 
     def solve(self, nums, target_sum):
         soln = 0
-        window = deque()
         curr_sum = 0
+        prefix_sums = defaultdict(int)
+        prefix_sums[0] += 1
         for n in nums:
-            if n == 1 and curr_sum == target_sum:
-                # Adding the next element will take us over the target sum.
-                if target_sum == 0:
-                    # If the target sum is zero then any sublist of current
-                    # window will sum to 0.
-                    soln += ((len(window) * (len(window) + 1)) // 2)
-                    # Since the target sum is zero, just empty the window
-                    # for the next element.
-                    window.clear()
-                    curr_sum = 0
-                else:
-                    # If the target sum is not zero, then we can just count
-                    # every window ending at current end if the curr_sum
-                    # equals the target_sum
-                    while curr_sum == target_sum:
-                        soln += 1
-                        curr_sum -= window[0]
-                        window.popleft()
-                    # The curr_sum is now one less than the target sum.
-                    # We can add the 1 to get the current sum.
-                    window.append(1)
-                    curr_sum += 1
-            else:
-                window.append(n)
-                curr_sum += n
-
-        # There still might be items in the window.
-        if window and target_sum == curr_sum:
-            if target_sum == 0:
-                # If the target sum is zero then any sublist of current
-                # window will sum to 0.
-                soln += ((len(window) * (len(window) + 1)) // 2)
-            else:
-                # If the target sum is not zero, then we can just count
-                # every window ending at current end if the curr_sum
-                # equals the target_sum.  Unlike before, though, we must
-                # handle trailing zeros.
-                while window[-1] == 0:
-                    soln += 1
-                    window.pop()
-                while curr_sum == target_sum:
-                    soln += 1
-                    curr_sum -= window[0]
-                    window.popleft()
-
+            curr_sum += n
+            # For a sublist from [i, j] to be the target sum, then
+            # there must exists a sublist [0, i-1] that has the sum
+            # of curr_sum - target_sum.
+            delta = curr_sum - target_sum
+            soln += prefix_sums[delta]
+            prefix_sums[curr_sum] += 1
         return soln
+
 
 
 def test_1():
