@@ -5,6 +5,7 @@ jramaswami
 
 
 import math
+import collections
 
 
 class Solution:
@@ -14,7 +15,6 @@ class Solution:
         if len(matrix) == 0 or len(matrix[0]) == 0:
             return -1
 
-        dist = [[math.inf for _ in row] for row in matrix]
 
         def inbounds(r, c):
             return r >= 0 and c >= 0 and r < len(matrix) and c < len(matrix[0])
@@ -26,29 +26,35 @@ class Solution:
                 if inbounds(r0, c0):
                     yield r0, c0
 
-        def bfs(r, c, d):
-            for r0, c0 in neighbors(r, c):
-                if dist[r0][c0] > d + 1:
-                    dist[r0][c0] = d + 1
-                    bfs(r0, c0, d + 1)
+        dist = [[math.inf for _ in row] for row in matrix]
+        queue = collections.deque()
 
+        # Find all water cells.
         for r, row in enumerate(matrix):
             for c, val in enumerate(row):
                 if val == 0:
+                    queue.append((r, c, 0))
                     dist[r][c] = 0
-                    bfs(r, c, 0)
 
-        print(dist)
-        soln = 0
-        for r, row in enumerate(dist):
-            for c, d in enumerate(row):
-                soln = max(soln, d)
-
-        if soln == 0:
-            # All water
+        if not queue:
+            # All land.
             return -1
-        if soln == math.inf:
-            # All land
+
+        # BFS from all water cells.
+        while queue:
+            r, c, d = queue.pop()
+
+            if dist[r][c] != d:
+                continue
+
+            for r0, c0 in neighbors(r, c):
+                if dist[r0][c0] > d + 1:
+                    dist[r0][c0] = d + 1
+                    queue.append((r0, c0, d + 1))
+
+        soln = max(max(row) for row in dist)
+        if soln == 0:
+            # All water.
             return -1
         return soln
 
