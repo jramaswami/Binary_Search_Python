@@ -3,10 +3,6 @@ binarysearch.com :: Split String Into Palindromes
 jramaswami
 """
 
-
-import functools
-
-
 import sys
 sys.setrecursionlimit(pow(10, 9))
 
@@ -15,29 +11,57 @@ class Solution:
 
     def solve(self, S):
 
+        def is_palindrome(i, j):
+            """Return True if S[i:j+1] is a palindrome."""
+            while i < j:
+                if S[i] != S[j]:
+                    return False
+                i += 1
+                j -= 1
+            return True
+
         # Corner case.
         if not S:
             return True
 
-        @functools.lru_cache(maxsize=None)
-        def is_palindrome(i, j):
-            """Return True if S[i:j+1] is a palindrome."""
-            if i >= j:
-                return True
-            return S[i] == S[j] and is_palindrome(i + 1, j - 1)
 
-        @functools.lru_cache(maxsize=None)
+        # The most cuts possible for any S is 999 since this is how many
+        # cuts to divide into 1000 separate palindromes.
+        cache = [[1000 for _ in S] for _ in S]
+        has_cache = [[False for _ in S] for _ in S]
+
         def minimum_cuts(i, j):
-            # If S[i:j+1] is a palindrome you do not have to cut it.
-            if is_palindrome(i, j):
+            if i > j:
                 return 0
-            # If not, then you have to cut it at least once.  Pick an
-            # arbitrary cut and get the minimum cuts for each side.
-            # i k    j
-            # xxx|xxxx
-            return min(1 + minimum_cuts(i, k) + minimum_cuts(k+1, j) for k in range(i, j))
 
-        return minimum_cuts(0, len(S) - 1) + 1
+            if has_cache[i][j]:
+                return cache[i][j]
+
+            if i == j:
+                cache[i][j] = 0
+                return 0
+
+            if is_palindrome(i, j):
+                cache[i][j] = 0
+                return 0
+
+            for k in range(i, j):
+                # Avoid overhead of recursive call if possible.
+                if has_cache[i][k]:
+                    left_min = cache[i][k]
+                else:
+                    left_min = minimum_cuts(i, k)
+                if has_cache[k+1][j]:
+                    right_min = cache[k+1][j]
+                else:
+                    right_min = minimum_cuts(k+1, j)
+                cache[i][j] = min(cache[i][j], left_min + 1 + right_min)
+
+            has_cache[i][j] = True
+            return cache[i][j]
+
+
+        return minimum_cuts(0, len(S)-1) + 1
 
 
 def test_1():
