@@ -3,65 +3,43 @@ binarysearch.com :: Split String Into Palindromes
 jramaswami
 """
 
-import sys
-sys.setrecursionlimit(pow(10, 9))
+
+import collections
 
 
 class Solution:
 
     def solve(self, S):
+        # The minimum number of cuts is len(S) - 1.
+        dp = collections.defaultdict(lambda: len(S) - 1)
+        dp[-1] = -1
 
-        def is_palindrome(i, j):
-            """Return True if S[i:j+1] is a palindrome."""
-            while i < j:
-                if S[i] != S[j]:
-                    return False
-                i += 1
-                j -= 1
-            return True
-
-        # Corner case.
-        if not S:
-            return True
-
-
-        # The most cuts possible for any S is 999 since this is how many
-        # cuts to divide into 1000 separate palindromes.
-        cache = [[1000 for _ in S] for _ in S]
-        has_cache = [[False for _ in S] for _ in S]
-
-        def minimum_cuts(i, j):
-            if i > j:
-                return 0
-
-            if has_cache[i][j]:
-                return cache[i][j]
-
-            if i == j:
-                cache[i][j] = 0
-                return 0
-
-            if is_palindrome(i, j):
-                cache[i][j] = 0
-                return 0
-
-            for k in range(i, j):
-                # Avoid overhead of recursive call if possible.
-                if has_cache[i][k]:
-                    left_min = cache[i][k]
+        for i, _ in enumerate(S):
+            # Keep track of the number of odd frequency letters.  This is
+            # done to optimize looking for palindromes since we only need
+            # to check if a substring is a palindrome if does not have more
+            # than one letter with an odd frequency.
+            freqs = collections.defaultdict(int)
+            odd_freqs = 0
+            for j, c in enumerate(S[i:], start=i):
+                freqs[c] += 1
+                if freqs[c] % 2:
+                    odd_freqs += 1
                 else:
-                    left_min = minimum_cuts(i, k)
-                if has_cache[k+1][j]:
-                    right_min = cache[k+1][j]
-                else:
-                    right_min = minimum_cuts(k+1, j)
-                cache[i][j] = min(cache[i][j], left_min + 1 + right_min)
+                    odd_freqs -= 1
 
-            has_cache[i][j] = True
-            return cache[i][j]
+                # If the odd frequency is no more than one, check to see if
+                # S[i:j+1] is a palindrome.  If it is, then the minimum number
+                # of cuts for the string ending at j is 1 cut for the substring
+                # S[i:j+1] added to the minimum number of cuts for the
+                # substring ending at i, S[0:i].
+                if odd_freqs <= 1 and S[i:j+1] == S[i:j+1][::-1]:
+                    dp[j] = min(dp[j], dp[i-1] + 1)
 
+        # We are looking for the number of substrings, so add 1 to the minimum
+        # number of cuts.
+        return dp[len(S)-1] + 1
 
-        return minimum_cuts(0, len(S)-1) + 1
 
 
 def test_1():
