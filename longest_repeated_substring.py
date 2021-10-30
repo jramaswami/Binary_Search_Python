@@ -47,7 +47,7 @@ class Solution:
             return False
 
         # Binary search for the answer
-        low, high = 0, len(S) - 1
+        low, high = 1, len(S) - 1
         soln = 0
         while low <= high:
             mid = low + ((high - low) // 2)
