@@ -4,22 +4,18 @@ jramaswami
 """
 
 
-import math
-
-
 class Solution:
 
     def solve(self, n):
-        COINS = (1, 5, 10, 25)
-        dp = [math.inf for _ in range(n + 1)]
-        dp[0] = 0
-        for i in range(n + 1):
-            if dp[i] == math.inf:
-                continue
-            for coin in COINS:
-                if i + coin <= n:
-                    dp[i + coin] = min(dp[i + coin], dp[i] + 1)
-        return dp[-1]
+        COINS = [1, 5, 10, 25]
+        coins_used = 0
+        curr_sum = 0
+        while curr_sum != n:
+            while COINS[-1] > n - curr_sum:
+                COINS.pop()
+            coins_used += 1
+            curr_sum += COINS[-1]
+        return coins_used
 
 
 def test_1():
