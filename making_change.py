@@ -9,12 +9,12 @@ class Solution:
     def solve(self, n):
         COINS = [1, 5, 10, 25]
         coins_used = 0
-        curr_sum = 0
-        while curr_sum != n:
-            while COINS[-1] > n - curr_sum:
+        curr_sum = n
+        while curr_sum > 0:
+            while COINS[-1] > curr_sum:
                 COINS.pop()
-            coins_used += 1
-            curr_sum += COINS[-1]
+            curr_coins_used, curr_sum = divmod(curr_sum, COINS[-1])
+            coins_used += curr_coins_used
         return coins_used
 
 
