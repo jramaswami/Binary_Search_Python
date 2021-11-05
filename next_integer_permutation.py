@@ -28,17 +28,21 @@ class Solution:
             """
             # (1) Find the largest index k such that L[k] < L[k + 1].
             # If no such index exists, the permutation is the last permutation.
-            for k, _ in enumerate(L):
-                if k+1 < len(L) and L[k] < L[k+1]:
+            k = len(L) - 2
+            while k >= 0:
+                if L[k] < L[k+1]:
                     break
+                k -= 1
 
-            if k == len(L) - 1:
+            if k == -1:
                 return list_to_number(sorted(L))
 
             # (2) Find the largest index l greater than k such that L[k] < L[l].
-            for l, _ in enumerate(L[k+1:], start=k+1):
+            l = len(L) - 1
+            while l > k:
                 if L[k] < L[l]:
                     break
+                l -= 1
 
             # (3) Swap the value of L[k] with that of L[l].
             L[k], L[l] = L[l], L[k]
@@ -48,7 +52,7 @@ class Solution:
             L[k+1:] = L[k+1:][::-1]
             return list_to_number(L)
 
-        return pandita(number_to_list(N))
+        return N if N < 10 else pandita(number_to_list(N))
 
 
 def test_1():
@@ -57,3 +61,20 @@ def test_1():
 
 def test_2():
     assert Solution().solve(321) == 123
+
+
+def test_3():
+    """RTE"""
+    assert Solution().solve(0) == 0
+
+
+def test_4():
+    assert Solution().solve(10) == 1
+
+
+def test_5():
+    assert Solution().solve(12) == 21
+
+
+def test_6():
+    assert Solution().solve(123) == 132
