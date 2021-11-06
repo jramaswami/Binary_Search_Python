@@ -15,18 +15,21 @@ class Solution:
 
         if graph:
             color = [0 for _ in graph]
-            color[0] = 1
-            queue = collections.deque([0])
-            while queue:
-                node = queue.popleft()
-                neighbor_color = color[node] * -1
-                for neighbor in graph[node]:
-                    if color[neighbor] == 0:
-                        color[neighbor] = neighbor_color
-                        queue.append(neighbor)
-                    elif color[neighbor] == color[node]:
-                        # Not a bipartite graph; graph has odd-length cycle.
-                        return True
+            # BFS from every uncolored node.
+            for root, _ in enumerate(graph):
+                if color[root] == 0:
+                    color[root] = 1
+                    queue = collections.deque([root])
+                    while queue:
+                        node = queue.popleft()
+                        neighbor_color = color[node] * -1
+                        for neighbor in graph[node]:
+                            if color[neighbor] == 0:
+                                color[neighbor] = neighbor_color
+                                queue.append(neighbor)
+                            elif color[neighbor] == color[node]:
+                                # Not a bipartite graph; graph has odd-length cycle.
+                                return True
         return False
 
 
