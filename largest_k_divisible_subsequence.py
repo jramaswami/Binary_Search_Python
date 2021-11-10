@@ -16,6 +16,9 @@ class Solution:
 
         for i, n in enumerate(nums[1:], start=1):
             for remainder, max_sum in enumerate(dp[i-1]):
+                # For each maximum sum per remainder, you can choose
+                # not to add the value nums[i].
+                dp[i][remainder] = max(dp[i][remainder], max_sum)
                 # For each maximum sum per remainder, add n and then
                 # store if it is the maximum for the new remainder.
                 new_sum = max_sum + n
