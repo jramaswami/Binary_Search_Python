@@ -4,9 +4,13 @@ jramaswami
 """
 
 
+import functools
+
+
 class Solution:
     def solve(self, nums, k):
 
+        @functools.cache
         def solve0(i, acc):
             # Base case.
             if i >= len(nums):
