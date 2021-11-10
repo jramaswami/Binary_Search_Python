@@ -6,6 +6,10 @@ jramaswami
 
 class Solution:
     def solve(self, nums, k):
+        # Corner case:
+        if len(nums) == 0:
+            return 0
+
         # dp will hold the maximum sum % k for each index.
         dp = [[0 for _ in range(k)] for _ in nums]
         dp[0][nums[0] % k] = nums[0]
@@ -47,4 +51,12 @@ def test_4():
     nums = []
     k = 4
     expected = 0
+    assert Solution().solve(nums, k) == expected
+
+
+def test_5():
+    """WA"""
+    nums = [0, 2, 1]
+    k = 2
+    expected = 2
     assert Solution().solve(nums, k) == expected
