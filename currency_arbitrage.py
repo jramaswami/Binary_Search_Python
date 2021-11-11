@@ -35,7 +35,7 @@ class Solution:
             # Do node_count - 1 relaxations.
             for _ in range(node_count-1):
                 # Iterate over every edge.
-                for node_from in range(node_count-1):
+                for node_from in range(node_count):
                     for node_to in range(node_count):
                         # edge(node_from, node_to)
                         if dist[node_from] + cost[node_to][node_from] < dist[node_to]:
@@ -44,12 +44,13 @@ class Solution:
             # Repeat to find any negative cycles.
             for _ in range(node_count-1):
                 # Iterate over every edge.
-                for node_from in range(node_count-1):
+                for node_from in range(node_count):
                     for node_to in range(node_count):
                         # edge(node_from, node_to)
                         if dist[node_from] + cost[node_to][node_from] < dist[node_to]:
                             return True
 
+            print(f"{root=} {dist=}")
             return False
 
         return any(negative_cycle_from(r) for r, _ in enumerate(matrix))
