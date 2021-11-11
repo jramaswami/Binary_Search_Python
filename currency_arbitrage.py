@@ -3,16 +3,18 @@ binarysearch.com :: Currency Arbitrage
 jramaswami
 
 REF: https://medium.com/swlh/arbitrage-as-a-shortest-path-problem-d8d3ee18c080
+REF: https://www.youtube.com/watch?v=lyw4FaxrwHg
 
 A sequence of trades can be thought of as the a path in a graph where the
 result of the trades is the product of the edge weights.  We are looking
-for a path where that product is greater than one and thus turns a profit.
+for a negative cycle, which represents an opportunity to make a profit.
+
 We must, however, transform the problem in order to make use of known
 graph algorithms.  We can use logarithms to transform the result of the
 trade into a sum where a profit is indicated by a sum greater than 0.  We
-can further transform the problem by multiplying the edge weights by nefative
-one.  This will make our problem one of finding any shortest path that is less
-than zero.  We can use the Bellman-Ford algorithm to solve our problem.
+can further transform the problem by multiplying the edge weights by negative
+one.  This will allows us to use the Bellman-Ford algorithm to find a negative
+cycle.
 """
 
 
@@ -23,25 +25,34 @@ class Solution:
 
     def solve(self, matrix):
         # Transform edge weights into -log(e[i]).
-        matrix0 = [[-math.log(e) for e in row] for row in matrix]
+        cost = [[-math.log(e) for e in row] for row in matrix]
 
-        # Bellman-Ford to find any negative paths.
-        node_count = len(matrix)
-        for r in range(node_count):
+        # Bellman-Ford to find any negative cycle.
+        def negative_cycle_from(root):
+            node_count = len(matrix)
             dist = [math.inf for _ in matrix]
-            dist[r] = 0
-            for i in range(node_count):
-                for j in range(i+1, node_count):
-                    # edge(i, j)
-                    if dist[i] < math.inf:
-                        dist[j] = min(dist[j], dist[i] + matrix0[i][j])
+            dist[root] = 0
+            # Do node_count - 1 relaxations.
+            for _ in range(node_count-1):
+                # Iterate over every edge.
+                for node_from in range(node_count-1):
+                    for node_to in range(node_count):
+                        # edge(node_from, node_to)
+                        if dist[node_from] + cost[node_to][node_from] < dist[node_to]:
+                            dist[node_to] = dist[node_from] + cost[node_to][node_from]
 
-            # Are there any negative weight (profitable) paths starting at r?
-            print(f"{r=} {dist=}")
-            if any(d < 0 for d in dist):
-                return True
+            # Repeat to find any negative cycles.
+            for _ in range(node_count-1):
+                # Iterate over every edge.
+                for node_from in range(node_count-1):
+                    for node_to in range(node_count):
+                        # edge(node_from, node_to)
+                        if dist[node_from] + cost[node_to][node_from] < dist[node_to]:
+                            return True
 
-        return False
+            return False
+
+        return any(negative_cycle_from(r) for r, _ in enumerate(matrix))
 
 
 def test_1():
@@ -71,4 +82,14 @@ def test_3():
         [0.39, 1]
     ]
     expected = False
+    assert Solution().solve(matrix) == expected
+
+
+def test_4():
+    """WA"""
+    matrix = [
+        [1, 2.5],
+        [0.41, 1]
+    ]
+    expected = True
     assert Solution().solve(matrix) == expected
