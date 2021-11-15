@@ -4,24 +4,20 @@ jramaswami
 """
 
 
+import collections
+
+
 class Solution:
     def solve(self, weights, limit):
-        weights0 = sorted(weights)
+        weights0 = collections.deque(sorted(weights))
         soln = 0
         while weights0:
-            # Remove any already used weights (over limit).
-            while weights0 and weights0[-1] > limit:
+            soln += 1
+            if len(weights0) == 1 or weights0[0] + weights0[-1] > limit:
                 weights0.pop()
-
-            if weights0:
-                soln += 1
-                # Take the largest weight
-                rocketship = limit - weights0.pop()
-                # Take the next largest weight that fits.
-                for i in range(len(weights0) - 1, -1, -1):
-                    if weights0[i] <= rocketship:
-                        weights0[i] = limit + 1
-                        break
+            else:
+                weights0.popleft()
+                weights0.pop()
         return soln
 
 
