@@ -5,19 +5,21 @@ jramaswami
 
 
 import math
+import functools
 
 
 class Solution:
     def solve(self, nums):
-        if nums:
-            dp = [math.inf for _ in nums]
-            dp[0] = 0
-            for i, n in enumerate(nums):
-                for j in range(1, n+1):
-                    if i+j < len(dp):
-                        dp[i+j] = min(dp[i+j], dp[i] + 1)
-            return dp[-1]
-        return 0
+
+        @functools.cache
+        def solve0(i):
+            if i >= len(nums) - 1:
+                return 0
+            if nums[i]:
+                return 1 + min(solve0(i+k) for k in range(1, nums[i]+1))
+            return math.inf
+
+        return solve0(0)
 
 
 def test_1():
