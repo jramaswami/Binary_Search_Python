@@ -15,6 +15,10 @@ MOD = pow(10, 9) + 7
 class Solution:
 
     def solve(self, S, T):
+        # Corner case.
+        if T == "":
+            return 0
+
         letter_indexes = collections.defaultdict(list)
         for i, c in enumerate(S):
             letter_indexes[c].append(i)
@@ -45,10 +49,8 @@ def test_1():
 
 
 def test_2():
-    S = "a" * 1000
-    T = "a" * 1000
-    expected = 1
+    "WA"
+    S = "hello"
+    T = ""
+    expected = 0
     assert Solution().solve(S, T) == expected
-
-
-
