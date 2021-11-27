@@ -20,7 +20,7 @@ class Solution:
         order = sorted(((matrix[r][c], r, c) for r, row in enumerate(matrix)
                                              for c, _ in enumerate(row)))
         dist = [[1 for _ in row] for row in matrix]
-        soln = 0
+        soln = 1
         for _, r, c in order:
             for r0, c0 in neighbors(r, c):
                 if matrix[r][c] < matrix[r0][c0]:
