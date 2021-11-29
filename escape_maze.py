@@ -12,7 +12,7 @@ class Solution:
 
     def solve(self, maze):
 
-        OFFSETS = ((1, 0), (-1, 0), (0, 1), (-1, 0))
+        OFFSETS = ((1, 0), (-1, 0), (0, 1), (0, -1))
 
         def inbounds(r, c):
             return r >= 0 and c >= 0 and r < len(maze) and c < len(maze[r])
