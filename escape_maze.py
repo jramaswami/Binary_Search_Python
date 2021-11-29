@@ -25,9 +25,10 @@ class Solution:
 
 
         dist = [[math.inf for _ in row] for row in maze]
-        dist[0][0] = 1
         queue = collections.deque()
-        queue.append((0, 0))
+        if maze[0][0] == 0:
+            dist[0][0] = 1
+            queue.append((0, 0))
         while queue:
             r, c = queue.popleft()
             for r0, c0 in neighbors(r, c):
@@ -62,4 +63,11 @@ def test_3():
     "WA"
     matrix = [[1]]
     expected = -1
+    assert Solution().solve(matrix) == expected
+
+
+def test_4():
+    "WA"
+    matrix = [ [0, 0, 0, 1], [1, 1, 0, 0], [1, 0, 0, 1], [1, 0, 1, 0], [1, 0, 0, 0] ]
+    expected = 10
     assert Solution().solve(matrix) == expected
