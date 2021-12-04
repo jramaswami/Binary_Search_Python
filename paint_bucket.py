@@ -22,15 +22,18 @@ class Solution:
                 if inbounds(r0, c0):
                     yield r0, c0
 
+        visited = [[False for _ in row] for row in matrix]
         original = matrix[r][c]
         matrix[r][c] = target
+        visited[r][c] = True
         queue = collections.deque()
         queue.append((r, c))
         while queue:
             r, c = queue.popleft()
             for r0, c0 in neighbors(r, c):
-                if matrix[r0][c0] == original:
+                if not visited[r0][c0] and matrix[r0][c0] == original:
                     matrix[r0][c0] = target
+                    visited[r0][c0] = True
                     queue.append((r0, c0))
         return matrix
 
