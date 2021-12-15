@@ -26,6 +26,7 @@ class Solution:
             return soln
 
         def solve0():
+            "Binary search for the answer."
             median_index = (len(nums0) + len(nums1)) // 2
             lo = 0
             hi = len(nums0) - 1
@@ -43,7 +44,7 @@ class Solution:
                     lo = mid + 1
 
         soln = solve0()
-        if not soln:
+        if soln is None:
             nums0, nums1 = nums1, nums0
             return solve0()
         return soln
@@ -96,8 +97,6 @@ def test_random():
         C.sort()
         median_index = len(C) // 2
         expected = C[median_index]
-        # print(C)
-        # print(expected)
         assert Solution().solve(A, B) == expected
 
 
