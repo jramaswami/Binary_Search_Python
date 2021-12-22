@@ -17,7 +17,7 @@ class Solution:
 
     def solve(self, nums):
         soln = 0
-        nums.sort()
+        nums = sorted(n for n in nums if n > 0)
         for i, a in enumerate(nums):
             for j, b in enumerate(nums[i+1:], start=i+1):
                 soln += 1 + count_lte(nums[j+1:], a + b)
@@ -32,4 +32,10 @@ def test_1():
 def test_2():
     "WA"
     nums = [1, 1, 0]
+    assert Solution().solve(nums) == 0
+
+
+def test_3():
+    "WA"
+    nums = [2, 1, 1]
     assert Solution().solve(nums) == 0
