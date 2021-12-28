@@ -5,37 +5,46 @@ jramaswami
 
 
 import math
+import collections
+
+
+Player = collections.namedtuple('Player', ['age', 'rating'])
 
 
 class Solution:
 
     def solve(self, ratings, ages):
 
-        ages.sort()
+        players = [Player._make(t) for t in zip(ages, ratings)]
+        players.sort()
+        print(players)
 
-        def solve0(index, min_rating, acc):
-            if index >= len(ratings):
+        def solve0(index, max_rating, acc):
+            if index >= len(players):
                 return acc
 
             # I can skip the player at index.
             without_player = solve0(
                     index + 1,
-                    min_rating,
+                    max_rating,
                     acc
             )
 
-            # I can choose the player at index if eligible.
-            if ratings[index] < min_rating:
+            # One can choose the player at index if eligible.
+            # Since all players picked have age less than candidate player,
+            # the candidate player must not have a rating less than any
+            # picked player.
+            if players[index].rating >= max_rating:
                 with_player = solve0(
                         index + 1,
-                        ratings[index],
-                        acc + ratings[index]
+                        players[index].rating,
+                        acc + players[index].rating
                 )
                 return max(with_player, without_player)
 
             return without_player
 
-        return solve0(0, math.inf, 0)
+        return solve0(0, -math.inf, 0)
 
 
 def test_1():
