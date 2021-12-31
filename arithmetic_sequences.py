@@ -4,22 +4,28 @@ jramaswami
 """
 
 
+import collections
+
+
 class Solution:
 
     def solve(self, nums):
 
-        # DP[end][delta]
+        # DP[end][delta] = list of lengths
         soln = 0
-        dp = [dict() for _ in nums]
+        dp = [collections.defaultdict(list) for _ in nums]
         for i, left in enumerate(nums):
             for j, right in enumerate(nums[i+1:], start=i+1):
                 delta = right - left
                 if delta in dp[i]:
-                    dp[j][delta] = 1 + dp[i][delta]
+                    for t in dp[i][delta]:
+                        t0 = 1 + t
+                        dp[j][delta].append(t0)
+                        if t0 >= 3:
+                            soln += (t0 - 3 + 1)
                 else:
-                    dp[j][delta] = 2
-                if dp[j][delta] >= 3:
-                    soln += (dp[j][delta] - 3 + 1)
+                    # The first one.
+                    dp[j][delta].append(2)
         return soln
 
 
@@ -45,7 +51,9 @@ def test_4():
 
 
 def test_5():
-    "WA"
+    """
+    WA: problem was that there was more than one way to arrive at a given
+    index with the given delta.
+    """
     nums = [1,1,2,3]
     assert Solution().solve(nums) == 2
-
