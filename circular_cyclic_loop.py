@@ -25,8 +25,8 @@ class Solution:
             color[node] = Color.GRAY
             neighbor = (node + nums[node]) % len(nums)
             result = False
-            if nums[neighbor] * nums[node] > 0:
-                # Only follow if same sign.
+            if node != neighbor and nums[neighbor] * nums[node] > 0:
+                # Only follow if same sign or cycle will be more than one node.
                 if color[neighbor] == Color.WHITE:
                     parent[neighbor] = node
                     result = result or dfs(neighbor)
