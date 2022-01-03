@@ -5,7 +5,7 @@ jramaswami
 
 
 import math
-import heapq
+import collections
 
 
 class Solution:
@@ -13,14 +13,11 @@ class Solution:
         dist = [[math.inf for _ in row] for row in matrix]
         dist[0][0] = 0
 
-        # Dijkstra
-        queue = [(0, 0, 0)]
+        queue = collections.deque([(0, 0, 0)])
         while queue:
-            d, r, c = heapq.heappop(queue)
+            d, r, c = queue.popleft()
             if dist[r][c] != d:
                 continue
-            if r == len(matrix) - 1 and c == len(matrix[-1]) - 1:
-                return d
             # Go down
             if r+1 < len(matrix):
                 d0 = d + abs(matrix[r][c] - matrix[r+1][c])
@@ -45,6 +42,8 @@ class Solution:
                 if d0 < dist[r][c+1]:
                     dist[r][c+1] = d0
                     queue.append((d0, r, c+1))
+
+        return dist[-1][-1]
 
 
 
