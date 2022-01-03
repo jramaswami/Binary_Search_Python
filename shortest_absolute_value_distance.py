@@ -5,6 +5,7 @@ jramaswami
 
 
 import math
+import heapq
 
 
 class Solution:
@@ -12,36 +13,37 @@ class Solution:
         dist = [[math.inf for _ in row] for row in matrix]
         dist[0][0] = 0
 
-        queue = set([(0, 0)])
-        new_queue = set()
+        # Dijkstra
+        queue = [(0, 0, 0)]
         while queue:
-            for r, c in queue:
-                d = dist[r][c]
-                # Go down
-                if r+1 < len(matrix):
-                    d0 = d + abs(matrix[r][c] - matrix[r+1][c])
-                    if d0 < dist[r+1][c]:
-                        dist[r+1][c] = d0
-                        new_queue.add((r+1, c))
-                # Go up
-                if r-1 >= 0:
-                    d0 = d + abs(matrix[r][c] - matrix[r-1][c])
-                    if d0 < dist[r-1][c]:
-                        dist[r-1][c] = d0
-                        new_queue.add((r-1, c))
-                # Go left
-                if c-1 >= 0:
-                    d0 = d + abs(matrix[r][c] - matrix[r][c-1])
-                    if d0 < dist[r][c-1]:
-                        dist[r][c-1] = d0
-                        new_queue.add((r, c-1))
-                # Go right
-                if c+1 < len(matrix[r]):
-                    d0 = d + abs(matrix[r][c] - matrix[r][c+1])
-                    if d0 < dist[r][c+1]:
-                        dist[r][c+1] = d0
-                        new_queue.add((r, c+1))
-            queue, new_queue = new_queue, set()
+            d, r, c = heapq.heappop(queue)
+            if dist[r][c] != d:
+                continue
+
+            # Go down
+            if r+1 < len(matrix):
+                d0 = d + abs(matrix[r][c] - matrix[r+1][c])
+                if d0 < dist[r+1][c]:
+                    dist[r+1][c] = d0
+                    queue.append((d0, r+1, c))
+            # Go up
+            if r-1 >= 0:
+                d0 = d + abs(matrix[r][c] - matrix[r-1][c])
+                if d0 < dist[r-1][c]:
+                    dist[r-1][c] = d0
+                    queue.append((d0, r-1, c))
+            # Go left
+            if c-1 >= 0:
+                d0 = d + abs(matrix[r][c] - matrix[r][c-1])
+                if d0 < dist[r][c-1]:
+                    dist[r][c-1] = d0
+                    queue.append((d0, r, c-1))
+            # Go right
+            if c+1 < len(matrix[r]):
+                d0 = d + abs(matrix[r][c] - matrix[r][c+1])
+                if d0 < dist[r][c+1]:
+                    dist[r][c+1] = d0
+                    queue.append((d0, r, c+1))
 
         return dist[-1][-1]
 
