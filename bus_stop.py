@@ -1,28 +1,26 @@
 """
-binarysearch.com :: Bus Stop
+binarysearch.com :: bus stop
 jramaswami
 """
-
-
-import collections
 
 
 class Solution:
 
     def solve(self, nums):
-        queue = collections.deque(nums)
-        new_queue = collections.deque()
-        soln = 0
-        while queue:
-            curr = 0
-            soln += 1
-            for bus in queue:
-                if bus > curr:
-                    curr = bus
-                else:
-                    new_queue.append(bus)
-            queue, new_queue = new_queue, collections.deque()
-        return soln
+        piles = []
+
+        for n in nums:
+            target_pile = len(piles)
+            for p, m in enumerate(piles):
+                if n > m:
+                    target_pile = p
+                    break
+            if target_pile == len(piles):
+                piles.append(n)
+            else:
+                piles[p] = n
+        return len(piles)
+
 
 
 def test_1():
