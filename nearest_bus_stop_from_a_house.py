@@ -5,10 +5,8 @@ jramaswami
 
 
 import enum
+import math
 import collections
-
-
-QItem = collections.namedtuple('QItem', ['row', 'col', 'dist'])
 
 
 class CellType(enum.IntEnum):
@@ -42,20 +40,23 @@ class Solution:
             return True
 
         # Gather bus stops.
+        dist = [[math.inf for _ in row] for row in matrix]
         queue = collections.deque()
         for r, row in enumerate(matrix):
             for c, val in enumerate(row):
                 if val == CellType.HOUSE:
-                    queue.append(QItem(r, c, 0))
+                    queue.append((r, c))
+                    dist[r][c] = 0
 
         # BFS
         while queue:
-            item = queue.popleft()
-            if matrix[item.row][item.col] == CellType.BUS_STOP:
-                return item.dist
-            for r0, c0 in neighbors(item.row, item.col):
-                if navigable(r0, c0):
-                    queue.append(QItem(r0, c0, item.dist + 1))
+            r, c = queue.popleft()
+            if matrix[r][c] == CellType.BUS_STOP:
+                return matrix[r][c]
+            for r0, c0 in neighbors(r, c):
+                if navigable(r0, c0) and dist[r][c] + 1 < dist[r0][c0]:
+                    dist[r0][c0] = dist[r][c] + 1
+                    queue.append((r0, c0))
         return -1
 
 
@@ -78,3 +79,9 @@ def test_2():
     ]
     assert Solution().solve(matrix) == -1
 
+
+
+def test_3():
+    "WA"
+    matrix = [[2, 3]]
+    assert Solution().solve(matrix) == 1
