@@ -52,7 +52,7 @@ class Solution:
         while queue:
             r, c = queue.popleft()
             if matrix[r][c] == CellType.BUS_STOP:
-                return matrix[r][c]
+                return dist[r][c]
             for r0, c0 in neighbors(r, c):
                 if navigable(r0, c0) and dist[r][c] + 1 < dist[r0][c0]:
                     dist[r0][c0] = dist[r][c] + 1
