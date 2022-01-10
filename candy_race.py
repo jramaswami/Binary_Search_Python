@@ -17,18 +17,18 @@ class Solution:
             dp[i][i] = (c, 0)
 
         # Dynamic programming.
-        for length in range(2, len(candies)):
-            for i in range(0, len(candies) - length):
-                j = i + length
-                left1 = dp[i+1][j][0] + candies[i]
-                right1 = dp[i][j-1][0] + candies[j]
+        for length in range(2, len(candies)+1):
+            for i in range(0, len(candies) - length + 1):
+                j = i + length - 1
+                left1 = dp[i+1][j][1] + candies[i]
+                right1 = dp[i][j-1][1] + candies[j]
                 if left1 > right1:
                     # Player 1 picks the best.  Player 2 gets the rest.
-                    dp[i][j] = (left1, dp[i][j-1][1])
+                    dp[i][j] = (left1, dp[i+1][j][0])
                 else:
-                    dp[i][j] = (right1, dp[i+1][j][1])
+                    dp[i][j] = (right1, dp[i][j-1][0])
 
-        return dp[-1][-1][0] > dp[-1][-1][1]
+        return dp[0][-1][0] > dp[0][-1][1]
 
 
 
