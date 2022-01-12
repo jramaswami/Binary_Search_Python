@@ -20,9 +20,10 @@ class ZippedIterator:
             i += 1
 
         while j < len(b):
-            self.A.append(b[i])
+            self.A.append(b[j])
             j += 1
 
+        print(self.A)
         self.i = 0
 
     def next(self):
