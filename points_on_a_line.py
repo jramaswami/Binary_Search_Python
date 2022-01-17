@@ -22,9 +22,7 @@ class Solution:
         soln = 1
         for i, p1 in enumerate(points):
             lines = collections.defaultdict(int)
-            for j, p2 in enumerate(points):
-                if i == j:
-                    continue
+            for j, p2 in enumerate(points[i+1:], start=i+1):
                 # Compute slope.
                 dy = p1.y - p2.y
                 dx = p1.x - p2.x
