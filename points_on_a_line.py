@@ -15,8 +15,11 @@ Point = collections.namedtuple('Point', ['x', 'y'])
 class Solution:
 
     def solve(self, coordinates):
+        if not coordinates:
+            return 0
+
         points = [Point(*p) for p in coordinates]
-        soln = 0
+        soln = 1
         for i, p1 in enumerate(points):
             lines = collections.defaultdict(int)
             for j, p2 in enumerate(points):
@@ -53,7 +56,3 @@ def test_2():
         [3, 0]
     ]
     assert Solution().solve(coordinates) == 1
-
-
-
-
