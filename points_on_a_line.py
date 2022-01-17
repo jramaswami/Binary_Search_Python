@@ -9,23 +9,19 @@ import fractions
 import math
 
 
-Point = collections.namedtuple('Point', ['x', 'y'])
-
-
 class Solution:
 
     def solve(self, coordinates):
         if not coordinates:
             return 0
 
-        points = [Point(*p) for p in coordinates]
         soln = 1
-        for i, p1 in enumerate(points):
+        for i, p1 in enumerate(coordinates):
             lines = collections.defaultdict(int)
-            for j, p2 in enumerate(points[i+1:], start=i+1):
+            for j, p2 in enumerate(coordinates[i+1:], start=i+1):
                 # Compute slope.
-                dy = p1.y - p2.y
-                dx = p1.x - p2.x
+                dy = p1[1] - p2[1]
+                dx = p1[0] - p2[0]
                 m = math.inf
                 if dx != 0:
                     m = fractions.Fraction(dy, dx)
