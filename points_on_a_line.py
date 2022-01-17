@@ -5,7 +5,6 @@ jramaswami
 
 
 import collections
-import fractions
 import math
 
 
@@ -24,7 +23,7 @@ class Solution:
                 dx = p1[0] - p2[0]
                 m = math.inf
                 if dx != 0:
-                    m = fractions.Fraction(dy, dx)
+                    m = dy / dx
                 # Same slope means same line.
                 lines[m] += 1
                 soln = max(soln, 1 + lines[m])
