@@ -28,10 +28,19 @@ class Solver:
         if visible_blocks > self.required_visible_blocks:
             return 0
 
+        # If we don't have enough larger blocks left, stop looking.
+        possible_larger_blocks = 0
+        for block in range(self.block_count - 1, -1, -1):
+            mask = (1 << block)
+            if unused_blocks & mask and block > max_block:
+                possible_larger_blocks += 1
+        if visible_blocks + possible_larger_blocks < self.required_visible_blocks:
+            return 0
+
         if unused_blocks:
             soln = 0
 
-            for block in range(self.block_count):
+            for block in range(self.block_count - 1, -1, -1):
                 mask = (1 << block)
                 if unused_blocks & mask:
                     soln += self._solve(
