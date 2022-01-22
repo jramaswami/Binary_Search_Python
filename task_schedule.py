@@ -13,12 +13,31 @@ class TaskQueue:
     def __init__(self):
         self.queue = []
 
-    def push(self, task_time, task_count, task_id):
-        heapq.heappush(self.queue, (task_time, -task_count, task_id))
+    def pop(self):
+        neg_task_count, task_id = heapq.heappop(self.queue)
+        return -neg_task_count, task_id
+
+    def push(self, task_count, task_id):
+        heapq.heappush(self.queue, (-task_count, task_id))
+
+    def __len__(self):
+        return len(self.queue)
+
+
+class TimerQueue:
+
+    def __init__(self):
+        self.queue = []
+
+    def top_time(self):
+        return self.queue[0][0]
 
     def pop(self):
-        task_time, neg_task_count, task_id = heapq.heappop(self.queue)
-        return task_time, -neg_task_count, task_id
+        _, task_count, task_id = heapq.heappop(self.queue)
+        return task_count, task_id
+
+    def push(self, task_time, task_count, task_id):
+        heapq.heappush(self.queue, (task_time, task_count, task_id))
 
     def __len__(self):
         return len(self.queue)
@@ -30,21 +49,31 @@ class Solution:
         # Count the kind of each task.
         ctr = collections.Counter(tasks)
         # Each type of task can be started at time 0.
-        queue = TaskQueue()
+        task_queue = TaskQueue()
         for task_id, task_count in ctr.items():
-            queue.push(0, task_count, task_id)
-        # Process tasks in time order.
+            task_queue.push(task_count, task_id)
+
+        timer_queue = TimerQueue()
         timer = 0
-        while queue:
-            task_time, task_count, task_id = queue.pop()
-            if task_time >= timer:
-                timer = task_time + 1
-            else:
-                timer += 1
+        while task_queue or timer_queue:
+            # If the task_queue is empty, advance time to the first eligible
+            # time for a task in the timer queue.
+            if not task_queue:
+                timer = timer_queue.top_time()
+
+            # First put any eligible tasks back on the queue.
+            while timer_queue and timer_queue.top_time() <= timer:
+                task_count, task_id = timer_queue.pop()
+                task_queue.push(task_count, task_id)
+
+            # Process task id with the hightest task count.
+            task_count, task_id = task_queue.pop()
+            timer += 1
             task_count -= 1
+            # If the the task id still has outstanding tasks, put it in the
+            # timer queue to be done later.
             if task_count:
-                queue.push(timer + k, task_count, task_id)
-            print(f"{task_id=} done @ {timer=}; {task_count=}")
+                timer_queue.push(timer + k, task_count, task_id)
         return timer
 
 
