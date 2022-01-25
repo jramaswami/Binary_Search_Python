@@ -4,14 +4,15 @@ jramaswami
 """
 
 
+import collections
+
+
 class Solution:
     def solve(self, nums):
-        dp = list(nums)
+        dp = collections.defaultdict(int)
         for i, n in enumerate(nums):
-            for j, m in enumerate(nums[i+1:], start=i+1):
-                if m - n == j - i:
-                    dp[j] = max(dp[j], dp[i] + m)
-        return max(dp)
+            dp[n - i] += n
+        return max(dp.values())
 
 
 def test_1():
@@ -19,7 +20,7 @@ def test_1():
     assert Solution().solve(nums) == 19
 
 
-# def test_2():
-#     "TLE"
-#     nums = list(range(100000))
-#     assert Solution().solve(nums) == sum(nums)
+def test_2():
+    "TLE"
+    nums = list(range(100000))
+    assert Solution().solve(nums) == sum(nums)
