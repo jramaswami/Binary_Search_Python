@@ -4,59 +4,16 @@ jramaswmai
 """
 
 
-class TrieNode:
-
-    def __init__(self):
-        self.one = None
-        self.zero = None
-        self.value = 0
-
-    def add_one(self):
-        self.one = TrieNode()
-
-    def add_zero(self):
-        self.zero = TrieNode()
-
-
 class Solution:
 
     def solve(self, nums):
-
-        # Build Trie.
-        root = TrieNode()
-        for n in nums:
-            curr = root
-            for bit in range(31, -1, -1):
-                mask = 1 << bit
-                if n & mask:
-                    if curr.one is None:
-                        curr.add_one()
-                    curr = curr.one
-                else:
-                    if curr.zero is None:
-                        curr.add_zero()
-                    curr = curr.zero
-            curr.value = n
-
-        # Find solution.
-        soln = 0
-        for n in nums:
-            curr = root
-            m = 0
-            for bit in range(31, -1, -1):
-                mask = 1 << bit
-                if n & mask:
-                    if curr.zero is None:
-                        curr = curr.one
-                    else:
-                        # n is one, curr is zero, soln has one
-                        curr = curr.zero
-                else:
-                    if curr.one is None:
-                        curr = curr.zero
-                    else:
-                        curr = curr.one
-            soln = max(soln, n ^ curr.value)
+        soln = mask = 0
+        for bit in reversed(range(32)):
+            mask |= (1 << bit)
+            prefixes = set(n & mask for n in nums)
+            candidate = soln | (1 << bit)
+            if any((p ^ candidate in prefixes) for p in prefixes):
+                soln = candidate
         return soln
 
 
