@@ -9,6 +9,7 @@ class TrieNode:
     def __init__(self):
         self.one = None
         self.zero = None
+        self.value = 0
 
     def add_one(self):
         self.one = TrieNode()
@@ -25,7 +26,7 @@ class Solution:
         root = TrieNode()
         for n in nums:
             curr = root
-            for bit in range(32, -1, -1):
+            for bit in range(31, -1, -1):
                 mask = 1 << bit
                 if n & mask:
                     if curr.one is None:
@@ -35,27 +36,27 @@ class Solution:
                     if curr.zero is None:
                         curr.add_zero()
                     curr = curr.zero
+            curr.value = n
 
         # Find solution.
         soln = 0
         for n in nums:
             curr = root
             m = 0
-            for bit in range(32, -1, -1):
+            for bit in range(31, -1, -1):
                 mask = 1 << bit
                 if n & mask:
                     if curr.zero is None:
                         curr = curr.one
-                        m |= mask
                     else:
+                        # n is one, curr is zero, soln has one
                         curr = curr.zero
                 else:
                     if curr.one is None:
                         curr = curr.zero
                     else:
                         curr = curr.one
-                        m |= mask
-            soln = max(soln, n ^ m)
+            soln = max(soln, n ^ curr.value)
         return soln
 
 
