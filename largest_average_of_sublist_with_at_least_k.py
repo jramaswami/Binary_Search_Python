@@ -1,61 +1,57 @@
 """
 binarysearch.com :: Largest Average of Sublist with Length at Least K
 jramaswami
+
+REF: https://www.tutorialspoint.com/program-to-find-largest-average-of-sublist-whose-size-at-least-k-in-python
 """
-
-
-import math
-import collections
 
 
 class Solution:
 
     def solve(self, nums, k):
-        sums = [-math.inf for _ in nums]
-        counts = [0 for _ in nums]
-        sums[k-1] = sum(nums[:k])
-        counts[k-1] = k
-        solns = [None for _ in nums]
-        prefix = sums[k-1]
-        window = collections.deque(nums[:k])
-        solns[k-1] = collections.deque(window)
-        assert len(window) == k
-        for i, _ in enumerate(nums[k:], start=k):
-            prefix -= window[0]
-            window.popleft()
-            prefix += nums[i]
-            window.append(nums[i])
-            assert len(window) == k
-            sums[i] = prefix
-            counts[i] = k
-            solns[i] = collections.deque(window)
-            print(f"{i=} {window=} {sums[i]=} {sums[i] / counts[i]}")
+        # Binary search limits.
+        low, high = min(nums), max(nums)
+        # Initial solution.
+        ssum = sum(nums[:k])
+        soln = ssum / k
 
-            # Can I increase the average ending at i by adding
-            # nums[i] to the best average ending at i-1?
-            if counts[i-1] + 1 >= k and (nums[i] + sums[i-1]) / (counts[i-1] + 1) > sums[i] / counts[i]:
-                sums[i] = nums[i] + sums[i-1]
-                counts[i] = counts[i-1] + 1
-                solns[i] = collections.deque(solns[i-1])
-                solns[i].append(nums[i])
-                print(f"adding {nums[i]} -> {solns[i]} {sums[i]=} {sums[i] / counts[i]}")
-
-
-        print(f"{prefix=}")
-        print(f"{sums=}")
-        print(f"{counts=}")
-        print(f"{[s / c for s, c in zip(sums, counts) if c > 0]}")
-        print(f"{solns=}")
-
-        soln = max(s / c for s, c in zip(sums, counts) if c > 0)
+        while low <= high:
+            mid = low + ((high - low) // 2)
+            sum1 = ssum
+            avg = ssum / k
+            sum2 = cnt = 0
+            # Window of elements starting at k.
+            for i, _ in enumerate(nums[k:], start=k):
+                # Add element to the current sum of the current window.
+                sum1 += nums[i]
+                # Add the trailing element to the sum of the trailing window.
+                sum2 += nums[i-k]
+                # Add to the number of elements over k.
+                cnt += 1
+                # Take the maximum average considering the current window.
+                avg = max(avg, sum1 / (cnt + k))
+                # If the average of the trailing window is less than or equal
+                # to the current mid average then remove the trailing window.
+                if sum2 / cnt <= mid:
+                    sum1 -= sum2
+                    sum2 = cnt = 0
+                # Take the maximum average considering the current window.
+                avg = max(avg, sum1 / (cnt + k))
+            # Take the maximum solution considering the best average we got.
+            soln = max(soln, avg)
+            if avg > mid:
+                low = mid + 1
+            else:
+                high = mid - 1
         return soln
-
 
 #
 # Testing
 #
 
+
 import random
+import math
 
 
 EPS = pow(10, -6)
@@ -92,14 +88,14 @@ def test_1():
     assert expected - EPS <= Solution().solve(nums, k) <= expected + EPS
 
 
-# def test_random():
-#     for _ in range(100):
-#         nums = [random.randint(-100, 100) for _ in range(10)]
-#         k = random.randint(1, len(nums))
-#         expected = brute(nums, k)
-#         if not (expected - EPS <= Solution().solve(nums, k) <= expected + EPS):
-#             print(nums, k)
-#         assert expected - EPS <= Solution().solve(nums, k) <= expected + EPS
+def test_random():
+    for _ in range(100):
+        nums = [random.randint(-100, 100) for _ in range(100)]
+        k = random.randint(1, len(nums))
+        expected = brute(nums, k)
+        if not (expected - EPS <= Solution().solve(nums, k) <= expected + EPS):
+            print(nums, k)
+        assert expected - EPS <= Solution().solve(nums, k) <= expected + EPS
 
 
 def test_5():
