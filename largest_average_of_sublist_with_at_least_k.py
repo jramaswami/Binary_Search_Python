@@ -2,47 +2,61 @@
 binarysearch.com :: Largest Average of Sublist with Length at Least K
 jramaswami
 
-REF: https://www.tutorialspoint.com/program-to-find-largest-average-of-sublist-whose-size-at-least-k-in-python
+Given a sublist of length k [a1, a2, a3, ... ak], the average will be:
+
+(a1 + a2 + a3 + ... + ak) / k = avg.
+a1 + a2 + a3 + ... + ak = k * avg
+a1 + a2 + a3 + ... + ak = avg + avg + avg + ... avg   (k times)
+(a1 - avg) + (a2 - avg) - ... - (ak - avg) = 0
+
+So if we subtract the target average from each element of the sublist and take
+the sum, then the sublist will have an average of at least the target average
+if that sum is greater than or equal to zero.
+
+Rather than try every sublist we can use prefix sums to check for every sublist
+ending at a given index. Suppose we are at index i.  Then our total list will
+be [a1, a2, ..., ai].  For a given index j, we can compute the sum of our
+sublist [aj+1, ..., ai] by taking the sum of [a1 ... ai] and subtracting the
+sum of [a0 ... aj].
+
+We want our sublist to have a sum greater than or equal to zero so we want:
+sum([a0 ... ai]) - sum([a0 ... aj]) >= 0.  In order to see if that is possible,
+we will keep track of the minimum sum([a0 ... aj]).  Any time the total sum
+ending at index, i, less than minimum sum of any sublist ending between 0 and j
+is greater than or equal to zero, there is a sublist with an average equal to
+or greater than our target average.
 """
 
 
 class Solution:
 
     def solve(self, nums, k):
-        # Binary search limits.
-        low, high = min(nums), max(nums)
-        # Initial solution.
-        ssum = sum(nums[:k])
-        soln = ssum / k
 
-        while low <= high:
-            mid = low + ((high - low) // 2)
-            sum1 = ssum
-            avg = ssum / k
-            sum2 = cnt = 0
-            # Window of elements starting at k.
-            for i, _ in enumerate(nums[k:], start=k):
-                # Add element to the current sum of the current window.
-                sum1 += nums[i]
-                # Add the trailing element to the sum of the trailing window.
-                sum2 += nums[i-k]
-                # Add to the number of elements over k.
-                cnt += 1
-                # Take the maximum average considering the current window.
-                avg = max(avg, sum1 / (cnt + k))
-                # If the average of the trailing window is less than or equal
-                # to the current mid average then remove the trailing window.
-                if sum2 / cnt <= mid:
-                    sum1 -= sum2
-                    sum2 = cnt = 0
-                # Take the maximum average considering the current window.
-                avg = max(avg, sum1 / (cnt + k))
-            # Take the maximum solution considering the best average we got.
-            soln = max(soln, avg)
-            if avg > mid:
-                low = mid + 1
+        def check(target_avg, k):
+            """
+            Check if there is a sublist with an average >= target_avg.
+            """
+            prev_sum = curr_sum = min_prev_sum = 0
+            for i, n in enumerate(nums):
+                curr_sum += (n - target_avg)
+                if i >= k:
+                    prev_sum += (nums[i-k] - target_avg)
+                    min_prev_sum = min(min_prev_sum, prev_sum)
+                if i >= k - 1 and curr_sum >= min_prev_sum:
+                    return True
+            return False
+
+        # Binary search limits.
+        eps = 0.000001
+        low, high = min(nums), max(nums)
+        soln = low
+        while abs(high - low) > eps:
+            mid = (low + high) / 2
+            if check(mid, k):
+                soln = max(soln,  mid)
+                low = mid
             else:
-                high = mid - 1
+                high = mid
         return soln
 
 #
