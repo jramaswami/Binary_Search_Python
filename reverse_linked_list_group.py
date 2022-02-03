@@ -18,8 +18,11 @@ class Solution:
             curr = curr.next
             nodes[-1].next = None
 
-        for right in range(k, len(nodes)+1, k):
-            nodes[right-k:right] = nodes[right-k:right][::-1]
+        left = 0
+        while left < len(nodes):
+            right = min(left+k, len(nodes))
+            nodes[left:right] = nodes[left:right][::-1]
+            left = right
 
         for i, _ in enumerate(nodes[:-1]):
             nodes[i].next = nodes[i+1]
