@@ -1,80 +1,50 @@
 """
 binarysearch.com :: Swapping Socks
 jramaswami
+
+REF: https://www.youtube.com/watch?v=mJVQL-deD7A
 """
 
 
-class Socks:
+class UnionFind:
 
-    def __init__(self, row):
-        self.row = row
-        self.loc = [0 for _ in row]
-        for i, n in enumerate(row):
-            self.loc[n] = i
+    def __init__(self, n):
+        self.id = [i for i in range(n)]
+        self.size = [1 for _ in self.id]
+        self.count = n
 
-    def swap(self, left, right):
-        "Swap the element at index left with element at index right."
-        left_val = self.row[left]
-        right_val = self.row[right]
-        # Swap the row values.
-        self.row[left], self.row[right] = self.row[right], self.row[left]
-        # Update locations.
-        self.loc[left_val] = right
-        self.loc[right_val] = left
+    def find(self, a):
+        if self.id[a] != a:
+            p = self.id[a]
+            self.id[a] = self.find(p)
+        return self.id[a]
 
-    def find(self, value):
-        "Return the index of the given value."
-        return self.loc[value]
-
-    def __getitem__(self, key):
-        return self.row[key]
-
-    def is_pair(self, left):
-        "Return True if row[left] and row[left+1] are a pair."
-        a = min(self.row[left], self.row[left+1])
-        b = max(self.row[left], self.row[left+1])
-        return a + 1 == b and b % 2
+    def union(self, a, b):
+        a = self.find(a)
+        b = self.find(b)
+        if a != b:
+            if self.size[a] < self.size[b]:
+                a, b = b, a
+            self.id[b] = a
+            self.size[a] += self.size[b]
+            self.count -= 1
 
     def __len__(self):
-        return len(self.row)
+        return self.count
 
 
 class Solution:
 
     def solve(self, row):
-
-        def solve0(socks, boundary):
-            "Recursive solution."
-            if boundary >= len(socks):
-                return 0
-
-            if socks.is_pair(boundary):
-                return solve0(socks, boundary+2)
-
-            # Make a pair with socks[boundary]
-            a = socks[boundary]
-            b = a + 1
-            if a % 2:
-                b = a - 1
-            i = socks.find(b)
-            socks.swap(boundary+1, i)
-            result0 = 1 + solve0(socks, boundary+2)
-            socks.swap(boundary+1, i)
-
-            # Make a pair with socks[boundary+1]
-            a = socks[boundary+1]
-            b = a + 1
-            if a % 2:
-                b = a - 1
-            i = socks.find(b)
-            socks.swap(boundary, i)
-
-            result1 = 1 + solve0(socks, boundary + 2)
-            socks.swap(boundary, i)
-            return min(result0, result1)
-
-        socks = Socks(row)
-        return solve0(socks, 0)
+        couples = len(row) // 2
+        uf = UnionFind(couples)
+        for i in range(0, len(row), 2):
+            a = row[i]
+            b = row[i+1]
+            couple_a = a // 2
+            couple_b = b // 2
+            uf.union(couple_a, couple_b)
+        return couples - len(uf)
 
 
 def test_1():
