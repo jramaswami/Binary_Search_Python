@@ -42,10 +42,10 @@ class Solution:
             if dnm == 0:
                 return (a1, c1) == (a2, c2)
 
-            nmr = (a1 * b2) - (c2 * b1)
+            nmr = (c1 * b2) - (c2 * b1)
 
             x = -(nmr / dnm)
-            print(f"{line1} intersects {line2} @ {x=}")
+            print(f"{line1=} {line2=} {x=}")
             return low - EPS <= x <= high + EPS
 
 
@@ -62,6 +62,7 @@ class Solution:
 
         overlaps = [0 for _ in lines]
         events.sort()
+        print(events)
         active = set()
         for event in events:
             if event.type == EType.Start:
@@ -75,6 +76,38 @@ class Solution:
             else:
                 active.remove(event.line_id)
         return sum(overlaps)
+
+
+def brute(lines, low, high):
+
+    def intersects(line1, line2):
+        """
+        Cramer's rule.
+        ax + by + c = 0
+        a = slope or line[1]
+        c = line[2]
+        b = -1 b/c we have y = ax + c --> 0 = ax - y + c
+        """
+        a1, c1 = lines[line1]
+        a2, c2 = lines[line2]
+
+        b1 = b2 = -1
+        dnm = (a1 * b2) - (a2 * b1)
+
+        # The lines do not overlap (or are the same line).
+        if dnm == 0:
+            return (a1, c1) == (a2, c2)
+
+        nmr = (c1 * b2) - (c2 * b1)
+
+        x = -(nmr / dnm)
+        print(f"{line1=} {line2=} {x=}")
+        return low - EPS <= x <= high + EPS
+
+    b1 = b2 = -1
+    for i, (a1, c1) in enumerate(lines):
+        for j, (a2, c2) in enumerate(lines[i+1:], start=i+1):
+            if intersects(i, j):
 
 
 def test_1():
@@ -146,3 +179,16 @@ def test_6():
     hi = 0
     expected = 2
     assert Solution().solve(lines, lo, hi) == expected
+
+
+def test_7():
+    "WA"
+    lines = [
+        [-1, 3],
+        [0, -2]
+    ]
+    lo = -1
+    hi = 0
+    expected = 2
+    assert Solution().solve(lines, lo, hi) == expected
+
