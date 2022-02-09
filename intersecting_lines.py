@@ -23,12 +23,33 @@ class Solution:
 
     def solve(self, lines, low, high):
 
+
+        def intersects(line1, line2):
+            "Cramer's rule."
+            a1, c1 = lines[line1]
+            a2, c2 = lines[line2]
+
+            b1 = b2 = -1
+            dnm = (a1 * b2) - (a2 * b1)
+
+            # The lines do not overlap (or are the same line).
+            if dnm == 0:
+                return (a1, c1) == (a2, c2)
+
+            nmr = (a1 * b2) - (c2 * b1)
+
+            x = -(nmr / dnm)
+            print(f"{line1} intersects {line2} @ {x=}")
+            return low - EPS <= x <= high + EPS
+
+
+        # Line sweep is used to limit comparisons.
         events = []
         for i, (m, b) in enumerate(lines):
             y_lo = (m*low) + b
             y_hi = (m*high) + b
             y_lo, y_hi = min(y_lo, y_hi), max(y_lo, y_hi)
-            if m == 0:
+            if m == 0 or y_lo == y_hi:
                 y_hi += EPS
             events.append(Event(y_lo, i, EType.Start))
             events.append(Event(y_hi, i, EType.Stop))
@@ -38,12 +59,12 @@ class Solution:
         active = set()
         for event in events:
             if event.type == EType.Start:
-                if len(active) == 1:
-                    # Will only be one line.
-                    for line in active:
-                        overlaps[line] = 1
-                if len(active) > 0:
-                    overlaps[event.line_id] = 1
+                line1 = event.line_id
+                for line2 in active:
+                    if intersects(line1, line2):
+                        overlaps[line1] = 1
+                        overlaps[line2] = 1
+                        break
                 active.add(event.line_id)
             else:
                 active.remove(event.line_id)
@@ -95,3 +116,28 @@ def test_4():
     hi = 0
     expected = 0
     assert Solution().solve(lines, lo, hi) == expected
+
+
+def test_5():
+    "WA"
+    lines = [
+        [2, 3],
+        [3, 1],
+    ]
+    lo = -2
+    hi = 0
+    expected = 0
+    assert Solution().solve(lines, lo, hi) == expected
+
+
+def test_6():
+    "WA"
+    lines = [
+        [-1, 0],
+        [3, 0]
+    ]
+    lo = 0
+    hi = 0
+    expected = 2
+    assert Solution().solve(lines, lo, hi) == expected
+
