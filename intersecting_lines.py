@@ -62,15 +62,39 @@ def f(slope, constant, x):
 class Solution:
 
     def solve(self, lines, low, high):
-        # Transform lines into line segments.
-        segments = [(Point(low, f(m, b, low)), Point(high, f(m, b, high))) for m, b in lines]
-        overlaps = [0 for _ in segments]
+        START = -1
+        STOP = 1
 
-        for i, (p1, p2) in enumerate(segments):
-            for j, (p3, p4) in enumerate(segments[i+1:], start=i+1):
-                if segments_intersect(p1, p2, p3, p4):
-                    overlaps[i] = 1
-                    overlaps[j] = 1
+        EPS = pow(10, -9)
+
+        # Transform lines into line segments.
+        segments = []
+        events = []
+        for i, (m, b) in enumerate(lines):
+            low_p = Point(low, f(m, b, low))
+            high_p = Point(high, f(m, b, high))
+            if high_p.y < low_p.y:
+                low_p, high_p = high_p, low_p
+            segments.append((low_p, high_p))
+            low_y = low_p.y
+            high_y = high_p.y
+            events.append((low_y, START, i))
+            events.append((high_y, STOP, i))
+
+        events.sort()
+        active = set()
+        overlaps = [0 for _ in lines]
+        for _, etype, i in events:
+            p1, p2 = segments[i]
+            if etype == START:
+                for j in active:
+                    p3, p4 = segments[j]
+                    if segments_intersect(p1, p2, p3, p4):
+                        overlaps[i] = 1
+                        overlaps[j] = 1
+                active.add(i)
+            else:
+                active.remove(i)
         return sum(overlaps)
 
 
