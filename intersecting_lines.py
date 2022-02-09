@@ -25,7 +25,13 @@ class Solution:
 
 
         def intersects(line1, line2):
-            "Cramer's rule."
+            """
+            Cramer's rule.
+            ax + by + c = 0
+            a = slope or line[1]
+            c = line[2]
+            b = -1 b/c we have y = ax + c --> 0 = ax - y + c
+            """
             a1, c1 = lines[line1]
             a2, c2 = lines[line2]
 
@@ -140,4 +146,3 @@ def test_6():
     hi = 0
     expected = 2
     assert Solution().solve(lines, lo, hi) == expected
-
