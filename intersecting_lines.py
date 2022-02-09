@@ -8,6 +8,9 @@ import collections
 import enum
 
 
+EPS = pow(10, -9)
+
+
 Event = collections.namedtuple('Event', ['y', 'line_id', 'type'])
 
 
@@ -25,6 +28,8 @@ class Solution:
             y_lo = (m*low) + b
             y_hi = (m*high) + b
             y_lo, y_hi = min(y_lo, y_hi), max(y_lo, y_hi)
+            if m == 0:
+                y_hi += EPS
             events.append(Event(y_lo, i, EType.Start))
             events.append(Event(y_hi, i, EType.Stop))
 
@@ -76,6 +81,17 @@ def test_3():
         [0, 2]
     ]
     lo = -1
+    hi = 0
+    expected = 0
+    assert Solution().solve(lines, lo, hi) == expected
+
+
+def test_4():
+    "RTE"
+    lines = [
+        [-1, -2]
+    ]
+    lo = 0
     hi = 0
     expected = 0
     assert Solution().solve(lines, lo, hi) == expected
