@@ -4,110 +4,74 @@ jramaswami
 """
 
 
-import collections
-import enum
+import math
 
 
-EPS = pow(10, -9)
+class Point:
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __sub__(self, other):
+        return Point(self.x - other.x, self.y - other.y)
+
+    def __add__(self, other):
+        return Point(self.x + other.x, self.y + other.y)
+
+    def __mul__(self, other):
+        "Cross product"
+        return (self.x * other.y) - (other.x * self.y)
+
+    def __repr__(self):
+        return f"Point({self.x}, {self.y})"
 
 
-Event = collections.namedtuple('Event', ['y', 'line_id', 'type'])
+def direction(pi, pj, pk):
+    return (pk - pi) * (pj - pi)
 
 
-class EType(enum.IntEnum):
-    Start = 1
-    Stop = -1
+def on_segment(pi, pj, pk):
+    if min(pi.x, pj.x) <= pk.x  <= max(pi.x, pj.x) and min(pi.y, pj.y) <= pk.y <= max(pi.y, pj.y):
+        return True
+    return False
+
+
+def segments_intersect(p1, p2, p3, p4):
+    d1 = direction(p3, p4, p1)
+    d2 = direction(p3, p4, p2)
+    d3 = direction(p1, p2, p3)
+    d4 = direction(p1, p2, p4)
+    if ((d1 > 0 and d2 < 0) or (d1 < 0 and d2 > 0)) and ((d3 > 0 and d4 < 0) or (d3 < 0 and d4 > 0)):
+        return True
+    elif d1 == 0 and on_segment(p3, p4, p1):
+        return True
+    elif d2 == 0 and on_segment(p3, p4, p2):
+        return True
+    elif d3 == 0 and on_segment(p1, p2, p3):
+        return True
+    elif d4 == 0 and on_segment(p1, p2, p4):
+        return True
+    return False
+
+
+def f(slope, constant, x):
+    return (slope * x) + constant
 
 
 class Solution:
 
     def solve(self, lines, low, high):
+        # Transform lines into line segments.
+        segments = [(Point(low, f(m, b, low)), Point(high, f(m, b, high))) for m, b in lines]
+        overlaps = [0 for _ in segments]
 
-
-        def intersects(line1, line2):
-            """
-            Cramer's rule.
-            ax + by + c = 0
-            a = slope or line[1]
-            c = line[2]
-            b = -1 b/c we have y = ax + c --> 0 = ax - y + c
-            """
-            a1, c1 = lines[line1]
-            a2, c2 = lines[line2]
-
-            b1 = b2 = -1
-            dnm = (a1 * b2) - (a2 * b1)
-
-            # The lines do not overlap (or are the same line).
-            if dnm == 0:
-                return (a1, c1) == (a2, c2)
-
-            nmr = (c1 * b2) - (c2 * b1)
-
-            x = -(nmr / dnm)
-            print(f"{line1=} {line2=} {x=}")
-            return low - EPS <= x <= high + EPS
-
-
-        # Line sweep is used to limit comparisons.
-        events = []
-        for i, (m, b) in enumerate(lines):
-            y_lo = (m*low) + b
-            y_hi = (m*high) + b
-            y_lo, y_hi = min(y_lo, y_hi), max(y_lo, y_hi)
-            if m == 0 or y_lo == y_hi:
-                y_hi += EPS
-            events.append(Event(y_lo, i, EType.Start))
-            events.append(Event(y_hi, i, EType.Stop))
-
-        overlaps = [0 for _ in lines]
-        events.sort()
-        print(events)
-        active = set()
-        for event in events:
-            if event.type == EType.Start:
-                line1 = event.line_id
-                for line2 in active:
-                    if intersects(line1, line2):
-                        overlaps[line1] = 1
-                        overlaps[line2] = 1
-                        break
-                active.add(event.line_id)
-            else:
-                active.remove(event.line_id)
+        for i, (p1, p2) in enumerate(segments):
+            for j, (p3, p4) in enumerate(segments[i+1:], start=i+1):
+                if segments_intersect(p1, p2, p3, p4):
+                    overlaps[i] = 1
+                    overlaps[j] = 1
         return sum(overlaps)
-
-
-def brute(lines, low, high):
-
-    def intersects(line1, line2):
-        """
-        Cramer's rule.
-        ax + by + c = 0
-        a = slope or line[1]
-        c = line[2]
-        b = -1 b/c we have y = ax + c --> 0 = ax - y + c
-        """
-        a1, c1 = lines[line1]
-        a2, c2 = lines[line2]
-
-        b1 = b2 = -1
-        dnm = (a1 * b2) - (a2 * b1)
-
-        # The lines do not overlap (or are the same line).
-        if dnm == 0:
-            return (a1, c1) == (a2, c2)
-
-        nmr = (c1 * b2) - (c2 * b1)
-
-        x = -(nmr / dnm)
-        print(f"{line1=} {line2=} {x=}")
-        return low - EPS <= x <= high + EPS
-
-    b1 = b2 = -1
-    for i, (a1, c1) in enumerate(lines):
-        for j, (a2, c2) in enumerate(lines[i+1:], start=i+1):
-            if intersects(i, j):
 
 
 def test_1():
@@ -179,16 +143,3 @@ def test_6():
     hi = 0
     expected = 2
     assert Solution().solve(lines, lo, hi) == expected
-
-
-def test_7():
-    "WA"
-    lines = [
-        [-1, 3],
-        [0, -2]
-    ]
-    lo = -1
-    hi = 0
-    expected = 2
-    assert Solution().solve(lines, lo, hi) == expected
-
