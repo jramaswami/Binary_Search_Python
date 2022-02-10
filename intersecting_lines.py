@@ -4,98 +4,61 @@ jramaswami
 """
 
 
+import collections
+import operator
 import math
 
 
-class Point:
-
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def __sub__(self, other):
-        return Point(self.x - other.x, self.y - other.y)
-
-    def __add__(self, other):
-        return Point(self.x + other.x, self.y + other.y)
-
-    def __mul__(self, other):
-        "Cross product"
-        return (self.x * other.y) - (other.x * self.y)
-
-    def __repr__(self):
-        return f"Point({self.x}, {self.y})"
-
-
-def direction(pi, pj, pk):
-    return (pk - pi) * (pj - pi)
-
-
-def on_segment(pi, pj, pk):
-    if min(pi.x, pj.x) <= pk.x  <= max(pi.x, pj.x) and min(pi.y, pj.y) <= pk.y <= max(pi.y, pj.y):
-        return True
-    return False
-
-
-def segments_intersect(p1, p2, p3, p4):
-    d1 = direction(p3, p4, p1);
-    d2 = direction(p3, p4, p2);
-    d3 = direction(p1, p2, p3);
-    d4 = direction(p1, p2, p4);
-    if ((d1 > 0 and d2 < 0) or (d1 < 0 and d2 > 0)) and ((d3 > 0 and d4 < 0) or (d3 < 0 and d4 > 0)):
-        return True
-    elif d1 == 0 and on_segment(p3, p4, p1):
-        return True
-    elif d2 == 0 and on_segment(p3, p4, p2):
-        return True
-    elif d3 == 0 and on_segment(p1, p2, p3):
-        return True
-    elif d4 == 0 and on_segment(p1, p2, p4):
-        return True
-    return False
-
-
-def f(slope, constant, x):
-    return (slope * x) + constant
+Segment = collections.namedtuple('Segment', ['left_y', 'right_y', 'idx'])
 
 
 class Solution:
 
-    def solve(self, lines, low, high):
-        START = -1
-        STOP = 1
-
-        EPS = pow(10, -9)
-
-        # Transform lines into line segments.
+    def solve(self, lines, left_x, right_x):
+        has_intersection = [0 for _ in lines]
         segments = []
-        events = []
-        for i, (m, b) in enumerate(lines):
-            low_p = Point(low, f(m, b, low))
-            high_p = Point(high, f(m, b, high))
-            if high_p.y < low_p.y:
-                low_p, high_p = high_p, low_p
-            segments.append((low_p, high_p))
-            low_y = low_p.y
-            high_y = high_p.y
-            events.append((low_y, START, i))
-            events.append((high_y, STOP, i))
+        for idx, (slope, constant) in enumerate(lines):
+            left_y = (slope * left_x) + constant
+            right_y = (slope * right_x) + constant
+            segments.append(Segment(left_y, right_y, idx))
 
-        events.sort()
-        active = set()
-        overlaps = [0 for _ in lines]
-        for _, etype, i in events:
-            p1, p2 = segments[i]
-            if etype == START:
-                for j in active:
-                    p3, p4 = segments[j]
-                    if segments_intersect(p1, p2, p3, p4):
-                        overlaps[i] = 1
-                        overlaps[j] = 1
-                active.add(i)
-            else:
-                active.remove(i)
-        return sum(overlaps)
+        # Sort segments by left_y.
+        segments.sort(key=operator.attrgetter('left_y'))
+        max_right_y = -math.inf
+        for i, curr_segment in enumerate(segments):
+            # Check for intersection on the same y_left.
+            if i - 1 >= 0 and curr_segment.left_y == segments[i-1].left_y:
+                has_intersection[curr_segment.idx] = 1
+            if i + 1 < len(segments) and curr_segment.left_y == segments[i+1].left_y:
+                has_intersection[curr_segment.idx] = 1
+
+            # Do any of the lines that start below y_left end up with
+            # at or above y_right?  If so, there is a line that crosses
+            # this line.  We can tell by keeping track of the maximum
+            # right y for all the lines below the current line.
+            if curr_segment.right_y <= max_right_y:
+                has_intersection[curr_segment.idx] = 1
+            max_right_y = max(max_right_y, curr_segment.right_y)
+
+        # Sort segments by right_y.
+        segments.sort(key=operator.attrgetter('right_y'))
+        max_left_y = -math.inf
+        for i, curr_segment in enumerate(segments):
+            # Check for intersection on the same y_right.
+            if i - 1 >= 0 and curr_segment.right_y == segments[i-1].right_y:
+                has_intersection[curr_segment.idx] = 1
+            if i + 1 < len(segments) and curr_segment.right_y == segments[i+1].right_y:
+                has_intersection[curr_segment.idx] = 1
+
+            # Do any of the lines that start below y_right end up with
+            # at or above y_left?  If so, there is a line that crosses
+            # this line.  We can tell by keeping track of the maximum
+            # left y for all the lines below the current line.
+            if curr_segment.left_y <= max_left_y:
+                has_intersection[curr_segment.idx] = 1
+            max_left_y = max(max_left_y, curr_segment.left_y)
+
+        return sum(has_intersection)
 
 
 def test_1():
