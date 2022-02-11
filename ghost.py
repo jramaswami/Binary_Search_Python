@@ -17,9 +17,10 @@ class TrieNode:
         if index == len(word) - 1:
             self.word_end = True
             return
+
         if word[index+1] not in self.children:
-            self.children[word[index]] = TrieNode()
-        self.children[word[index]].add(index + 1, word)
+            self.children[word[index+1]] = TrieNode()
+        self.children[word[index+1]].add(index + 1, word)
 
     def is_winner(self):
         if self.word_end:
@@ -68,4 +69,11 @@ def test_3():
     "RTE"
     words = ["gr", "rf"]
     expected = True
+    assert Solution().solve(words) == expected
+
+
+def test_4():
+    "WA"
+    words = ["aba", "accc"]
+    expected = False
     assert Solution().solve(words) == expected
