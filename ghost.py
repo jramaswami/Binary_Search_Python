@@ -5,42 +5,61 @@ jramaswami
 
 
 class TrieNode:
-    def __init__(self):
+    def __init__(self, char, index):
         self.children = dict()
         self.word_end = False
-        self.index = -1
         self.word = ""
+        self.char = char
+        self.index = index
 
     def add(self, index, word):
-        self.index = index
-        self.word = word
         if index == len(word) - 1:
             self.word_end = True
+            self.word = word
             return
 
         if word[index+1] not in self.children:
-            self.children[word[index+1]] = TrieNode()
+            self.children[word[index+1]] = TrieNode(word[index + 1], index + 1)
         self.children[word[index+1]].add(index + 1, word)
 
     def is_winner(self):
         if self.word_end:
-            return False
-        # If there is a move from the current state to a losing state
-        # it is a winning state, otherwise it is a losing state.
-        return not all(node.is_winner() for node in self.children.values())
+            if self.index % 2 == 0:
+                # print(self.word, 'is loser at', self.index)
+                return False
+            else:
+                # print(self.word, 'is winner at', self.index)
+                return True
+
+        if self.index % 2 == 1:
+            # If it is my turn and there are any winners then return a win:
+            winner = any(node.is_winner() for node in self.children.values())
+            # if winner:
+            #     print(self.char, '@', self.index, 'is a winner with a child as winners')
+            # else:
+            #     print(self.char, '@', self.index, 'is a loser with all childrend as losers')
+            return winner
+        else:
+            # If it is my opponent's turn and there are any losers I lose.
+            winner = all(node.is_winner() for node in self.children.values())
+            # if winner:
+            #     print(self.char, '@', self.index, 'is a winner all children as winners')
+            # else:
+            #     print(self.char, '@', self.index, 'is a loser with a child as loser')
+            return winner
 
 
 class Trie:
 
     def __init__(self):
-        self.root = TrieNode()
+        self.root = TrieNode("", -1)
 
     def add_word(self, word):
         self.root.add(-1, word)
 
     def is_winner(self):
         # Root is the turn before the actual start of the game.
-        return not self.root.is_winner()
+        return any(node.is_winner() for node in self.root.children.values())
 
 
 class Solution:
