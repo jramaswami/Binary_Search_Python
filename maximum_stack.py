@@ -47,9 +47,9 @@ class MaximumStack:
         return -result.negval
 
     def _cleanup(self):
-        while self.popped[self.heap[0].index]:
+        while self.heap and self.popped[self.heap[0].index]:
             heapq.heappop(self.heap)
-        while self.popped[self.stack[-1].index]:
+        while self.stack and self.popped[self.stack[-1].index]:
             self.stack.pop()
 
 
@@ -63,10 +63,20 @@ def test_1():
 
 
 def test_2():
-    "WA"
+    "RTE"
     methods = ["constructor", "append", "popmax"]
     arguments = [[], [3], []]
     expected = [None, None, 3]
+    maxstack = MaximumStack()
+    for m, a, e in zip(methods[1:], arguments[1:], expected[1:]):
+        assert getattr(maxstack, m)(*a) == e
+
+
+def test_3():
+    "WA"
+    methods = ["constructor", "append", "append", "append", "append", "popmax", "peek", "peek", "pop"]
+    arguments = [[], [6], [2], [1], [6], [], [], [], []]
+    expected = [None, None, None, None, None, 6, 1, 1, 1]
     maxstack = MaximumStack()
     for m, a, e in zip(methods[1:], arguments[1:], expected[1:]):
         assert getattr(maxstack, m)(*a) == e
