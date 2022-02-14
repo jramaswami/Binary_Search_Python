@@ -8,7 +8,7 @@ import heapq
 import collections
 
 
-SItem = collections.namedtuple('SItem', ['negval', 'index'])
+SItem = collections.namedtuple('SItem', ['negval', 'negindex'])
 
 
 class MaximumStack:
@@ -20,7 +20,7 @@ class MaximumStack:
         self.popped = []
 
     def append(self, val):
-        item = SItem(-val, self.index)
+        item = SItem(-val, -self.index)
         self.popped.append(False)
         self.index += 1
         self.stack.append(item)
@@ -36,21 +36,24 @@ class MaximumStack:
 
     def pop(self):
         result = self.stack.pop()
-        self.popped[result.index] = True
+        self.popped[-result.negindex] = True
         self._cleanup()
         return -result.negval
 
     def popmax(self):
         result = heapq.heappop(self.heap)
-        self.popped[result.index] = True
+        self.popped[-result.negindex] = True
         self._cleanup()
         return -result.negval
 
     def _cleanup(self):
-        while self.heap and self.popped[self.heap[0].index]:
+        while self.heap and self.popped[-self.heap[0].negindex]:
             heapq.heappop(self.heap)
-        while self.stack and self.popped[self.stack[-1].index]:
+        while self.stack and self.popped[-self.stack[-1].negindex]:
             self.stack.pop()
+
+    def __repr__(self):
+        return f"{self.heap=}\n{self.stack=}\n{self.popped=}"
 
 
 def test_1():
@@ -79,4 +82,9 @@ def test_3():
     expected = [None, None, None, None, None, 6, 1, 1, 1]
     maxstack = MaximumStack()
     for m, a, e in zip(methods[1:], arguments[1:], expected[1:]):
+        args = ", ".join(str(x) for x in a)
+        print(f"{maxstack}")
+        print(f"maxstack.{m}({args})")
         assert getattr(maxstack, m)(*a) == e
+        print(f"{maxstack}")
+        print()
