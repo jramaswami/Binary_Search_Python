@@ -5,35 +5,30 @@ jramaswami
 
 
 import math
-import functools
+import collections
 
 
 class Solution:
 
     def solve(self, nums):
+        soln = -math.inf
+        dp = [collections.defaultdict(set) for _ in nums]
+        for i, n in enumerate(nums):
+            if i == 0:
+                dp[i][-n] = [0]
+                dp[i][n] = [n]
+                dp[i][0] = [0]
+            else:
+                for ss in dp[i-1]:
+                    for t in dp[i-1][ss]:
+                        # Add to ss
+                        dp[i][ss+n].add(t + n)
+                        # Sub from ss
+                        dp[i][ss-n].add(t)
+                        # Zero
+                        dp[i][ss].add(t)
 
-        LIMIT = sum(nums) / 2
-
-        @functools.cache
-        def solve0(index, ss, ps):
-            # Shortcut: the positive sum cannot exceed half the sum of nums.
-            if ps > LIMIT:
-                return -math.inf
-
-            if index >= len(nums):
-                if ss == 0:
-                    return ps
-                else:
-                    return -math.inf
-
-            n = nums[index]
-            return max(
-                solve0(index + 1, ss + n, ps + n),
-                solve0(index + 1, ss - n, ps),
-                solve0(index + 1, ss, ps)
-            )
-
-        return solve0(0, 0, 0)
+        return max(dp[-1][0])
 
 
 def test_1():
