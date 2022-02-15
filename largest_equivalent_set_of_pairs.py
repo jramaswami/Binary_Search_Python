@@ -4,31 +4,36 @@ jramaswami
 """
 
 
-import math
 import collections
 
 
 class Solution:
 
     def solve(self, nums):
-        soln = -math.inf
-        dp = [collections.defaultdict(set) for _ in nums]
-        for i, n in enumerate(nums):
-            if i == 0:
-                dp[i][-n] = [0]
-                dp[i][n] = [n]
-                dp[i][0] = [0]
-            else:
-                for ss in dp[i-1]:
-                    for t in dp[i-1][ss]:
-                        # Add to ss
-                        dp[i][ss+n].add(t + n)
-                        # Sub from ss
-                        dp[i][ss-n].add(t)
-                        # Zero
-                        dp[i][ss].add(t)
+        # double knapsack
+        max_sum = sum(nums) // 2
 
-        return max(dp[-1][0])
+        # O(1500 * 1500 * 30)
+
+        # dp[index][w1][w2]
+        dp = [collections.defaultdict(lambda: collections.defaultdict(lambda: False)) for _ in nums]
+        dp[0][nums[0]][0] = True
+        dp[0][0][nums[0]] = True
+        dp[0][0][0] = True
+        for i, n in enumerate(nums[1:], start=1):
+            for w1 in dp[i-1]:
+                for w2 in dp[i-1][w1]:
+                    if dp[i-1][w1][w2]:
+                        # Can I add it to w1?
+                        if w1 + n <= max_sum:
+                            dp[i][w1+n][w2] = True
+                        # Can I add it to w2?
+                        if w2 + n <= max_sum:
+                            dp[i][w1][w2+n] = True
+                        # I can always chuck n!
+                        dp[i][w1][w2] = True
+
+        return max(w for w in range(max_sum+1) if dp[-1][w][w])
 
 
 def test_1():
