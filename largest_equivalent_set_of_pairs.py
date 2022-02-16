@@ -4,36 +4,30 @@ jramaswami
 """
 
 
-import collections
-
-
 class Solution:
 
     def solve(self, nums):
         # double knapsack
         max_sum = sum(nums) // 2
 
-        # O(1500 * 1500 * 30)
-
         # dp[index][w1][w2]
-        dp = [collections.defaultdict(lambda: collections.defaultdict(lambda: False)) for _ in nums]
-        dp[0][nums[0]][0] = True
-        dp[0][0][nums[0]] = True
-        dp[0][0][0] = True
+        curr = set()
+        prev = set()
+        prev.add((nums[0], 0))
+        prev.add((0, nums[0]))
+        prev.add((0, 0))
         for i, n in enumerate(nums[1:], start=1):
-            for w1 in dp[i-1]:
-                for w2 in dp[i-1][w1]:
-                    if dp[i-1][w1][w2]:
-                        # Can I add it to w1?
-                        if w1 + n <= max_sum:
-                            dp[i][w1+n][w2] = True
-                        # Can I add it to w2?
-                        if w2 + n <= max_sum:
-                            dp[i][w1][w2+n] = True
-                        # I can always chuck n!
-                        dp[i][w1][w2] = True
-
-        return max(w for w in range(max_sum+1) if dp[-1][w][w])
+            for w1, w2 in prev:
+                # Can I add it to w1?
+                if w1 + n <= max_sum:
+                    curr.add((w1+n, w2))
+                # Can I add it to w2?
+                if w2 + n <= max_sum:
+                    curr.add((w1, w2+n))
+                # I can always chuck n!
+                curr.add((w1, w2))
+            prev, curr = curr, prev
+        return max(w for w in range(max_sum+1) if (w, w) in prev)
 
 
 def test_1():
