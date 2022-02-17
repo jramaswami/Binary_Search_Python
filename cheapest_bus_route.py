@@ -6,6 +6,7 @@ jramaswami
 
 import collections
 import math
+import heapq
 
 
 class Solution:
@@ -21,10 +22,10 @@ class Solution:
             stops[stop].add(bus)
             last_stop = max(start, stop, last_stop)
 
-        queue = collections.deque([(0, 0, -1, -1)])
-        total_cost = [{stop : math.inf for stop in stops} for bus in routes]
+        queue = [(0, 0, -1, -1)]
+        total_cost = [[math.inf for _ in range(last_stop+1)] for bus in routes]
         while queue:
-            curr_cost, curr_stop, curr_bus, init_stop = queue.popleft()
+            curr_cost, curr_stop, curr_bus, init_stop = heapq.heappop(queue)
             if curr_bus >= 0:
                 total_cost[curr_bus][curr_stop] = min(total_cost[curr_bus][curr_stop], curr_cost)
 
@@ -37,7 +38,7 @@ class Solution:
             for next_bus in stops[curr_stop]:
                 if curr_bus != next_bus and init_stop != curr_stop:
                     if total_cost[next_bus][curr_stop] > curr_cost + 1:
-                        queue.append((curr_cost + 1, curr_stop, next_bus, curr_stop))
+                        heapq.heappush(queue, (curr_cost + 1, curr_stop, next_bus, curr_stop))
 
         min_cost = min(total_cost[bus][last_stop] for bus in routes)
         return -1 if min_cost == math.inf else min_cost
