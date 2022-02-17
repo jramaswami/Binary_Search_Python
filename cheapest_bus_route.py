@@ -25,17 +25,18 @@ class Solution:
         total_cost = [{stop : math.inf for stop in stops} for bus in routes]
         while queue:
             curr_cost, curr_stop, curr_bus, init_stop = queue.popleft()
-            total_cost[curr_bus][curr_stop] = min(total_cost[curr_bus][curr_stop], curr_cost)
+            if curr_bus >= 0:
+                total_cost[curr_bus][curr_stop] = min(total_cost[curr_bus][curr_stop], curr_cost)
 
             # I can stay on this bus for 0 cost.
             for next_stop in routes[curr_bus][curr_stop]:
                 if next_stop != init_stop and total_cost[curr_bus][next_stop] > curr_cost:
                     queue.append((curr_cost, next_stop, curr_bus, init_stop))
+
             # I can switch buses at cost of 1.
             for next_bus in stops[curr_stop]:
                 if curr_bus != next_bus and init_stop != curr_stop:
                     if total_cost[next_bus][curr_stop] > curr_cost + 1:
-                        total_cost[next_bus][curr_stop] = curr_cost + 1
                         queue.append((curr_cost + 1, curr_stop, next_bus, curr_stop))
 
         min_cost = min(total_cost[bus][last_stop] for bus in routes)
