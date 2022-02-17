@@ -5,44 +5,61 @@ jramaswami
 
 
 import collections
-import math
 import heapq
 
 
 class Solution:
 
     def solve(self, connections):
-        routes = collections.defaultdict(lambda: collections.defaultdict(list))
-        stops = collections.defaultdict(set)
+        max_bus = max(t[2] for t in connections)
+        last_stop = max(max(t[0], t[1]) for t in connections)
 
-        last_stop = 0
-        for start, stop, bus in connections:
-            routes[bus][start].append(stop)
-            stops[start].add(bus)
-            stops[stop].add(bus)
-            last_stop = max(start, stop, last_stop)
+        # bus_changes[curr_bus] = next buses
+        bus_changes = [set() for _ in range(last_stop+1)]
 
-        queue = [(0, 0, -1, -1)]
-        total_cost = [[math.inf for _ in range(last_stop+1)] for bus in routes]
+        # adj[curr_bus][curr_stop] = next stops
+        adj = [[[] for _ in range(last_stop+1)] for _ in range(max_bus+1)]
+
+        for curr_stop, next_stop, curr_bus in connections:
+            bus_changes[curr_stop].add(curr_bus)
+            bus_changes[next_stop].add(curr_bus)
+            adj[curr_bus][curr_stop].append(next_stop)
+
+        # visited[bus][stop]
+        visited = [[False for _ in range(last_stop+1)] for _ in range(max_bus+1)]
+
+        def ride_bus(curr_bus, init_stop):
+            if not visited[curr_bus][init_stop]:
+                visited[curr_bus][init_stop] = True
+                tqueue = collections.deque()
+                tqueue.append(init_stop)
+                while tqueue:
+                    curr_stop = tqueue.popleft()
+                    yield curr_stop, curr_bus
+                    for next_stop in adj[curr_bus][curr_stop]:
+                        if not visited[curr_bus][next_stop]:
+                            visited[curr_bus][next_stop] = True
+                            tqueue.append(next_stop)
+
+        queue = collections.deque([(0, -1)])
+        curr_cost = 0
+        new_queue = collections.deque()
         while queue:
-            curr_cost, curr_stop, curr_bus, init_stop = heapq.heappop(queue)
-            if curr_bus >= 0:
-                total_cost[curr_bus][curr_stop] = min(total_cost[curr_bus][curr_stop], curr_cost)
 
-            # I can stay on this bus for 0 cost.
-            for next_stop in routes[curr_bus][curr_stop]:
-                if next_stop != init_stop and total_cost[curr_bus][next_stop] > curr_cost:
-                    queue.append((curr_cost, next_stop, curr_bus, init_stop))
+            while queue:
+                curr_stop, curr_bus = queue.popleft()
 
-            # I can switch buses at cost of 1.
-            for next_bus in stops[curr_stop]:
-                if curr_bus != next_bus and init_stop != curr_stop:
-                    if total_cost[next_bus][curr_stop] > curr_cost + 1:
-                        heapq.heappush(queue, (curr_cost + 1, curr_stop, next_bus, curr_stop))
+                if curr_stop == last_stop:
+                    return curr_cost
 
-        min_cost = min(total_cost[bus][last_stop] for bus in routes)
-        return -1 if min_cost == math.inf else min_cost
+                for next_bus in bus_changes[curr_stop]:
+                    # Get on next bus at this stop and visit every next stop
+                    new_queue.extend(ride_bus(next_bus, curr_stop))
 
+            curr_cost += 1
+            queue, new_queue = new_queue, collections.deque()
+
+        return -1
 
 
 def test_1():
