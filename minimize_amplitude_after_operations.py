@@ -40,7 +40,11 @@ class Solution:
             if n0 > n_limit:
                 break
 
-            min_n0 = min(heap[0][0], n0)
+            if heap:
+                min_n0 = min(heap[0][0], n0)
+            else:
+                if n == min_n:
+                    min_n0 = n0
             max_n0 = max(max_n, n0)
             if (max_n - min_n) >= (max_n0 - min_n0):
                 heapq.heappush(heap, (n0, n_limit))
@@ -94,5 +98,5 @@ def test_6():
 def test_7():
     "RTE"
     nums = [200, 230]
-    expected = 1
+    expected = 15
     assert Solution().solve(nums) == expected
