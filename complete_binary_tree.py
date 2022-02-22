@@ -24,7 +24,7 @@ class Solution:
                     # If the node has a right child but no left child, this
                     # is not a complete binary tree.
                     return False
-                elif node.left is not None and node.right is None:
+                elif not (node.left is not None and node.right is not None):
                     # If this node is not full, then we have now seen a nonfull
                     # node.
                     nonfull_seen = True
