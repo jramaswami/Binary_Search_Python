@@ -4,44 +4,39 @@ jramaswami
 """
 
 
-import math
-
-
 class Solution:
 
     def solve(self, root):
+        if root is None:
+            return True
 
-        node_count = 0
-        level_count = 0
         queue = [root]
         new_queue = []
+        nonfull_seen = False
         while queue:
-            level_count += 1
-            # Check queue is valid.
-            first_none = len(queue)
-            last_value = -1
-            for i, t in enumerate(queue):
-                if t is None:
-                    first_none = min(first_none, i)
-                else:
-                    last_value = max(last_value, i)
-            if last_value > first_none:
-                return False
-
-            # BFS
             for node in queue:
-                if node:
-                    node_count += 1
+                if nonfull_seen:
+                    # If we have seen a nonfull node, the rest of the nodes
+                    # must be leaf nodes.
+                    if node.left or node.right:
+                        return False
+                elif node.left is None and node.right is not None:
+                    # If the node has a right child but no left child, this
+                    # is not a complete binary tree.
+                    return False
+                elif node.left is not None and node.right is None:
+                    # If this node is not full, then we have now seen a nonfull
+                    # node.
+                    nonfull_seen = True
+
+                if node.left:
                     new_queue.append(node.left)
+                if node.right:
                     new_queue.append(node.right)
-
-
-            if all(node is None for node in new_queue):
-                break
 
             queue, new_queue = new_queue, []
 
-        return int(math.ceil(math.log2(node_count))) == level_count
+        return True
 
 
 #
@@ -81,4 +76,18 @@ def test_5():
     "RTE"
     root = None
     expected = True
+    assert Solution().solve(root) == expected
+
+
+def test_6():
+    "WA"
+    root = make_tree([0, null, null])
+    expected = True
+    assert Solution().solve(root) == expected
+
+
+def test_7():
+    "WA"
+    root =  make_tree([14, [8, [4, null, null], [6, [12, null, null], [13, null, null]]], [1, [9, [11, null, null], [7, null, null]], [0, [3, null, null], [5, null, null]]]])
+    expected = False
     assert Solution().solve(root) == expected
