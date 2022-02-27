@@ -24,12 +24,14 @@ class Solution:
 
         min_pq = []
         max_pq = []
+        moveable = []
 
         for i, L in enumerate(lists):
             heapq.heappush(min_pq, QItem(L[0], L[0], i, 0))
+            heapq.heappush(moveable, QItem(L[0], L[0], i, 0))
             heapq.heappush(max_pq, QItem(-L[0], L[0], i, 0))
 
-        while moveable
+        while moveable:
 
             # Remove expired items.
             while max_pq[0].value_index < indexes[max_pq[0].list_index]:
@@ -40,20 +42,19 @@ class Solution:
 
             soln = min(soln, max_pq[0].actual_value - min_pq[0].actual_value)
 
-            moveable_index = -1
-            moveable_min = math.inf
-            for li, (i, L) in enumerate(zip(indexes, lists)):
-                if i + 1 < len(L) and L[i] < moveable_min:
-                    moveable_index, moveable_min = li, L[i]
+            # Remove any lists that cannot be moved because they are at the end.
+            while moveable and moveable[0].value_index + 1 >= len(lists[moveable[0].list_index]):
+                heapq.heappop(moveable)
 
-            if moveable_index >= 0:
-                indexes[moveable_index] += 1
-                L = lists[moveable_index]
-                i = indexes[moveable_index]
-                heapq.heappush(min_pq, QItem(L[i], L[i], moveable_index, i))
-                heapq.heappush(max_pq, QItem(-L[i], L[i], moveable_index, i))
-            else:
-                break
+            if moveable:
+                li = moveable[0].list_index
+                heapq.heappop(moveable)
+                indexes[li] += 1
+                i = indexes[li]
+                L = lists[li]
+                heapq.heappush(min_pq, QItem(L[i], L[i], li, i))
+                heapq.heappush(max_pq, QItem(-L[i], L[i], li, i))
+                heapq.heappush(moveable, QItem(L[i], L[i], li, i))
 
         return soln
 
