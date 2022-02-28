@@ -5,55 +5,66 @@ jramaswami
 
 
 import collections
-
-
-State = collections.namedtuple('State', ['dels', 'inss'])
-Posn = collections.namedtuple('Posn', ['row', 'col'])
+import functools
 
 
 class Solution:
 
     def solve(self, source, target):
+        def count_ops(T):
+            dlt = ins = 0
+            for op in T:
+                if op[0] == '+':
+                    ins += 1
+                elif op[0] == '-':
+                    dlt += 1
+            return ins, dlt
 
-        def incr_ins(state):
-            return State(state.dels, state.inss+1)
+        @functools.cache
+        def solve0(s, t):
+            if s >= len(source) and t >= len(target):
+                return ()
 
-        def incr_del(state):
-            return State(state.dels+1, state.inss)
+            if s >= len(source):
+                x = collections.deque(solve0(s, t+1))
+                x.appendleft(f"+{target[t]}")
+                return tuple(x)
 
-        dp = [[State(0, 0) for _ in range(len(source) + 1)]
-                           for _ in range(len(target) + 1)]
-        dp[0] = [State(c, 0) for c in range(len(source) + 1)]
-        for r in range(len(target) + 1):
-            dp[r][0] = State(0, r)
-        parent = [[None for _ in range(len(source) + 1)]
-                        for _ in range(len(target) + 1)]
+            if t >= len(target):
+                x = collections.deque(solve0(s+1, t))
+                x.appendleft(f"-{source[s]}")
+                return tuple(x)
 
-        for c in range(1, len(target) + 1):
-            t = target[c-1]
-            for r in range(1, len(source) + 1):
-                s = source[c-1]
-                if r > c:
-                    # Must insert
-                    if s == t:
-                        parent[r][c] = Posn(r-1, c-1)
-                        dp[r][c] = incr_ins(dp[r-1][c-1])
-                    else:
-                        parent[r][c] = Posn(r-1, c)
-                        dp[r][c] = incr_ins(dp[r-1][c])
+            if source[s] == target[t]:
+                x = collections.deque(solve0(s+1, t+1))
+                x.appendleft(f"{source[s]}")
+                return tuple(x)
 
-                elif r <= c:
-                    # Must/can delete
-                    # Must insert
-                    if s == t:
-                        parent[r][c] = Posn(r-1, c-1)
-                        dp[r][c] = incr_del(dp[r-1][c-1])
-                    else:
-                        parent[r][c] = Posn(r, c-1)
-                        dp[r][c] = incr_del(dp[r][c-1])
+            # Delete here.  This moves the source index forward.
+            x = collections.deque(solve0(s+1, t))
+            insx, dltx = count_ops(x)
+            # Insert here
+            y = collections.deque(solve0(s, t+1))
+            insy, dlty = count_ops(y)
+            dltx += 1
+            totx = dltx + insx
+            insy += 1
+            toty = insy + dlty
+            if totx < toty:
+                x.appendleft(f"-{source[s]}")
+                return tuple(x)
+            elif totx > toty:
+                y.appendleft(f"+{target[t]}")
+                return tuple(y)
+            else:
+                if dltx >= dlty:
+                    x.appendleft(f"-{source[s]}")
+                    return tuple(x)
+                else:
+                    y.appendleft(f"+{target[t]}")
+                    return tuple(y)
 
-        for row in dp:
-            print(row)
+        return list(solve0(0, 0))
 
 
 def test_1():
@@ -64,25 +75,33 @@ def test_1():
     assert result == expected
 
 
-# def test_2():
-#     source = "aaab"
-#     target = "aabb"
-#     expected = ["a", "a", "-a", "b", "+b"]
-#     result = Solution().solve(source, target)
-#     assert result == expected
+def test_2():
+    source = "aaab"
+    target = "aabb"
+    expected = ["a", "a", "-a", "b", "+b"]
+    result = Solution().solve(source, target)
+    assert result == expected
 
 
-# def test_3():
-#     source = "abc"
-#     target = "cba"
-#     expected = ["-a", "-b", "c", "+b", "+a"]
-#     result = Solution().solve(source, target)
-#     assert result == expected
+def test_3():
+    source = "abc"
+    target = "cba"
+    expected = ["-a", "-b", "c", "+b", "+a"]
+    result = Solution().solve(source, target)
+    assert result == expected
 
 
-# def test_4():
-#     source = "bcd"
-#     target = "acd"
-#     expected = ["-b", "+a", "c", "c", "d"]
-#     result = Solution().solve(source, target)
-#     assert result == expected
+def test_4():
+    source = "bcd"
+    target = "acd"
+    expected = ["-b", "+a", "c", "d"]
+    result = Solution().solve(source, target)
+    assert result == expected
+
+
+def test_5():
+    source = 'gqhdausadyfsozuerncognjgsbazlfbnwyutaxhwbusxpfgpsjpfgqayemzzwbchaamqfyxllsbgbkuevqgkliimruqhkldjonenmtfnwxvjfuofobfwjgmbcsukpfzputjektrafkqfkidnwtwahwqgkznmqftowhpxlcafsnzycphhgknieqrjrnueqmeagmtneecrzljonmuymvsbcacwhqdcxzooyksrthmctjcolkjeivhngctxclbfxldiqjsagamsgmygehhrawonryyrkppptmgamwmxbgeywrlzxktshllneifspcqseditfflozhprlnlhdgtmtzclgxsaxlhayrrzfgrgkzfstaftoewrrtgbsrwmjnlboobgudebvtufjltchewhshlwpnksdkgjnolavujhstmrtgddopixwezsxypebxpqwviricvfngazhealbjjfbfucfrxyktlznyzsgtqslewxcjiakuboxllx'
+    target = 'ehcotggthvxzcwyjgqsisocwwwlamqjfnyfjxzmctgkdswftzytnzhnlnqoyjlrqwiganwwbgdufrbwjkyhydcgqwpwfspglxvsfrphoyznlfuacqvastsjqvwpprjxmgaqphamtkgbuwjbyvvadwuworfhzecydzzlljwmxubrftbfiybsidoxexzqfidxufpgbhtfvggsskwndbiaslrwhehlabscdghjuqhapcecndkfqtjnwuitgydopmarwcxaytrazqhraqstnwoxfjitddgsbkvlbutgxqlamirsfohopjazqktlhzhozboacvtknnnguscydtihechmrelmxwamoroihfxdoogktggmjybmzwahzwvyuzuhwuvethlfspphuhimoousrbjcetarhwmxgnbowdwpncoxehwsrbxjrzcxxxpammtttuohmtgryzqdqefcjyunobivcjpthvqiplzomdwdhafzwqxaamsfovugm'
+    expected = ["-b", "+a", "c", "d"]
+    result = Solution().solve(source, target)
+    assert result == expected
