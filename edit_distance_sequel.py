@@ -1,6 +1,9 @@
 """
 binarysearch.com :: Edit Distance Sequel
 jramaswami
+
+
+Will using longest common subsequence help?
 """
 
 
@@ -69,15 +72,21 @@ class Solution:
                 dp[-1][c+1] = delete
                 parent[(-1, c+1)] = (-1, c)
 
-        # DEBUG
-        # print(f"{source=} {target=}")
-        # for row in dp:
-        #     print(row)
+        # # DEBUG
+        print(f"{source=} {target=}")
+        for row in dp:
+            print(row)
 
         soln = []
         r, c = len(dp)-1, len(dp[0])-1
         while r - 1 >= 0 or c - 1 >= 0:
-            keep = State(math.inf, math.inf)
+
+            if dp[r][c] == dp[r-1][c-1]:
+                print((r,c), '->', (r-1, c-1), soln)  # DEBUG
+                soln.append(source[c-1])
+                r, c = r-1, c-1
+                continue
+
             insert = State(math.inf, math.inf)
             delete = State(math.inf, math.inf)
             if r-1 >= 0 and c-1 >= 0:
@@ -89,19 +98,15 @@ class Solution:
             if c-1 >= 0:
                 delete = dp[r][c-1]
 
-            # print(f"{r=} {c=} {keep=} {delete=} {insert=}")  # DEBUG
+            print(f"{r=} {c=} {delete=} {insert=}")  # DEBUG
 
-            if keep.ops < insert.ops and keep.ops < delete.ops:
-                soln.append(source[c-1])
-                # print((r,c), '->', (r-1, c-1), soln)  # DEBUG
-                r, c = r-1, c-1
-            elif delete.ops < keep.ops and delete.ops < insert.ops:
-                soln.append(f"-{source[c-1]}")  # DEBUG
-                # print((r,c), '->', (r, c-1), soln)
+            if delete.ops < insert.ops:
+                soln.append(f"-{source[c-1]}")
+                print((r,c), '->', (r, c-1), soln)  # DEBUG
                 r, c = r, c-1
             else:
-                soln.append(f"+{target[r-1]}")  # DEBUG
-                # print((r,c), '->', (r-1, c), soln)
+                soln.append(f"+{target[r-1]}")
+                print((r,c), '->', (r-1, c), soln)  # DEBUG
                 r, c = r-1, c
         soln = soln[::-1]
         return soln
