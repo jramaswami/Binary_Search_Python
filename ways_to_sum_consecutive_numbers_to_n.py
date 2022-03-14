@@ -1,28 +1,31 @@
 """
 binarysearch.com :: Ways to Sum Consecutive Numbers to N
 jramaswami
+
+Searching for the sequence on OEIS shows that it is A001227,
+number of odd divisors of N.
 """
-
-
-import collections
 
 
 class Solution():
     def solve(self, N):
-        window = collections.deque()
-        curr_sum = 0
+        # Boundary case:
+        if N == 0:
+            return 1
+
         soln = 0
-        for n in range(1, N+1):
-            window.append(n)
-            curr_sum += n
-            while curr_sum > N:
-                curr_sum -= window[0]
-                window.popleft()
+        k = 1
+        N0 = N
+        while N0 % 2 == 0:
+            N0 //= 2
 
-            if curr_sum == N:
-                # print(window)
-                soln += 1
-
+        while k * k <= N0:
+            if N0 % k == 0:
+                if k * k == N0:
+                    soln += 1
+                else:
+                    soln += 2
+            k += 2
         return soln
 
 
@@ -33,6 +36,6 @@ def test_1():
 
 
 def test_2():
-    n = 2147483648
+    n = 2147483647
     expected = 2
     assert Solution().solve(n) == expected
