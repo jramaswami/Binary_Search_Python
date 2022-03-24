@@ -29,14 +29,15 @@ class Solution:
             for c, color in enumerate(row):
                 if not visited[r][c]:
                     freqs[color] += 1
+                    visited[r][c] = True
 
                     queue = collections.deque([(r, c)])
                     while queue:
                         r0, c0 = queue.popleft()
-                        visited[r0][c0] = True
                         for r1, c1 in neighbors(r0, c0):
                             if matrix[r0][c0] == matrix[r1][c1] and not visited[r1][c1]:
                                 queue.append((r1, c1))
+                                visited[r1][c1] = True
 
         max_freq = max(freqs.values())
         sum_freq = sum(freqs.values())
