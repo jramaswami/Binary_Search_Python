@@ -5,26 +5,28 @@ jramaswami
 
 
 import math
-import functools
-import sys
-
-
-sys.setrecursionlimit(pow(10, 9))
+import heapq
 
 
 class Solution:
     def solve(self, denominations, amount):
-
-        @functools.cache
-        def solve0(amt):
-            if amt < 0:
-                return math.inf
-            if amt == 0:
-                return 0
-            return 1 + min(solve0(amt - d) for d in denominations)
-
-        soln = solve0(amount)
-        return -1 if soln == math.inf else soln
+        dp = dict()
+        for d in denominations:
+            dp[d] = 1
+        Q = list(denominations)
+        heapq.heapify(Q)
+        while Q:
+            k = heapq.heappop(Q)
+            for d in denominations:
+                if k + d <= amount:
+                    if k + d not in dp:
+                        dp[k+d] = dp[k] + 1
+                        heapq.heappush(Q, k+d)
+                    else:
+                        dp[k+d] = min(dp[k+d], dp[k]+1)
+        if amount in dp:
+            return dp[amount]
+        return -1
 
 
 def test_1():
@@ -44,6 +46,5 @@ def test_2():
 def test_3():
     denominations = [1, 5, 10, 25]
     amount = 500000
-    expected = 250
+    expected = 20000
     assert Solution().solve(denominations, amount) == expected
-
