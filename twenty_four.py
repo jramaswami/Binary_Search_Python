@@ -5,26 +5,40 @@ jramaswami
 
 
 import operator
-import itertools
 
 
 class Solution:
     def solve(self, nums):
         ops = [operator.add, operator.sub, operator.mul, lambda a, b: int(a/b)]
-        for nums0 in itertools.permutations(nums):
 
-            for ops0 in itertools.permutations(ops, 3):
-                stack = list(nums0)
-                for op in reversed(ops0):
-                    a = stack.pop()
-                    b = stack.pop()
-                    if a == 0:
-                        break
-                    c = op(b, a)
-                    stack.append(c)
-                if len(stack) == 1 and stack[-1] == 24:
+        def dfs(nums0):
+            # Base Case: only one number.
+            if len(nums0) == 1:
+                if nums0[-1] == 24:
                     return True
-        return False
+                return False
+
+            for i, _ in enumerate(nums0[:-1]):
+                # You can apply operator to nums0[i] and nums0[i+1]
+                for op in ops:
+                    nums1 = []
+                    for j, _ in enumerate(nums0):
+                        if j == i:
+                            try:
+                                nums1.append(op(nums0[j], nums0[j+1]))
+                            except:
+                                break
+                        elif j == i + 1:
+                            pass
+                        else:
+                            nums1.append(nums0[j])
+
+                    if dfs(tuple(nums1)):
+                        return True
+
+            return False
+
+        return dfs(tuple(nums))
 
 
 def test_1():
