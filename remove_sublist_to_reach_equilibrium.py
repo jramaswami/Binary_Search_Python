@@ -19,6 +19,7 @@ class Solution:
         if delta == 0:
             return len(nums)
         prev_sums = dict()
+        prev_sums[0] = -1
         curr_sum = 0
         soln = len(nums)
         for i, n in enumerate(nums0):
