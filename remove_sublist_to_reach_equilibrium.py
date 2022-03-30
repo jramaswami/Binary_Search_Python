@@ -16,6 +16,8 @@ class Solution:
 
         nums0 = [sign(n) for n in nums]
         delta = sum(nums0)
+        if delta == 0:
+            return len(nums)
         prev_sums = dict()
         curr_sum = 0
         soln = len(nums)
@@ -45,6 +47,14 @@ def test_2():
 def test_3():
     "WA"
     nums = [0]
+    k = 0
+    expected = 1
+    assert Solution().solve(nums, k) == expected
+
+
+def test_4():
+    "WA"
+    nums = [1,2,2,3,0]
     k = 0
     expected = 1
     assert Solution().solve(nums, k) == expected
