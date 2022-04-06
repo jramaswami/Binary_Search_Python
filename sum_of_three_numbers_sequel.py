@@ -10,6 +10,7 @@ import bisect
 class Solution:
     def solve(self, nums, target):
         nums.sort()
+        print(nums, target)
         soln = abs(target - (sum(nums[:3])))
         for i, n in enumerate(nums):
             for j, m in enumerate(nums[i+1:], start=i+1):
@@ -19,8 +20,8 @@ class Solution:
                 print(f"{i=} {n=} {j=} {m=} {d=} {k=}")
                 if k > j:
                     soln = min(soln, abs(target - (n + m + nums[k])))
-                    if k + 1 < len(nums):
-                        soln = min(soln, abs(target - (n + m + nums[k+1])))
+                if k + 1 > j and k + 1 < len(nums):
+                    soln = min(soln, abs(target - (n + m + nums[k+1])))
         return soln
 
 
@@ -41,6 +42,14 @@ def test_2():
 def test_3():
     "WA"
     nums = [1,-1,0,-2]
+    k = 0
+    expected = 0
+    assert Solution().solve(nums, k) == expected
+
+
+def test_4():
+    "WA"
+    nums = [1,-1,1,-2]
     k = 0
     expected = 0
     assert Solution().solve(nums, k) == expected
