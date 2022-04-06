@@ -49,6 +49,12 @@ def find_leftmost_greater(lo, hi, target, nums):
 class Solution:
     def solve(self, nums, target):
         nums.sort()
+        leftmost = collections.defaultdict(math.inf)
+        rightmost = collections.defaultdict(-math.inf)
+        for i, n in enumerate(nums):
+            leftmost[n] = min(leftmost[n], i)
+            rightmost[n] = max(rightmost[n], i)
+
         soln = abs(target - (sum(nums[:3])))
         for i, n in enumerate(nums):
             for j, m in enumerate(nums[i+1:], start=i+1):
