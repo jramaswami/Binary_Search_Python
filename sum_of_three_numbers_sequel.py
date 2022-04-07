@@ -4,70 +4,23 @@ jramaswami
 """
 
 
-def find_rightmost_equal(lo, hi, target, nums):
-    k = -1
-    while lo <= hi:
-        mid = lo + ((hi - lo) // 2)
-        if nums[mid] == target:
-            k = max(k, mid)
-            lo = mid + 1
-        elif nums[mid] < target:
-            lo = mid + 1
-        else:
-            hi = mid - 1
-    return k
-
-
-def find_rightmost_less(lo, hi, target, nums):
-    k = -1
-    while lo <= hi:
-        mid = lo + ((hi - lo) // 2)
-        if nums[mid] == target:
-            lo = mid + 1
-        elif nums[mid] < target:
-            k = max(k, mid)
-            lo = mid + 1
-        else:
-            hi = mid - 1
-    return k
-
-
-def find_leftmost_greater(lo, hi, target, nums):
-    k = len(nums)
-    while lo <= hi:
-        mid = lo + ((hi - lo) // 2)
-        if nums[mid] == target:
-            lo = mid + 1
-        elif nums[mid] < target:
-            lo = mid + 1
-        else:
-            k = min(k, mid)
-            hi = mid - 1
-    return k
+import math
 
 
 class Solution:
     def solve(self, nums, target):
         nums.sort()
-        leftmost = collections.defaultdict(math.inf)
-        rightmost = collections.defaultdict(-math.inf)
-        for i, n in enumerate(nums):
-            leftmost[n] = min(leftmost[n], i)
-            rightmost[n] = max(rightmost[n], i)
-
-        soln = abs(target - (sum(nums[:3])))
-        for i, n in enumerate(nums):
-            for j, m in enumerate(nums[i+1:], start=i+1):
-                d = target - n - m
-                eqi = find_rightmost_equal(j+1, len(nums)-1, d, nums)
-                if eqi > j:
-                    soln = min(soln, abs(target - (n + m + nums[eqi])))
-                lti = find_rightmost_less(j+1, len(nums)-1, d, nums)
-                if lti > j:
-                    soln = min(soln, abs(target - (n + m + nums[lti])))
-                gti = find_leftmost_greater(j+1, len(nums)-1, d, nums)
-                if gti < len(nums) and gti > j:
-                    soln = min(soln, abs(target - (n + m + nums[gti])))
+        soln = math.inf
+        for i, _ in enumerate(nums[:-2]):
+            j = i+1
+            k = len(nums) - 1
+            while j < k:
+                curr = nums[i] + nums[j] + nums[k]
+                soln = min(abs(target - curr), soln)
+                if curr <= target:
+                    j += 1
+                else:
+                    k -= 1
         return soln
 
 
