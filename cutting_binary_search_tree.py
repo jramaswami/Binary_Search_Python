@@ -13,7 +13,7 @@ class Solution:
         right_subtree = self.solve(node.right, lo, hi)
         if lo <= node.val <= hi:
             node.left = left_subtree
-            node.righ = right_subtree
+            node.right = right_subtree
             return node
         else:
             # Node must be removed
@@ -21,7 +21,7 @@ class Solution:
                 return None
             elif left_subtree is None:
                 return right_subtree
-            elif right_subree is None:
+            elif right_subtree is None:
                 return left_subtree
             else:
                 # Since left subtree is less than right subtree
@@ -60,8 +60,10 @@ def test_2():
 
 def test_3():
     "WA"
-    root = [5, [1, null, null], [9, [7, [6, null, null], [8, null, null]], [10, null, null]]]
-    lo = 7
-    hi = 10
-    expected = make_tree([0, null, [6, [2, null, null], null]])
-    Solution().solve(make_tree(root), lo, hi) == expected
+    root = [0, null, [6, [2, null, null], null]]
+    lo = 0
+    hi = 1
+    expected = make_tree([0, null, null])
+    result = Solution().solve(make_tree(root), lo, hi)
+    print(result)
+    assert result == expected
