@@ -4,36 +4,40 @@ jramaswami
 """
 
 
+import collections
+
+
 class Solution:
     def solve(self, root, head):
-
-        def find_head(node, head):
-            if head is None:
-                return True
-
-            if node is None:
-                return False
-
-            if node.val == head.val and find_list_from(node, head):
-                return True
-
-            return find_head(node.left, head) or find_head(node.right, head)
-
-        def find_list_from(node, curr):
-            if curr is None:
-                return True
-
-            if node is None:
-                return False
-
-            if node.val == curr.val:
-                return (
-                    find_list_from(node.left, curr.next) or
-                    find_list_from(node.right, curr.next)
-                )
+        if head is None:
+            return True
+        if root is None:
             return False
 
-        return find_head(root, head)
+        def find_list_from(node):
+            P = collections.deque()
+            P.append((node, head))
+            while P:
+                tree_node, list_node = P.popleft()
+                if list_node.next is None:
+                    return True
+                if tree_node.left and tree_node.left.val == list_node.next.val:
+                    P.append((tree_node.left, list_node.next))
+                if tree_node.right and tree_node.right.val == list_node.next.val:
+                    P.append((tree_node.right, list_node.next))
+            return False
+
+        Q = collections.deque()
+        Q.append(root)
+        while Q:
+            tree_node = Q.popleft()
+            if tree_node.val == head.val and find_list_from(tree_node):
+                return True
+            if tree_node.left:
+                Q.append(tree_node.left)
+            if tree_node.right:
+                Q.append(tree_node.right)
+        return False
 
 
 #
