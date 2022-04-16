@@ -8,6 +8,9 @@ class Solution:
     def solve(self, root, head):
 
         def find_head(node, head):
+            if head is None:
+                return True
+
             if node is None:
                 return False
 
@@ -16,23 +19,19 @@ class Solution:
 
             return find_head(node.left, head) or find_head(node.right, head)
 
-        def find_list_from(node, head):
-            # We already know that node.val == head.val
-            curr = head.next
-            while curr:
-                print(f"{curr=}")
-                if node.left and node.left.val == curr.val:
-                    node = node.left
-                elif node.right and node.right.val == curr.val:
-                    node = node.right
-                else:
-                    return False
-                curr = curr.next
-            return True
+        def find_list_from(node, curr):
+            if curr is None:
+                return True
 
-        # Boundary case:
-        if head is None:
-            return True
+            if node is None:
+                return False
+
+            if node.val == curr.val:
+                return (
+                    find_list_from(node.left, curr.next) or
+                    find_list_from(node.right, curr.next)
+                )
+            return False
 
         return find_head(root, head)
 
