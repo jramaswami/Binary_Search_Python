@@ -4,9 +4,6 @@ jramaswami
 """
 
 
-import collections
-
-
 class Solution:
     def solve(self, root, head):
         if head is None:
@@ -14,30 +11,41 @@ class Solution:
         if root is None:
             return False
 
-        def find_list_from(node):
-            P = collections.deque()
-            P.append((node, head))
-            while P:
-                tree_node, list_node = P.popleft()
-                if list_node.next is None:
-                    return True
-                if tree_node.left and tree_node.left.val == list_node.next.val:
-                    P.append((tree_node.left, list_node.next))
-                if tree_node.right and tree_node.right.val == list_node.next.val:
-                    P.append((tree_node.right, list_node.next))
-            return False
+        # Build KMP pi.
+        P = []
+        PI = []
+        curr = head
+        while curr:
+            P.append(curr.val)
+            PI.append(0)
+            curr = curr.next
 
-        Q = collections.deque()
-        Q.append(root)
-        while Q:
-            tree_node = Q.popleft()
-            if tree_node.val == head.val and find_list_from(tree_node):
+        assert len(P) == len(PI)
+        i = 0
+        for j, _ in enumerate(P[1:], start=1):
+            if P[i] == P[j]:
+                PI[j] = i + 1
+                i += 1
+            else:
+                PI[j] = 0
+                i = 0
+
+        def search(node, i):
+            if i == len(P):
                 return True
-            if tree_node.left:
-                Q.append(tree_node.left)
-            if tree_node.right:
-                Q.append(tree_node.right)
-        return False
+
+            if node is None:
+                return False
+
+            if node.val == P[i]:
+                i = i + 1
+            else:
+                i = PI[i]
+            return search(node.left, i) or search(node.right, i)
+
+        return search(root, 0)
+
+
 
 
 #
@@ -79,5 +87,13 @@ def test_4():
 def test_5():
     root = [2, [1, [0, null, null], null], null]
     head = []
+    expected = True
+    assert Solution().solve(make_tree(root), list_to_ll(head)) == expected
+
+
+def test_6():
+    "WA"
+    root = [1, null, [1, null, [1, null, [1, null, [2, null, null]]]]]
+    head = [1,1,1,2]
     expected = True
     assert Solution().solve(make_tree(root), list_to_ll(head)) == expected
