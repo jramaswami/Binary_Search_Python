@@ -7,7 +7,20 @@ jramaswami
 class Solution:
     def solve(self, root, head):
 
-        def solve0(node, curr):
+        def find_head(node, head):
+            if node is None:
+                return False
+
+            result = False
+            if node.val == head.val:
+                return (
+                    find_list_from(node, head) or
+                    find_head(node.left, head) or
+                    find_head(node.right, head)
+                )
+            return find_head(node.left, head) or find_head(node.right, head)
+
+        def find_list_from(node, curr):
             if curr is None:
                 return True
 
@@ -15,11 +28,17 @@ class Solution:
                 return False
 
             if node.val == curr.val:
-                return solve0(node.left, curr.next) or solve0(node.right, curr.next)
-            else:
-                return solve0(node.left, curr) or solve0(node.right, curr)
+                return (
+                    find_list_from(node.left, curr.next) or
+                    find_list_from(node.right, curr.next)
+                )
+            return False
 
-        return solve0(root, head)
+        # Boundary case:
+        if head is None:
+            return True
+
+        return find_head(root, head)
 
 
 #
@@ -48,4 +67,18 @@ def test_3():
     root = [2, [1, [0, null, null], null], null]
     head = [2,0]
     expected = False
+    assert Solution().solve(make_tree(root), list_to_ll(head)) == expected
+
+
+def test_4():
+    root = null
+    head = [2,0]
+    expected = False
+    assert Solution().solve(make_tree(root), list_to_ll(head)) == expected
+
+
+def test_5():
+    root = [2, [1, [0, null, null], null], null]
+    head = []
+    expected = True
     assert Solution().solve(make_tree(root), list_to_ll(head)) == expected
