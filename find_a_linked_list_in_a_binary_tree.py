@@ -11,28 +11,24 @@ class Solution:
             if node is None:
                 return False
 
-            result = False
-            if node.val == head.val:
-                return (
-                    find_list_from(node, head) or
-                    find_head(node.left, head) or
-                    find_head(node.right, head)
-                )
-            return find_head(node.left, head) or find_head(node.right, head)
-
-        def find_list_from(node, curr):
-            if curr is None:
+            if node.val == head.val and find_list_from(node, head):
                 return True
 
-            if node is None:
-                return False
+            return find_head(node.left, head) or find_head(node.right, head)
 
-            if node.val == curr.val:
-                return (
-                    find_list_from(node.left, curr.next) or
-                    find_list_from(node.right, curr.next)
-                )
-            return False
+        def find_list_from(node, head):
+            # We already know that node.val == head.val
+            curr = head.next
+            while curr:
+                print(f"{curr=}")
+                if node.left and node.left.val == curr.val:
+                    node = node.left
+                elif node.right and node.right.val == curr.val:
+                    node = node.right
+                else:
+                    return False
+                curr = curr.next
+            return True
 
         # Boundary case:
         if head is None:
