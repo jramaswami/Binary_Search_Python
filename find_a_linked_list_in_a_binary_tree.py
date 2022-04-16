@@ -1,7 +1,35 @@
 """
 binarysearch.com :: Find a Linked List in a Binary Tree
 jramaswami
+
+REF: https://www.youtube.com/watch?v=GTJr8OvyEVQ
 """
+
+
+def ll_to_list(head):
+    A = []
+    curr = head
+    while curr:
+        A.append(curr.val)
+        curr = curr.next
+    return A
+
+
+def prefix_function(pattern):
+    longest_prefix_suffix = [0 for _ in pattern]
+    index = 0
+    for i in range(1, len(pattern)):
+        if pattern[i] == pattern[index]:
+            longest_prefix_suffix[i] = index + 1
+            index += 1
+            i += 1
+        else:
+            if index != 0:
+                index = longest_prefix_suffix[index-1]
+            else:
+                longest_prefix_suffix[i] = 0
+                i += 1
+    return longest_prefix_suffix
 
 
 class Solution:
@@ -11,46 +39,34 @@ class Solution:
         if root is None:
             return False
 
-        # Build KMP pi.
-        P = []
-        PI = []
-        curr = head
-        while curr:
-            P.append(curr.val)
-            PI.append(0)
-            curr = curr.next
+        # Build KMP prefix/suffix table.
+        pattern = ll_to_list(head)
+        longest_prefix_suffix = prefix_function(pattern)
 
-        assert len(P) == len(PI)
-        i = 0
-        for j, _ in enumerate(P[1:], start=1):
-            if P[i] == P[j]:
-                PI[j] = i + 1
-                i += 1
-            else:
-                PI[j] = 0
-                i = 0
-
-        def search(node, i):
-            if i == len(P):
+        def search(node, j):
+            if j == len(pattern):
                 return True
 
             if node is None:
                 return False
 
-            if node.val == P[i]:
-                i = i + 1
+            if node.val == pattern[j]:
+                return search(node.left, j+1) or search(node.right, j+1)
             else:
-                i = PI[i]
-            return search(node.left, i) or search(node.right, i)
+                if j != 0:
+                    j = longest_prefix_suffix[j-1]
+                    return search(node, j)
+                else:
+                    return search(node.left, j) or search(node.right, j)
 
         return search(root, 0)
-
-
 
 
 #
 #  Testing
 #
+
+
 from bscom_trees import *
 from bscom_linked_lists import *
 
