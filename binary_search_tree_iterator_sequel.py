@@ -8,8 +8,7 @@ class BSTIterator:
     def __init__(self, root):
         self.values = []
         self._inorder(root)
-        print(self.values)
-        self.index = 0
+        self.index = -1
 
     def _inorder(self, node):
         if node is None:
@@ -19,17 +18,15 @@ class BSTIterator:
         self._inorder(node.right)
 
     def next(self):
-        x = self.values[self.index]
         self.index += 1
-        return x
+        return self.values[self.index]
 
     def hasnext(self):
-        return self.index < len(self.values)
+        return self.index < len(self.values) - 1
 
     def prev(self):
-        self.index -= 2
-        x = self.values[self.index]
-        return x
+        self.index -= 1
+        return self.values[self.index]
 
     def hasprev(self):
-        return self.index > 2
+        return self.index > 0
