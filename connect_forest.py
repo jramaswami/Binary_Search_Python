@@ -5,12 +5,16 @@ jramaswami
 
 
 import collections
-import heapq
 
 
 class Solution:
 
     def solve(self, graph):
+        # Boundary case:
+        if not graph:
+            return 0
+
+        # Component id to identify the different disjoint trees.
         comp_id = [None for _ in graph]
 
         def compute_tree_diameter(root):
@@ -43,24 +47,43 @@ class Solution:
                         visited.add(neighbor)
                         queue.append((neighbor, dist+1))
             # BFS to find the center node.
-            visited = collections.defaultdict(int)
-            center_node = None
-            queue = collections.deque([(node1
+            visited = dict()
+            center_node = node1
+            queue = collections.deque([(node1, 1), (node2, 2)])
+            visited[node1] = 1
+            visited[node2] = 2
+            while queue:
+                node, parent = queue.popleft()
+                for neighbor in graph[node]:
+                    if neighbor in visited:
+                        if visited[neighbor] != parent:
+                            center_node = node
+                            break
+                    else:
+                        visited[neighbor] = parent
+                        queue.append((neighbor, parent))
 
-            return diameter
+            return diameter, center_node
 
+        # Find the diameter and center node for each tree in forest.
         diameters = []
         for root, _ in enumerate(graph):
             if comp_id[root] is None:
-                diameter = compute_tree_diameter(root)
-                heapq.heappush(diameters, diameter)
-                while len(diameters) > 2:
-                    heapq.heappop(diameters)
+                diameter, center_node = compute_tree_diameter(root)
+                diameters.append((diameter, center_node))
 
-        if len(diameters) == 2:
-            a, b = diameters
-            return (a // 2) + (b // 2) + 1
-        return diameters[0] - 1
+        # Attach the center node of all other trees to the center  node
+        # of the tree with the maximum diameter.
+        diameters.sort()
+        _, center_node0 = diameters[-1]
+        for _, center_node in diameters[:-1]:
+            graph[center_node0].append(center_node)
+            graph[center_node].append(center_node0)
+
+        # Compute the diameter of that tree.  Then subtract one because
+        # we are looking for the number of edges not nodes.
+        soln, _ = compute_tree_diameter(root)
+        return soln - 1
 
 
 def test_1():
@@ -92,4 +115,22 @@ def test_3():
     "WA"
     graph = [[], [], [], []]
     expected = 2
+    assert Solution().solve(graph) == expected
+
+
+def test_4():
+    graph = []
+    expected = 0
+    assert Solution().solve(graph) == expected
+
+
+def test_5():
+    graph = [[]]
+    expected = 0
+    assert Solution().solve(graph) == expected
+
+
+def test_6():
+    graph = [[], []]
+    expected = 1
     assert Solution().solve(graph) == expected
