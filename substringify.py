@@ -16,7 +16,7 @@ class Solution:
             return result
 
         soln = len(T)
-        for i, _ in enumerate(S[:len(T)]):
+        for i, _ in enumerate(S):
             if i + len(T) > len(S):
                 break
             soln = min(soln, compute_changes(i))
