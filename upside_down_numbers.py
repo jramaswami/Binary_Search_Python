@@ -7,57 +7,41 @@ jramaswami
 class Solution:
 
     def solve(self, n):
+
+        # Boundary case
+        if n == 0:
+            return []
+
         soln = []
 
-        def partnered(i, acc):
-            partner = n - i - 1
-            print(f"partner({i=} {acc=}) {n=} {partner=}")
-            if partner >= 0 and partner > i:
-                if acc[partner] == '9':
-                    return True
-                if acc[partner] == '6':
-                    return True
-            return False
-
-        def get_partner(i, acc):
-            partner = n - i - 1
-            if partner >= 0:
-                if acc[partner] == '9':
-                    return '6'
-                if acc[partner] == '6':
-                    return '9'
-
-        def cannot_be_partner(i):
-            if n % 2:
-                mid = n // 2
-                # print(f"cannot_be_partner({i=}) {mid=}")
-                return i == mid
-            return False
-
-        def solve0(i, acc):
-            if i >= n:
+        def solve0(left, right, acc):
+            if left > right:
                 soln.append("".join(acc))
                 return
 
-            if partnered(i, acc):
-                # Check and see if we are matching a previous 6 or 9.
-                acc.append(get_partner(i, acc))
-                solve0(i+1, acc)
-                acc.pop()
+            if left == right:
+                # Must not be a 6 or 9
+                acc[left] = "1"
+                solve0(left+1, right-1, acc)
+                acc[left] = "8"
+                solve0(left+1, right-1, acc)
+                acc[left] = "0"
+                solve0(left+1, right-1, acc)
             else:
-                for k in "01689":
-                    # print(f"{k=} {cannot_be_partner(i)=}")
-                    # No leading zeros.
-                    if k == 0 and i == 0:
+                for k in "018":
+                    if left == 0 and k == '0':
                         continue
-                    if k in "69" and cannot_be_partner(i):
-                        continue
-                    acc.append(k)
-                    solve0(i+1, acc)
-                    acc.pop()
+                    acc[left] = acc[right] = k
+                    solve0(left+1, right-1, acc)
+                acc[left], acc[right] = '6', '9'
+                solve0(left+1, right-1, acc)
+                acc[left], acc[right] = '9', '6'
+                solve0(left+1, right-1, acc)
+                acc[left], acc[right] = '9', '6'
 
-        solve0(0, [])
-        return soln
+        acc = ["" for _ in range(n)]
+        solve0(0, n-1, acc)
+        return sorted(soln)
 
 
 def test_1():
@@ -69,4 +53,10 @@ def test_1():
 def test_2():
     n = 2
     expected = ["11", "69", "88", "96"]
+    assert Solution().solve(n) == expected
+
+
+def test_3():
+    n = 3
+    expected = ["101", "111", "181", "609", "619", "689", "808", "818", "888", "906", "916", "986"]
     assert Solution().solve(n) == expected
