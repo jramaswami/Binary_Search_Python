@@ -18,13 +18,14 @@ class Solution:
         soln = 0
         lo, hi = 0, sum(counts)
         while lo <= hi:
-            mid = lo = ((hi - lo) // 2)
+            mid = lo + ((hi - lo) // 2)
             if check(mid):
                 soln = max(mid, soln)
-                hi -= 1
+                lo = mid + 1
             else:
-                lo += 1
+                hi = mid - 1
         return soln
+
 
 def test_1():
     counts = [3, 3, 2, 5]
