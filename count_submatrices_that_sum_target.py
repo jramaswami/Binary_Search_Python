@@ -4,53 +4,37 @@ jramaswami
 """
 
 
-import math
+import collections
+import itertools
 
 
 class Solution:
 
     def solve(self, matrix, target):
+        prefix = [list(itertools.accumulate(row)) for row in matrix]
 
-        # Prefix sums for matrix.
-        prefix = [[0 for _ in row] for row in matrix]
+        def get_sum(row, left, right):
+            "Return the sum of matrix[row][left:right+1]."
+            if left - 1 < 0:
+                return prefix[row][right]
+            return prefix[row][right] - prefix[row][left-1]
 
-        def get_prefix(r, c):
-            "Helper function to return prefix sum or 0 if out of bounds."
-            if r < 0 or c < 0:
-                return 0
-            return prefix[r][c]
-
-        # Compute prefix sums
-        for r, row in enumerate(matrix):
-            for c, val in enumerate(row):
-                prefix[r][c] = (
-                    get_prefix(r-1, c) +
-                    get_prefix(r, c-1) -
-                    get_prefix(r-1, c-1) +
-                    val
-                )
-
-        def get_sum(r1, c1, r2, c2):
-            """
-            Compute the sum for the matrix from top left (r1, c1)
-            to bottom right (r2, c2).
-            """
-            return (
-                get_prefix(r2, c2) -
-                get_prefix(r1-1, c2) -
-                get_prefix(r2, c1-1) +
-                get_prefix(r1-1, c1-1)
-            )
-
-        # Compute number of submatrices that sum to target.
+        height = len(matrix)
+        width = len(matrix[0])
         soln = 0
-        height, width = len(matrix), len(matrix[0])
-        for r1 in range(height):
-            for r2 in range(r1, height):
-                for c1 in range(width):
-                    for c2 in range(c1, width):
-                        if get_sum(r1, c1, r2, c2) == target:
-                            soln += 1
+        for left in range(width):
+            for right in range(left, width):
+                curr_sum = 0
+                prev_sums = collections.defaultdict(int)
+                for row in range(height):
+                    curr_sum += get_sum(row, left, right)
+                    if curr_sum == target:
+                        soln += 1
+                    # curr_sum - prev_sum = target
+                    # curr_sum - target = prev_sum
+                    prev_sum = curr_sum - target
+                    soln += prev_sums[prev_sum]
+                    prev_sums[curr_sum] += 1
         return soln
 
 
