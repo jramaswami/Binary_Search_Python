@@ -22,8 +22,8 @@ class Solution:
             return curr_days <= k
 
         # Binary search for the answer.
-        lo = 0
-        hi = sum(nums)
+        lo = max(nums) # Minimally, you must fit the largest group on a plane.
+        hi = sum(nums) # Maximally, you will take all the people at once.
         soln = hi
         while lo <= hi:
             mid = lo + ((hi - lo) // 2)
