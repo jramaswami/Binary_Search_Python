@@ -50,8 +50,8 @@ class Solution:
                 curr.is_found = True
                 result += 1
             for r0, c0 in neighbors(r, c):
-                if not visited[r0][c0] and matrix[r][c] in curr.children:
-                    result += dfs(r0, c0, curr.children[matrix[r][c]], visited)
+                if not visited[r0][c0] and matrix[r0][c0] in curr.children:
+                    result += dfs(r0, c0, curr.children[matrix[r0][c0]], visited)
             return result
 
         soln = 0
@@ -72,7 +72,6 @@ def test_1():
     words = ["bar", "car", "cat"]
     expected = 3
     assert Solution().solve(matrix, words) == expected
-
 
 
 def test_2():
