@@ -20,7 +20,6 @@ class Solution:
         graph= collections.defaultdict(list)
         for u, v, w in roads:
             graph[u].append((v, w))
-            graph[v].append((u, w))
 
         dist = collections.defaultdict(lambda: (math.inf, math.inf))
         dist[start] = (0, 0)
