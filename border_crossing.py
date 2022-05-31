@@ -12,7 +12,7 @@ import math
 class Solution:
 
     def solve(self, roads, countries, start, end):
-        city_countries = [0 for _ in roads]
+        city_countries = collections.defaultdict(int)
         for country, cities in enumerate(countries):
             for city in cities:
                 city_countries[city] = country
@@ -65,4 +65,14 @@ def test_3():
     start = 1
     end = 0
     expected = [0, 5]
+    assert Solution().solve(roads, countries, start, end) == expected
+
+
+def test_4():
+    "WA"
+    roads = [[1,0,5],[0,1,4]]
+    countries = [[1,2],[0]]
+    start = 1
+    end = 0
+    expected = [1, 5]
     assert Solution().solve(roads, countries, start, end) == expected
