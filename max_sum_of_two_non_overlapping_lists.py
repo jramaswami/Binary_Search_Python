@@ -30,16 +30,10 @@ class Solution:
             curr_max = max(curr_max, sums[i])
             prefix_maxs[i] = curr_max
 
-        print(f"{a=} {b=}")
-        print(f"{sums=}")
-        print(f"{suffix_maxs=}")
-        print(f"{prefix_maxs=}")
-        print(f"{nums=}")
-
         soln = -math.inf
         curr_sum = sum(nums[:b])
-        if b < len(suffix_maxs):
-            soln = max(soln, curr_sum + suffix_maxs[b])
+        if i + a < len(suffix_maxs):
+            soln = max(soln, curr_sum + suffix_maxs[i+a])
         for i, n in enumerate(nums[b:], start=b):
             curr_sum -= nums[i-b]
             curr_sum += n
@@ -47,7 +41,6 @@ class Solution:
                 soln = max(soln, curr_sum + prefix_maxs[i-b])
             if i + a < len(suffix_maxs):
                 soln = max(soln, curr_sum + suffix_maxs[i+a])
-            print(f"{i=} {i-b=} {n=} {curr_sum=} {soln=}")
         return soln
 
 
@@ -65,4 +58,13 @@ def test_2():
     a = 2
     b = 1
     expected = -3
+    assert Solution().solve(nums, a, b) == expected
+
+
+def test_3():
+    "WA"
+    nums = [1,-2,0,0]
+    a = 2
+    b = 1
+    expected = 1
     assert Solution().solve(nums, a, b) == expected
