@@ -20,16 +20,18 @@ class Solution:
                     yield x0, y0
 
         # dp[steps][x][y] = number of ways to reach in i steps.
-        dp = [[[0 for _ in range(n)] for _ in range(n)] for _ in range(k+1)]
-        dp[0][x][y] = 1
+        prev_dp = [[0 for _ in range(n)] for _ in range(n)]
+        prev_dp[x][y] = 1
+        next_dp = [[0 for _ in range(n)] for _ in range(n)]
 
         for i in range(k):
             for x0 in range(n):
                 for y0 in range(n):
                     for x1, y1 in neighbors(x0, y0):
-                        dp[i+1][x1][y1] += dp[i][x0][y0]
+                        next_dp[x1][y1] += prev_dp[x0][y0]
+            prev_dp, next_dp = next_dp, [[0 for _ in range(n)] for _ in range(n)]
 
-        t = sum(sum(row) for row in dp[-1])
+        t = sum(sum(row) for row in prev_dp)
         return int(100 * (t / pow(8, k)))
 
 
