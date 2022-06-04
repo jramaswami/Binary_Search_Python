@@ -56,27 +56,17 @@ class Solution:
                             j = rc_to_index(r0, c0)
                             uf.union(i, j)
 
-        # Smallest possible solution is 1 because we can turn a single
-        # water cell into an island of size 1.
         soln = max(1, max(uf.size))
         for r, row in enumerate(matrix):
             for c, _ in enumerate(row):
                 if matrix[r][c] == 0:
+                    connected_islands = set()
                     for r0, c0 in neighbors(r, c):
                         if matrix[r0][c0] == 1:
                             i = rc_to_index(r0, c0)
                             a = uf.find(i)
-                            # We can attach this water cell to just this island.
-                            soln = max(soln, 1 + uf.size[a])
-                            for r1, c1 in neighbors(r, c):
-                                if matrix[r1][c1] == 1:
-                                    j = rc_to_index(r1, c1)
-                                    b = uf.find(j)
-                                    if a != b:
-                                        # If the two islands adjacent to this
-                                        # water cell are different, we can
-                                        # combine them.
-                                        soln = max(soln, 1 + uf.size[a] + uf.size[b])
+                            connected_islands.add(a)
+                            soln = max(soln, 1 + sum(uf.size[k] for k in connected_islands))
         return soln
 
 
