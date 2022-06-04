@@ -44,10 +44,7 @@ class Solution:
                     yield r0, c0
 
         def rc_to_index(r, c):
-            return r * len(matrix) + c
-
-        def index_to_rc(index):
-            return index // len(matrix), index % len(matrix)
+            return r * len(matrix[0]) + c
 
         uf = UnionFind(len(matrix) * len(matrix[0]))
         for r, row in enumerate(matrix):
@@ -119,4 +116,11 @@ def test_6():
     "RTE"
     matrix = [[1], [1]]
     expected = 2
+    assert Solution().solve(matrix) == expected
+
+
+def test_7():
+    "WA"
+    matrix = [[1,0,1],[0,1,0]]
+    expected = 4
     assert Solution().solve(matrix) == expected
