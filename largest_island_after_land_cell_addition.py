@@ -61,7 +61,7 @@ class Solution:
 
         # Smallest possible solution is 1 because we can turn a single
         # water cell into an island of size 1.
-        soln = 1
+        soln = max(1, max(uf.size))
         for r, row in enumerate(matrix):
             for c, _ in enumerate(row):
                 if matrix[r][c] == 0:
@@ -111,5 +111,12 @@ def test_4():
 def test_5():
     "WA"
     matrix = [[1, 1]]
+    expected = 2
+    assert Solution().solve(matrix) == expected
+
+
+def test_6():
+    "RTE"
+    matrix = [[1], [1]]
     expected = 2
     assert Solution().solve(matrix) == expected
