@@ -41,7 +41,7 @@ class Solution:
             return result
 
         r, xc, yc = 0, 0, len(matrix[0]) - 1
-        return dfs(r, xc, yc)
+        return matrix[0][0] + matrix[0][-1] + dfs(r, xc, yc)
 
 
 def test_1():
@@ -54,4 +54,10 @@ def test_2():
     "WA"
     matrix = [[2,3,2]]
     expected = 4
+    assert Solution().solve(matrix) == expected
+
+
+def test_3():
+    matrix = [ [2, 3, 3, 7], [2, 1, 0, 1], [1, 0, 3, 3], [0, 2, 0, 0] ]
+    expected = 19
     assert Solution().solve(matrix) == expected
