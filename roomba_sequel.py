@@ -38,18 +38,20 @@ class UnionFind:
             self.right[a] = max(self.right[a], self.right[b])
 
     def next_west(self, a):
+        # OFFSET -1
         a = self.find(a)
         return self.left[a]-1
 
     def next_east(self, a):
+        # OFFSET +1
         a = self.find(a)
         return self.right[a]+1
 
     def next_north(self, a):
-        return self.next_west(a)
+        return self.next_east(a)
 
     def next_south(self, b):
-        return self.next_east(b)
+        return self.next_west(b)
 
 
 class Solver:
@@ -94,9 +96,7 @@ class Solver:
                     y = self.visited_x[x].next_north(y)
                 elif move == "SOUTH":
                     y = self.visited_x[x].next_south(y)
-            else:
-                self.visit(x, y)
-            # print(f"{x=} {y=}")
+            self.visit(x, y)
 
         return x, y
 
@@ -108,6 +108,27 @@ class Solution:
         solver = Solver()
         x, y = solver.simulate(moves)
         return x == xn and y == yn
+
+
+#
+# Testing
+#
+
+
+def brute_force(moves, xn, yn):
+    visited = set()
+    visited.add((0, 0))
+    OFFSETS = {
+        "WEST": (-1, 0), "EAST": (1, 0), "NORTH": (0, 1), "SOUTH": (0, -1)
+    }
+    x = y = 0
+    for move in moves:
+        dx, dy = Solver.OFFSETS[move]
+        x, y = x + dx, y + dy
+        while (x, y) in visited:
+            x, y = x + dx, y + dy
+        visited.add((x, y))
+    return x == xn and y == yn
 
 
 def test_1():
@@ -130,6 +151,6 @@ def test_3():
     "WA"
     moves = ["WEST","SOUTH","NORTH","SOUTH","WEST","WEST","NORTH","WEST","SOUTH","EAST","SOUTH","EAST","NORTH","WEST","EAST","WEST","SOUTH","WEST","WEST","WEST","WEST","WEST","EAST","SOUTH","EAST","SOUTH","SOUTH","NORTH","SOUTH","EAST","SOUTH","WEST","SOUTH","EAST","WEST","SOUTH","NORTH","SOUTH","WEST","WEST","WEST","SOUTH","NORTH","SOUTH","NORTH","EAST","NORTH","SOUTH","WEST","NORTH","SOUTH","NORTH","SOUTH","NORTH","WEST","EAST","EAST","EAST","EAST","WEST","NORTH","EAST","NORTH","SOUTH","SOUTH","WEST","EAST","SOUTH","SOUTH","EAST","WEST","EAST","EAST","EAST","NORTH","SOUTH","WEST","SOUTH","EAST","EAST","SOUTH","NORTH","EAST","SOUTH","WEST","EAST","EAST","NORTH","WEST","WEST","EAST","WEST","WEST","NORTH","EAST","EAST","NORTH","NORTH","WEST","NORTH","SOUTH","WEST","EAST","WEST","SOUTH","EAST","WEST","EAST","WEST","SOUTH","EAST","WEST","EAST","SOUTH","EAST","SOUTH","EAST","SOUTH","EAST","WEST","EAST","EAST","EAST","EAST","EAST","WEST","SOUTH","WEST","NORTH","WEST","WEST","EAST","SOUTH","SOUTH","WEST","SOUTH","SOUTH","NORTH","NORTH","WEST","EAST","SOUTH","NORTH","EAST","EAST","WEST","WEST","SOUTH","WEST","SOUTH","WEST","NORTH","EAST","NORTH","WEST","NORTH","NORTH","EAST","SOUTH","NORTH","EAST","SOUTH","WEST","SOUTH","EAST","WEST","SOUTH","NORTH","EAST","WEST","NORTH","SOUTH","SOUTH","WEST","WEST","WEST","WEST","NORTH","EAST","NORTH","NORTH","NORTH","WEST","EAST","SOUTH","WEST","NORTH","WEST","WEST","NORTH","EAST","SOUTH","NORTH","EAST","WEST","SOUTH","NORTH","EAST","SOUTH","WEST","EAST","SOUTH","SOUTH","EAST","NORTH","EAST","SOUTH","WEST","WEST","WEST","WEST","WEST","SOUTH","WEST","NORTH","WEST","SOUTH","WEST","NORTH","WEST","EAST","SOUTH","WEST","WEST","WEST","SOUTH","WEST","EAST","WEST","EAST","WEST","NORTH","SOUTH","NORTH","SOUTH","WEST","SOUTH","EAST","WEST","NORTH","WEST","EAST","EAST","SOUTH","EAST","NORTH","NORTH","WEST","EAST","WEST","SOUTH","WEST","NORTH","SOUTH","WEST","EAST","WEST","SOUTH","SOUTH","WEST","EAST","NORTH","WEST","WEST","EAST"]
     x = -3
-    y = 24
+    y = -24
     expected = True
     assert Solution().solve(moves, x, y) == expected
