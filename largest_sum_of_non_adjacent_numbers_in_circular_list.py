@@ -12,7 +12,7 @@ class Solution:
 
         # Boundary case
         if len(nums) < 3:
-            return max(nums)
+            return max(0, max(nums))
 
         def solve0(nums0):
             dp = [0 for _ in nums0]
