@@ -10,6 +10,10 @@ class Solution:
         if not nums:
             return 0
 
+        # Boundary case
+        if len(nums) < 3:
+            return max(nums)
+
         def solve0(nums0):
             dp = [0 for _ in nums0]
             dp[0] = max(dp[0], nums0[0])
@@ -41,5 +45,18 @@ def test_2():
 def test_3():
     "RTE"
     nums = [0]
+    expected = 0
+    assert Solution().solve(nums) == expected
+
+
+def test_4():
+    nums = [7, 20]
+    expected = 20
+    assert Solution().solve(nums) == expected
+
+
+def test_5():
+    "WA"
+    nums = [-1]
     expected = 0
     assert Solution().solve(nums) == expected
