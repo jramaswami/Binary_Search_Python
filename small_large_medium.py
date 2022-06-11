@@ -4,20 +4,24 @@ jramaswami
 """
 
 
-import collections
+import math
 
 
 class Solution:
 
     def solve(self, nums):
-        T = collections.deque()
+        T = []
+        curr_second_max = -math.inf
         for n in reversed(nums):
-            if len(T) > 1 and n < T[0]:
+            # If n < curr_second_max then this implies
+            # n < curr_second_max < unrecorded first max.
+            if n < curr_second_max:
                 return True
-            if not T or n > T[-1]:
-                T.append(n)
-            while len(T) > 2:
-                T.popleft()
+            # Find the highest number < n.
+            while T and n > T[-1]:
+                curr_second_max = max(curr_second_max, T[-1])
+                T.pop()
+            T.append(n)
         return False
 
 
