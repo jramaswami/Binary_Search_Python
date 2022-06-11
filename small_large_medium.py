@@ -9,15 +9,10 @@ class Solution:
     def solve(self, nums):
         T = []
         for n in reversed(nums):
-            if len(T) < 2:
-                while T and T[-1] >= n:
-                    T.pop()
+            if len(T) > 1 and n < T[0]:
+                return True
+            if not T or n > T[-1]:
                 T.append(n)
-            else:
-                if T[0] < n < T[-1]:
-                    return True
-                if n > T[0]:
-                    T.append(n)
         return False
 
 
@@ -50,4 +45,11 @@ def test_6():
     "WA"
     nums = [1, 2, 0]
     expected = False
+    assert Solution().solve(nums) == expected
+
+
+def test_7():
+    "WA"
+    nums = [0,3,2,0]
+    expected = True
     assert Solution().solve(nums) == expected
