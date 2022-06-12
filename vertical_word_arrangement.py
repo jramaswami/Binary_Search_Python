@@ -10,7 +10,7 @@ import itertools
 class Solution:
 
     def solve(self, s):
-        return [''.join(t) for t in itertools.zip_longest(*s.split(), fillvalue=' ')]
+        return [''.join(t).rstrip() for t in itertools.zip_longest(*s.split(), fillvalue=' ')]
 
 
 def test_1():
