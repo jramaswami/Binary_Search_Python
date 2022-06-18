@@ -40,6 +40,10 @@ class Solution:
                     lt += lt_i - i - 1
                     lte += lte_i - i - 1
 
+                # TODO: can I figure out what x should be from the fact that
+                #       I have a guess and I kept track of the maximum difference
+                #       that is less than or equal to x.
+
                 # If lt <= k < lte then our guess, x, produces the right
                 # number of pairs sums to that x is the k-th pair sum.
                 if lt <= k < lte:
