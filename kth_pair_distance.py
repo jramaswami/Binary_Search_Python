@@ -4,9 +4,6 @@ jramaswami
 """
 
 
-import math
-
-
 class Solution:
 
     def solve(self, nums, k):
@@ -27,13 +24,21 @@ class Solution:
                 lt = 0
                 # How many pair diffs are less than or equal to x.
                 lte = 0
-                # TODO: make this part faster
-                for i, n in enumerate(nums):
-                    for m in nums[i+1:]:
-                        if m - n < x:
-                            lt += 1
-                        if m - n <= x:
-                            lte += 1
+
+                lt_i = 0
+                lte_i = 0
+                for i, _ in enumerate(nums):
+                    # m - n < x
+                    # m < x + n
+                    while lt_i < len(nums) and nums[lt_i] - nums[i] < x:
+                        lt_i += 1
+                    while lte_i < len(nums) and  nums[lte_i] - nums[i] <= x:
+                        lte_i += 1
+
+                    # le_i now points to the first j such that nums[i] + any nums[i+1:j] < x
+                    # lte_i now points to the first j such that nums[i] + any nums[i+1:j] <= x
+                    lt += lt_i - i - 1
+                    lte += lte_i - i - 1
 
                 # If lt <= k < lte then our guess, x, produces the right
                 # number of pairs sums to that x is the k-th pair sum.
@@ -54,13 +59,17 @@ class Solution:
                     lo = x + 1
             return result
 
-
-        # TODO: make this faster
         def difference_exists(x):
-            for i, n in enumerate(nums):
-                for m in nums[i+1:]:
-                    if m - n == x:
-                        return True
+            lt_i = 0
+            for i, _ in enumerate(nums):
+                # m - n < x
+                # m < x + n
+                while lt_i < len(nums) and nums[lt_i] - nums[i] < x:
+                    lt_i += 1
+                # le_i now points to the first j such that nums[i] + any nums[i+1:j] < x
+                # lte_i now points to the first j such that nums[i] + any nums[i+1:j] <= x
+                if lt_i < len(nums) and nums[lt_i] - nums[i] == x:
+                    return True
             return False
 
         smallest_possible = find_possible(smallest=True)
