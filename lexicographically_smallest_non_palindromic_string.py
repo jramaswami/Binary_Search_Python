@@ -9,7 +9,7 @@ class Solution:
         first_down_index = -1
         left = 0
         right = len(s) - 1
-        while left <= right:
+        while left < right:
             if s[left] != 'a':
                 first_down_index = left
                 return s[:left] + 'a' + s[left+1:]
