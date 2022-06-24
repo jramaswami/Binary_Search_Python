@@ -28,6 +28,11 @@ class LFUCache:
         self._increment_use(key)
         self.key_value[key] = val
 
+    def _key_freq(self, key):
+        if key in self.key_freqs:
+            return self.key_freqs[key]
+        return -1
+
     def _increment_use(self, key):
         if key not in self.key_value:
             self.key_freqs[key] = 1
@@ -35,19 +40,17 @@ class LFUCache:
             self.min_freq = 1
         else:
             prev_freq = self.key_freqs[key]
-            i = self.freqs_list[prev_freq].index(key)
-            self.freqs_list[prev_freq][i] = None
-            while self.freqs_list[prev_freq] and self.freqs_list[prev_freq][0] is None:
+            self.key_freqs[key] = prev_freq + 1
+            self.freqs_list[prev_freq + 1].append(key)
+            while self.freqs_list[prev_freq] and self._key_freq(self.freqs_list[prev_freq][0]) != prev_freq:
                 self.freqs_list[prev_freq].popleft()
             if not self.freqs_list[self.min_freq]:
                 del self.freqs_list[self.min_freq]
                 self.min_freq += 1
-            self.freqs_list[prev_freq + 1].append(key)
-            self.key_freqs[key] = prev_freq + 1
 
     def _eject(self):
         ejecting_key = self.freqs_list[self.min_freq].popleft()
-        while self.freqs_list[self.min_freq] and self.freqs_list[self.min_freq][0] is None:
+        while self.freqs_list[self.min_freq] and self._key_freq(self.freqs_list[self.min_freq][0]) != self.min_freq:
             self.freqs_list[self.min_freq].popleft()
         if not self.freqs_list[self.min_freq]:
             del self.freqs_list[self.min_freq]
