@@ -30,8 +30,10 @@ class Solution:
                 # Overlaps
                 # iiiiiiiii
                 #    xxx
-                cut_intervals.append([interval[0], cut[0]])
-                cut_intervals.append([cut[1], interval[1]])
+                if interval[0] < cut[0]:
+                    cut_intervals.append([interval[0], cut[0]])
+                if cut[1] < interval[1]:
+                    cut_intervals.append([cut[1], interval[1]])
             elif interval[0] <= cut[0] <= interval[1]:
                 # Intersects
                 # iiii
