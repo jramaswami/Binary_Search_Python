@@ -23,8 +23,7 @@ class Solution:
             if curr == math.inf:
                 return False
             for c in wd[1:]:
-                curr = graph[curr][c]
-                print(c, curr)
+                curr = graph[curr+1][c]
                 if curr == math.inf:
                     return False
             return True
@@ -52,5 +51,13 @@ def test_3():
     "WA"
     words = ["cbb"]
     s = "cba"
+    expected = 0
+    assert Solution().solve(words, s) == expected
+
+
+def test_4():
+    "RTE"
+    words = ["bba"]
+    s = "bb"
     expected = 0
     assert Solution().solve(words, s) == expected
