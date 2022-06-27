@@ -4,20 +4,33 @@ jramaswami
 """
 
 
+import collections
+import math
+
+
 class Solution:
     def solve(self, words, s):
-        ptr = [0 for _ in words]
+        alphabet = set(s)
+        root = {c: math.inf for c in s}
+        graph = [None for _ in range(len(s)+1)]
 
-        for i, c in enumerate(s):
-            for j, _ in enumerate(words):
-                p = ptr[j]
-                w = words[j]
-                if p < len(w) and w[p] == c:
-                    ptr[j] += 1
+        for i in range(len(s)-1, -1, -1):
+            graph[i+1] = root.copy()
+            root[s[i]] = i+1
+        graph[0] = root
 
-        return sum(p == len(w) for p, w in zip(ptr, words))
+        def is_subsequence(wd):
+            if len(wd) > len(graph):
+                return False
 
+            curr = 0
+            for i, c in enumerate(wd):
+                curr = graph[curr].get(c, math.inf)
+                if curr == math.inf:
+                    return False
+            return True
 
+        return sum(is_subsequence(wd) for wd in words)
 
 
 def test_1():
@@ -66,3 +79,4 @@ def test_6():
     s = "bc"
     expected = 1
     assert Solution().solve(words, s) == expected
+
