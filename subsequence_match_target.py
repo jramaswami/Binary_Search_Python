@@ -19,6 +19,8 @@ class Solution:
                     graph[i][c] = min(graph[i][c], graph[i+1][c])
 
         def is_subsequence(wd):
+            if len(wd) > len(graph):
+                return False
             curr = graph[0][wd[0]]
             if curr == math.inf:
                 return False
@@ -59,5 +61,13 @@ def test_4():
     "RTE"
     words = ["bba"]
     s = "bb"
+    expected = 0
+    assert Solution().solve(words, s) == expected
+
+
+def test_5():
+    "RTE"
+    words = ["cab"]
+    s = "aac"
     expected = 0
     assert Solution().solve(words, s) == expected
