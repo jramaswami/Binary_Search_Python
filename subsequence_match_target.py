@@ -11,23 +11,25 @@ import math
 class Solution:
     def solve(self, words, s):
         alphabet = set(s)
-        graph = [collections.defaultdict(lambda: math.inf) for _ in s]
+        root = {c: math.inf for c in s}
+        graph = [None for _ in range(len(s)+1)]
+
         for i in range(len(s)-1, -1, -1):
-            graph[i][s[i]] = i
-            if i < len(s) - 1:
-                for c in alphabet:
-                    graph[i][c] = min(graph[i][c], graph[i+1][c])
+            graph[i+1] = root.copy()
+            root[s[i]] = i+1
+        graph[0] = root
 
         def is_subsequence(wd):
             if len(wd) > len(graph):
                 return False
-            curr = graph[0][wd[0]]
-            if curr == math.inf:
-                return False
-            for c in wd[1:]:
-                curr = graph[curr+1][c]
+
+            curr = -1
+            for i, c in enumerate(wd):
+                curr = graph[i].get(c, math.inf)
                 if curr == math.inf:
                     return False
+            print(graph)
+            print(wd, curr)
             return True
 
         return sum(is_subsequence(wd) for wd in words)
@@ -71,3 +73,12 @@ def test_5():
     s = "aac"
     expected = 0
     assert Solution().solve(words, s) == expected
+
+
+def test_6():
+    "WA"
+    words = ["b", "cc"]
+    s = "bc"
+    expected = 1
+    assert Solution().solve(words, s) == expected
+
