@@ -20,8 +20,11 @@ class Solution:
 
         def is_subsequence(wd):
             curr = graph[0][wd[0]]
+            if curr == math.inf:
+                return False
             for c in wd[1:]:
                 curr = graph[curr][c]
+                print(c, curr)
                 if curr == math.inf:
                     return False
             return True
@@ -44,3 +47,10 @@ def test_2():
     expected = 0
     assert Solution().solve(words, s) == expected
 
+
+def test_3():
+    "WA"
+    words = ["cbb"]
+    s = "cba"
+    expected = 0
+    assert Solution().solve(words, s) == expected
