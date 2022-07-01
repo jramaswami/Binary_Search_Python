@@ -28,7 +28,7 @@ class Solution:
                     curr_sum = total - chunk_sums
                     break
 
-            return curr_sum > min_sum and chunks == k
+            return curr_sum >= min_sum and chunks == k
 
         # Binary search for the answer.
         lo = min(nums)
@@ -37,6 +37,7 @@ class Solution:
         while lo <= hi:
             mid = lo + ((hi - lo) // 2)
             ok = check(mid, total)
+            print(lo, hi, mid, ok)
             if ok:
                 soln = max(mid, soln)
                 lo = mid + 1
