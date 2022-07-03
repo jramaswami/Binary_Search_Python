@@ -7,17 +7,20 @@ jramaswami
 class Solution:
 
     def solve(self, nums):
+        result = -1
         lo = 0
         hi = len(nums) - 1
         while lo <= hi:
             mid = lo + ((hi - lo) // 2)
             if nums[mid] == mid:
-                return mid
+                result = mid
+                # Try smaller numbers.
+                hi = mid - 1
             elif nums[mid] < mid:
                 lo = mid + 1
             else:
                 hi = mid - 1
-        return -1
+        return result
 
 
 def test_1():
@@ -34,5 +37,5 @@ def test_2():
 
 def test_3():
     nums = [0, 1, 2]
-    expected = -1
+    expected = 0
     assert Solution().solve(nums) == expected
