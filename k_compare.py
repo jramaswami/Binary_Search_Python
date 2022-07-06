@@ -10,6 +10,15 @@ import heapq
 class Solution:
 
     def solve(self, a, b, k):
+        if not b:
+            return len(a)
+
+        if not a:
+            return 0
+
+        if k == 0:
+            return len(a)
+
         x = min(heapq.nlargest(k, b))
         return sum(n < x for n in a)
 
@@ -41,6 +50,22 @@ def test_4():
     "RTE"
     a = []
     b = []
+    k = 0
+    expected = 0
+    assert Solution().solve(a, b, k) == expected
+
+
+def test_5():
+    a = [1,2,3]
+    b = []
+    k = 0
+    expected = 3
+    assert Solution().solve(a, b, k) == expected
+
+
+def test_6():
+    a = []
+    b = [1,2,3]
     k = 0
     expected = 0
     assert Solution().solve(a, b, k) == expected
