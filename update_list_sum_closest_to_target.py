@@ -21,7 +21,7 @@ class Solution:
             if i == 0:
                 return len(nums) * e
             elif i < len(nums):
-                return prefix[i-1] + (e * len(nums) - i)
+                return prefix[i-1] + (e * (len(nums) - i))
             else:
                 return prefix[-1]
 
@@ -33,9 +33,13 @@ class Solution:
             e = lo + ((hi - lo) // 2)
             t = compute_sum(e)
             d = target - t
+            print(f"{e=} {t=} {d=}")
             if abs(d) < delta:
                 delta = abs(d)
                 soln = e
+            elif abs(d) == delta:
+                soln = min(soln, e)
+
             if d > 0:
                 # try larger
                 lo = e + 1
@@ -80,4 +84,12 @@ def test_5():
     nums = [1, 2]
     target = 1
     expected = 0
+    assert Solution().solve(nums, target) == expected
+
+
+def test_6():
+    "WA"
+    nums = [1, 2, 3]
+    target = 5
+    expected = 2
     assert Solution().solve(nums, target) == expected
