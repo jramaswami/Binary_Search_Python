@@ -37,7 +37,7 @@ class Solution:
                 if ones > 0:
                     s.append(TENS_AND_ONES_LABELS[ones])
 
-            return " ".join(s)
+            return " ".join(s).strip()
 
         # Left-pad to 12 digits.
         num = str(num)
