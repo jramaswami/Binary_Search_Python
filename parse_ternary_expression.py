@@ -7,25 +7,24 @@ jramaswami
 class Solution:
 
     def solve(self, expr):
-
-        eval_dict = {'true': True, 'false': False}
-
-        def evaluate(e):
-            print(f"evaluate({e})")
-            question = e.find('?')
-            if question == -1:
-                # This must be just a true/false.
-                return eval_dict[e.strip()]
-            colon = e.rfind(':')
-
-            answer = evaluate(e[:question].strip())
-            true_condition = e[question+1:colon].strip()
-            false_condition = e[colon+1:].strip()
-            if answer:
-                return evaluate(true_condition)
-            return evaluate(false_condition)
-
-        return evaluate(expr)
+        tokens = [t.strip() for t in expr.split()]
+        stack = []
+        for t in reversed(tokens):
+            if stack and stack[-1] == '?':
+                stack.pop() # Pop ?
+                lhs = stack[-1]
+                stack.pop() # Pop lhs
+                stack.pop() # Pop :
+                rhs = stack[-1]
+                stack.pop() # Pop rhs
+                if t:
+                    stack.append(lhs)
+                else:
+                    stack.append(rhs)
+            else:
+                stack.append(t)
+        assert len(stack) == 1
+        return True if stack[-1] == 'true' else False
 
 
 def test_1():
@@ -41,6 +40,7 @@ def test_2():
 
 
 def test_3():
+    "RTE"
     s = "true ? true ? true : true : true ? true : true"
     expected = True
     assert Solution().solve(s) == expected
