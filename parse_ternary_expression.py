@@ -17,7 +17,7 @@ class Solution:
                 stack.pop() # Pop :
                 rhs = stack[-1]
                 stack.pop() # Pop rhs
-                if t:
+                if t == 'true':
                     stack.append(lhs)
                 else:
                     stack.append(rhs)
