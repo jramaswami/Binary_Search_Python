@@ -34,7 +34,7 @@ class Solution:
 
         window = collections.deque(enumerate(customers[:k]))
         window_sum = sum(customers[:k])
-        soln = window_sum + get_suffix(window[0][0]+1)
+        soln = window_sum + get_suffix(window[-1][0]+1)
         for right, n in enumerate(customers[k:], start=k):
             window_sum -= window[0][1]
             window.popleft()
