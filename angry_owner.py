@@ -12,6 +12,12 @@ import itertools
 class Solution:
 
     def solve(self, customers, mood, k):
+        if not customers or not mood:
+            return 0
+
+        if not k:
+            return sum(c * h for c, h in zip(customers, mood))
+
         happy_customers = [c * h for c, h in zip(customers, mood)]
         prefix = list(itertools.accumulate(happy_customers))
         suffix = list(itertools.accumulate(reversed(happy_customers)))[::-1]
@@ -49,8 +55,26 @@ def test_1():
 
 
 def test_2():
+    "WA"
     customers = []
     mood = []
     k = 0
     expected = 0
+    assert Solution().solve(customers, mood, k) == expected
+
+
+def test_3():
+    customers = [1, 2, 5, 5, 2]
+    mood = [1, 1, 0, 0, 0]
+    k = 0
+    expected = 3
+    assert Solution().solve(customers, mood, k) == expected
+
+
+def test_4():
+    "WA"
+    customers = [1, 2]
+    mood = [0, 1]
+    k = 2
+    expected = 3
     assert Solution().solve(customers, mood, k) == expected
