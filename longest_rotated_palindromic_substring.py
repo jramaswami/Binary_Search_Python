@@ -24,7 +24,7 @@ class Solution:
         # to True.
         for i, _ in enumerate(dp[1][:-1]):
             if S[i % N] == S[(i+1) % N]:
-                dp[1][i] = True
+                dp[2][i] = True
                 soln = 2
 
         # For substrings of length 3 to N * 2, use previous computations
@@ -34,7 +34,6 @@ class Solution:
                 if S[i % N] == S[(i + k - 1) % N] and dp[k-2][i+1]:
                     dp[k][i] = True
                     soln = max(soln, k)
-
         return soln
 
 
@@ -42,6 +41,7 @@ def test_1():
     s = "carzrace"
     expected = 7
     assert Solution().solve(s) == expected
+
 
 def test_2():
     # WA
