@@ -4,81 +4,46 @@ jramaswami
 """
 
 
-class PathLeg:
-    def __init__(self, value, length):
-        self.value = value
-        self.length = length
+import math
 
-    def is_odd(self):
-        return self.value % 2 == 1
-
-    def is_even(self):
-        return self.value % 2 == 0
-
-class Path:
-    def __init__(self, leg1, leg2, nodeval):
-        # Node value is double counted when combining legs.
-        self.value = leg1.value + leg2.value - nodeval
-        self.length = leg1.length + leg2.length - 1
-
-    def is_even(self):
-        return self.value % 2 == 0
 
 class Solution:
 
+    def __init__(self):
+        self.soln = 0
+
     def solve(self, root):
-
-        def get_legs(node, child):
-            if child is None:
-                if node.val % 2 == 1:
-                    return PathLeg(0, 0), PathLeg(node.val, 1)
-                return PathLeg(node.val, 1), PathLeg(0, 0)
-
-            opl = PathLeg(node.val + child.opl.value, 1 + child.opl.length)
-            epl = PathLeg(node.val + child.epl.value, 1 + child.epl.length)
-            if opl.is_even:
-                opl, epl = epl, opl
-            return opl, epl
 
         def traverse(node):
             if node is None:
-                return
+                return 0, -math.inf
 
-            traverse(node.left)
-            traverse(node.right)
+            lel, lol = traverse(node.left)
+            rel, rol = traverse(node.right)
 
-            lopl, lepl = get_legs(node, node.left)
-            ropl, repl = get_legs(node, node.right)
-
-            # Find the longest odd leg
-            if lopl.length >= ropl.length:
-                node.opl = lopl
+            # Find my longest even leg and my longest odd leg.
+            if node.val % 2 == 1:
+                # I have an odd number.
+                # To have an even path I must be added to an odd path.
+                self.soln = max(self.soln, lel + rol + 1, lol + rel + 1)
+                # To have an even leg, I must be added to an odd leg.
+                # (Odd leg could be -math.inf and there should always be
+                # on even length even if it is zero.)
+                # To have an odd leg, I must be added to an even leg.
+                return max(lol+1, rol+1, 0), max(lel+1, rel+1)
             else:
-                node.opl = ropl
-            # Find the longest even leg
-            if lepl.length >= repl.length:
-                node.epl = lepl
-            else:
-                node.epl = repl
-            # Find the longest even path for this subtree.
-            paths = [
-                Path(lopl, ropl, node.val), Path(lopl, repl, node.val),
-                Path(lepl, ropl, node.val), Path(lepl, repl, node.val),
-                lepl, repl
-            ]
-            if node.left:
-                paths.append(node.left.mep)
-            if node.right:
-                paths.append(node.right.mep)
-            max_path = None
-            max_path_len = -1
-            for p in paths:
-                if p.is_even() and p.length > max_path_len:
-                    max_path_len, max_path = p.length, p
-            node.mep = max_path
+                # I have an even number.
+                # To have an even path, I must be added to an even path.
+                self.soln = max(self.soln, lel + rel + 1, lol + rol + 1)
+                # To have an even leg, I must be added to an even leg.
+                # To have an odd leg, I must be added to an odd leg.
+                # (Odd leg could be -math.inf and there should always be
+                # on even length even if it is zero.)
+                return max(lel+1, rel+1, 0), max(lol+1, rol+1)
 
+        self.soln = 0
         traverse(root)
-        return root.mep.length
+        return self.soln
 
 
 #
