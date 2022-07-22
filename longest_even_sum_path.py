@@ -70,8 +70,8 @@ class Solution:
                 paths.append(node.left.mep)
             if node.right:
                 paths.append(node.right.mep)
-            max_path = PathLeg(node.val, 1)
-            max_path_len = 1
+            max_path = None
+            max_path_len = -1
             for p in paths:
                 if p.is_even() and p.length > max_path_len:
                     max_path_len, max_path = p.length, p
@@ -104,4 +104,10 @@ def test_3():
     "WA"
     root = [3, null, null]
     expected = 0
+    assert Solution().solve(make_tree(root)) == expected
+
+def test_4():
+    "WA"
+    root = [133, [23, [69, [63, null, [70, [112, [131, null, [139, null, null]], [134, [43, null, null], null]], null]], [14, [1, null, null], [39, null, null]]], null], [80, [128, [74, [4, [42, null, [35, null, [71, null, [50, null, null]]]], null], [52, null, null]], [88, null, [100, [22, [26, [2, null, null], null], [64, null, null]], [84, null, [9, null, null]]]]], [38, [66, [20, [99, null, [123, null, [37, [145, [7, null, null], [104, null, null]], [73, [146, null, [126, [41, null, null], [75, null, null]]], null]]]], [34, [119, null, [25, null, null]], null]], [28, [13, [142, null, [5, [81, null, null], null]], [96, null, [95, null, [82, null, [135, null, null]]]]], [137, null, [111, null, null]]]], [40, [92, [72, null, [105, [6, [30, null, [113, null, null]], [32, null, null]], null]], [144, [33, null, null], null]], [79, [58, [36, [21, [125, null, null], null], null], null], [106, null, null]]]]]]
+    expected = 19
     assert Solution().solve(make_tree(root)) == expected
