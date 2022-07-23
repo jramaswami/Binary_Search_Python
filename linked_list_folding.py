@@ -5,45 +5,29 @@ jramaswami
 
 
 from bscom_linked_lists import *
+import collections
 
 
 class Solution:
 
     def solve(self, node):
-        # Boundary cases:
-        if node is None:
-            return
+        A = collections.deque()
+        curr = node
+        while node:
+            A.append(node.val)
+            node = node.next
 
-        if node.next is None:
-            return node
+        head = None
+        while A:
+            if len(A) == 1:
+                head = LLNode(A[0], head)
+                A.popleft()
+            else:
+                head = LLNode(A[0] + A[-1], head)
+                A.popleft()
+                A.pop()
 
-        if node.next.next is None:
-            return LLNode(node.val + node.next.val)
-
-        # Find the middle.
-        slow = node
-        fast = node
-        stack = []
-        while fast and fast.next:
-            stack.append(slow.val)
-            slow = slow.next
-            fast = fast.next.next
-
-        dummy = LLNode(0)
-        curr = dummy
-
-        # Handle odd number of elements.
-        if len(stack) % 2:
-            curr.next = LLNode(slow.val)
-            curr = curr.next
-            slow = slow.next
-
-        while slow != None:
-            curr.next = LLNode(slow.val + stack[-1])
-            stack.pop()
-            curr = curr.next
-            slow = slow.next
-        return dummy.next
+        return head
 
 
 #
