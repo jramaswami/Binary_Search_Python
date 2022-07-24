@@ -38,13 +38,15 @@ class Solution:
         def multibfs():
             while queue:
                 r, c, pid, t = queue.popleft()
+                if len(visited[r][c]) == people_count:
+                    return t
                 for r0, c0 in neighbors(r, c):
                     if pid not in visited[r0][c0]:
                         visited[r0][c0].add(pid)
                         if len(visited[r0][c0]) == people_count:
                             return t + 1
                         queue.append((r0, c0, pid, t+1))
-            return -1
+            return 0
 
         soln = multibfs()
         return soln
