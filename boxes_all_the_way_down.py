@@ -12,7 +12,7 @@ Box = collections.namedtuple('Box', ['ht', 'wd'])
 
 class Solution:
     def solve(self, matrix):
-        boxes = [Box(a, b) for a, b in matrix]
+        boxes = list(set([Box(a, b) for a, b in matrix]))
         boxes.sort(key=lambda b:(b.wd, -b.ht))
         dp = [boxes[0]]
         for box in boxes[1:]:
@@ -48,5 +48,12 @@ def test_2():
 def test_3():
     "WA"
     matrix = [[2, 0], [2, 0]]
+    expected = 1
+    assert Solution().solve(matrix) == expected
+
+
+def test_3():
+    "WA"
+    matrix = [[2, 1], [2, 3]]
     expected = 1
     assert Solution().solve(matrix) == expected
