@@ -5,8 +5,6 @@ jramaswami
 
 
 import collections
-import operator
-import math
 
 
 Box = collections.namedtuple('Box', ['ht', 'wd'])
@@ -15,7 +13,7 @@ Box = collections.namedtuple('Box', ['ht', 'wd'])
 class Solution:
     def solve(self, matrix):
         boxes = [Box(a, b) for a, b in matrix]
-        boxes.sort(key=operator.attrgetter('wd'))
+        boxes.sort(key=lambda b:(b.wd, -b.ht))
         dp = [boxes[0]]
         for box in boxes[1:]:
             lo = 0
@@ -23,11 +21,12 @@ class Solution:
             i = len(dp)
             while lo <= hi:
                 mid = lo + ((hi - lo) // 2)
-                if dp[mid].ht <= box.ht:
-                    lo = mid + 1
-                else:
+                if dp[mid].ht > box.ht:
                     i = min(i, mid)
                     hi = mid - 1
+                else:
+                    lo = mid + 1
+
             if i == len(dp):
                 dp.append(box)
             else:
@@ -43,5 +42,11 @@ def test_1():
 def test_2():
     "WA"
     matrix = [[0, 0], [2, 0]]
+    expected = 1
+    assert Solution().solve(matrix) == expected
+
+def test_3():
+    "WA"
+    matrix = [[2, 0], [2, 0]]
     expected = 1
     assert Solution().solve(matrix) == expected
