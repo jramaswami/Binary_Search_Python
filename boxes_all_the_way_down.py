@@ -21,7 +21,7 @@ class Solution:
             i = len(dp)
             while lo <= hi:
                 mid = lo + ((hi - lo) // 2)
-                if dp[mid].ht > box.ht:
+                if dp[mid].ht >= box.ht:
                     i = min(i, mid)
                     hi = mid - 1
                 else:
@@ -39,11 +39,13 @@ def test_1():
     expected = 3
     assert Solution().solve(matrix) == expected
 
+
 def test_2():
     "WA"
     matrix = [[0, 0], [2, 0]]
     expected = 1
     assert Solution().solve(matrix) == expected
+
 
 def test_3():
     "WA"
@@ -52,7 +54,7 @@ def test_3():
     assert Solution().solve(matrix) == expected
 
 
-def test_3():
+def test_4():
     "WA"
     matrix = [[2, 1], [2, 3]]
     expected = 1
