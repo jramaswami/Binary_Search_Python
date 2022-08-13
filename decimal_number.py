@@ -7,6 +7,9 @@ jramaswami
 class Solution:
 
     def solve(self, numerator, denominator):
+        if numerator == 0:
+            return "0"
+
         remainders = dict()
         soln = []
         i = 0
@@ -32,7 +35,10 @@ class Solution:
         return (
             sign + "".join(soln[0:d]) +
             "." + "".join(soln[d:j+1]) +
-            "(" + "".join(soln[j+1:]) + ")"
+            (
+                "" if int("".join(soln[j+1:])) == 0
+                else "(" + "".join(soln[j+1:]) + ")"
+            )
         )
 
 
