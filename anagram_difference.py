@@ -7,35 +7,34 @@ jramaswami
 import math
 
 
-import functools
-
-
 class Solution:
 
     def solve(self, s0, s1):
-
-        @functools.cache
-        def solve0(i, t):
-            if t == s1:
+        t0, t1 = list(s0), list(s1)
+        def solve0(i):
+            if t0 == t1:
                 return 0
 
-            if i >= len(s0):
+            if i >= len(t0):
                 return math.inf
 
-            # Make no swaps
-            result = solve0(i + 1, t)
+            if t0[i] != t1[i]:
+                # Only make swaps if t[i] is in the wrong place.
+                result = math.inf
+                for j, _ in enumerate(t0[i+1:], start=i+1):
+                    if t0[j] == t1[i]:
+                        # Only continue if this at least fixed t[i].
+                        t0[i], t0[j] = t0[j], t0[i]
+                        result = min(
+                            result,
+                            1 + solve0(i + 1)
+                        )
+                        t0[i], t0[j] = t0[j], t0[i]
+                return result
+            else:
+                return solve0(i + 1)
 
-            for j, _ in enumerate(s0):
-                t0 = list(t)
-                t0[i], t0[j] = t0[j], t0[i]
-                result = min(
-                    result,
-                    1 + solve0(i + 1, "".join(t0))
-                )
-
-            return result
-
-        return solve0(0, s0)
+        return solve0(0)
 
 
 def test_1():
@@ -58,4 +57,20 @@ def test_3():
     s0 = "fxaaieki"
     s1 = "aaeixkif"
     expected = 6
+    assert Solution().solve(s0, s1) == expected
+
+
+def test_4():
+    "TLE"
+    s0 = "kuccbrzycccswti"
+    s1 = "tcuccsizrcwcybk"
+    expected = 10
+    assert Solution().solve(s0, s1) == expected
+
+
+def test_5():
+    "TLE"
+    s0 = "mbkjwzboqpqzldmtiot"
+    s1 = "qdttiqkozzmjowpbblm"
+    expected = 12
     assert Solution().solve(s0, s1) == expected
