@@ -31,9 +31,6 @@ class Solution:
         return soln
 
 
-
-
-
 def test_1():
     nums = [6, 3, 8]
     expected = 15
