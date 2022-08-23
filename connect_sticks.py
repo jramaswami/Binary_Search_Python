@@ -7,24 +7,16 @@ Problem statement not really clear!!!
 """
 
 
-import collections
-
-
-Stick = collections.namedtuple('Stick', ['left', 'right', 'length'])
-
-
 class Solution:
 
     def solve(self, sticks):
-        visited = [[True for _ in range(7)] for _ in range(7)]
-        for a, b in sticks:
-            visited[a][b] = False
+        used = [False for _ in sticks]
 
         def dfs(a, b):
             result = 0
-            for x, y in sticks:
-                if not visited[x][y]:
-                    visited[x][y] = True
+            for i, (x, y) in enumerate(sticks):
+                if not used[i]:
+                    used[i] = True
                     if a == x:
                         result = max(result, 1 + dfs(b, y))
                     if b == x:
@@ -33,14 +25,14 @@ class Solution:
                         result = max(result, 1 + dfs(b, x))
                     if b == y:
                         result = max(result, 1 + dfs(a, x))
-                    visited[x][y] = False
+                    used[i] = False
             return result
 
         soln = 0
-        for a, b in sticks:
-            visited[a][b] = True
+        for i, (a, b) in enumerate(sticks):
+            used[i] = True
             soln = max(soln, 1 + dfs(a, b))
-            visited[a][b] = False
+            used[i] = False
         return soln
 
 
@@ -72,5 +64,5 @@ def test_4():
 def test_5():
     "WA"
     sticks = [[2, 1], [4, 1], [6, 4]]
-    expected = 2
+    expected = 3
     assert Solution().solve(sticks) == expected
