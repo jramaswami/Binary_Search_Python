@@ -7,32 +7,22 @@ jramaswami
 class Solution:
 
     def solve(self, nums):
-        MOD = pow(10, 9)
-
-        # Even/odd sublists ending at given index.
-        even_sublists = [0 for _ in nums]
-        odd_sublists = [0 for _ in nums]
-
+        MOD = pow(10, 9) + 7
+        even_prefixes = 1   # empty list
+        odd_prefixes = 0
+        curr_sum = 0
         soln = 0
-        for i, n in enumerate(nums):
-            # n can begin an entirely new sublist.
-            if n % 2:
-                odd_sublists[i] = 1
+        for n in nums:
+            curr_sum += n
+            if curr_sum % 2:
+                # Odd sum requires subtracting even sum prefix.
+                soln = (soln + even_prefixes) % MOD
+                odd_prefixes = (odd_prefixes + 1) % MOD
             else:
-                even_sublists[i] = 1
-
-            # n can attach to any previous sublist ending at i - 1.
-            if i > 0:
-                if n % 2:
-                    odd_sublists[i] = (odd_sublists[i] + even_sublists[i-1]) % MOD
-                    even_sublists[i] = (even_sublists[i] + odd_sublists[i-1]) % MOD
-                else:
-                    even_sublists[i] = (even_sublists[i] + even_sublists[i-1]) % MOD
-                    odd_sublists[i] = (odd_sublists[i] + odd_sublists[i-1]) % MOD
-
-            soln = (soln + odd_sublists[i]) % MOD
-
-        return soln
+                # Even sum requires subtracting an odd sum prefix.
+                soln = (soln + odd_prefixes) % MOD
+                even_prefixes = (even_prefixes + 1) % MOD
+        return soln % MOD
 
 
 def test_1():
