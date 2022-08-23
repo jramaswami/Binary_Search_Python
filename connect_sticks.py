@@ -16,45 +16,31 @@ Stick = collections.namedtuple('Stick', ['left', 'right', 'length'])
 class Solution:
 
     def solve(self, sticks):
+        visited = [[True for _ in range(7)] for _ in range(7)]
+        for a, b in sticks:
+            visited[a][b] = False
 
-        def match(a, b):
-            return (
-                a.left == b.left or
-                a.left == b.right or
-                a.right == b.left or
-                a.right == b.right
-            )
-
-        def combine(a, b):
-            if a.left == b.left:
-                return Stick(a.right, b.right, a.length + 1)
-            elif a.left == b.right:
-                return Stick(a.left, b.left, a.length + 1)
-            elif a.right == b.left:
-                return Stick(a.right, b.left, a.length + 1)
-            elif a.right == b.right:
-                return Stick(a.right, b.right, a.length + 1)
-
-        def solve0(a, sticks0):
-            result = a.length
-            for i, b in enumerate(sticks0):
-                if match(a, b):
-                    a0 = combine(a, b)
-                    sticks0[i], sticks0[-1] = sticks0[-1], sticks0[i]
-                    t = sticks0.pop()
-                    result = max(result, solve0(a0, sticks0))
-                    sticks0.append(t)
-                    sticks0[i], sticks0[-1] = sticks0[-1], sticks0[i]
+        def dfs(a, b):
+            result = 0
+            for x, y in sticks:
+                if not visited[x][y]:
+                    visited[x][y] = True
+                    if a == x:
+                        result = max(result, 1 + dfs(b, y))
+                    if b == x:
+                        result = max(result, 1 + dfs(a, y))
+                    if a == y:
+                        result = max(result, 1 + dfs(b, x))
+                    if b == y:
+                        result = max(result, 1 + dfs(a, x))
+                    visited[x][y] = False
             return result
 
-        sticks0 = [Stick(l, r, 1) for l, r in sticks]
         soln = 0
-        for i, s in enumerate(sticks0):
-            sticks0[i], sticks0[-1] = sticks0[-1], sticks0[i]
-            a = sticks0.pop()
-            soln = max(soln, solve0(a, sticks0))
-            sticks0.append(a)
-            sticks0[i], sticks0[-1] = sticks0[-1], sticks0[i]
+        for a, b in sticks:
+            visited[a][b] = True
+            soln = max(soln, 1 + dfs(a, b))
+            visited[a][b] = False
         return soln
 
 
@@ -80,4 +66,11 @@ def test_4():
     "WA"
     sticks = [[2,1],[4,1],[6,4]]
     expected = 3
+    assert Solution().solve(sticks) == expected
+
+
+def test_5():
+    "WA"
+    sticks = [[2, 1], [4, 1], [6, 4]]
+    expected = 2
     assert Solution().solve(sticks) == expected
