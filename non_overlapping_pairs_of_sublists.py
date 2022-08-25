@@ -4,90 +4,55 @@ jramaswami
 """
 
 
-import collections
-
-
 MOD = pow(10, 9) + 7
-MOD_INV_2 = 500000004
-MOD_INV_24 = 41666667
-
-
-def S(n):
-    # The number of possible sublists for a list of length n.
-    result = n
-    result *= (n + 1)
-    result %= MOD
-    result *= MOD_INV_2
-    result %= MOD
-    return result
-
-
-def T(n):
-    # Sum of i * S(n-i) for i from i to n - 1 if we add 3 to n.
-    n += 2
-    # Equivalent to n Choose 4.
-    result = n
-    result *= (n - 1)
-    result %= MOD
-    result *= (n - 2)
-    result %= MOD
-    result *= (n - 3)
-    result %= MOD
-    result *= MOD_INV_24
-    result %= MOD
-    return result
 
 
 class Solution:
 
     def solve(self, nums, k):
-        # Determine the number of each length of sublist.
-        sublist_freqs = collections.Counter()
+        sublists_ending_at = [0 for _ in nums]
         curr = 0
-        for n in nums:
+        for i, n in enumerate(nums):
             if n >= k:
                 curr += 1
             else:
-                sublist_freqs[curr] += 1
-        sublist_freqs[curr] += 1
-        del sublist_freqs[0]
-        print(f"{sublist_freqs=}")
-        # Count the total number of sublists.
-        total_sublists = 0
-        for l, f in sublist_freqs.items():
-            # A list of length l will have S(l) sublists.
-            t = S(l)
-            # There are f of those sublists.
-            t *= f
-            t %= MOD
-            total_sublists += t
-            total_sublists %= MOD
-        print(f"{total_sublists}")
+                curr = 0
+            sublists_ending_at[i] = curr
+
+        sublists_starting_at = [0 for _ in nums]
+        curr = 0
+        for i in range(len(nums) - 1, -1, -1):
+            if nums[i] >= k:
+                curr += 1
+            else:
+                curr = 0
+            sublists_starting_at[i] = curr
+
+        suffix = [0 for _ in nums]
+        curr = 0
+        for i in range(len(nums)-1, -1, -1):
+            curr += sublists_starting_at[i]
+            suffix[i] = curr
+        suffix.append(0)
+
         soln = 0
-        for l, f in sublist_freqs.items():
-            # How many ways can we split a given sublist into
-            # nonoverlapping sublists.
-            x = T(l)
-            print(f"We can split a sublist of length {l} -> {x}")
-            # How many ways can we choose a sublist of our current
-            # sublist and pair it with a sublist of another sublist.
-            t = S(l)
-            s = t * (total_sublists - t)
-            s %= MOD
-            x += s
-            x %= MOD
-            # There are f of these lists.
-            x *= f
-            x %= MOD
-            soln += x
-            soln %= MOD
+        for i, _ in enumerate(nums):
+            # Pick any sublist ending at i.
+            x = sublists_ending_at[i]
+            # Pick any of the sublists starting anywhere after i.
+            y = suffix[i+1]
+            # We can pair any sublists ending at i with any suffix
+            # starting anywhere after i.
+            z = (x * y) % MOD
+            print(f"{i=} {x=} {y=} {z=}")
+            soln = (soln + z) % MOD
         return soln
 
 
 def test_1():
     nums = [3, 4, 4, 9]
     k = 4
-    expected = 57
+    expected = 5
     assert Solution().solve(nums, k) == expected
 
 
