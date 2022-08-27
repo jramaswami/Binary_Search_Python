@@ -20,7 +20,7 @@ class Solution:
                     for c in components:
                         for d in components:
                             mm = 10*c + d
-                            if 0 < mm < 60:
+                            if mm < 60:
                                 curr_time = (60 * hh) + mm
                                 delta = 0
                                 if (curr_time < init_time):
