@@ -35,18 +35,24 @@ class Solution:
 
         @functools.cache
         def rec(state):
-            # Base case:
-            if sum(state[2:]) == 0:
-                return False
-
             # If any of the possible next states are losing states
             # then this is a winning state.
-            return any(rec(s) == False for s in next_states(state))
+            return (
+                False or
+                any(rec(s) == False for s in next_states(state))
+            )
 
         return rec(tuple(nums))
 
 
 def test_1():
     nums = [1, 1, 1, 1]
+    expected = True
+    assert Solution().solve(nums) == expected
+
+
+def test_2():
+    "WA"
+    nums = [1, 1]
     expected = True
     assert Solution().solve(nums) == expected
