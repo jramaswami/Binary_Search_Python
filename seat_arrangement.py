@@ -4,11 +4,17 @@ jramaswami
 """
 
 
-import functools
-
-
 class Solution:
     def solve(self, n, seats):
+        # Boundary cases.
+        if n == 0:
+            return True
+
+        if len(seats) == 1:
+            if seats == [0]:
+                return n <= 1
+            return False
+
         # Greedy
         seatslr = list(seats)
         m = 0
@@ -64,5 +70,13 @@ def test_3():
     "RTE"
     n = 0
     seats = [0]
+    expected = True
+    assert Solution().solve(n, seats) == expected
+
+
+def test_4():
+    "WA"
+    n = 1
+    seats = [0, 0, 0]
     expected = True
     assert Solution().solve(n, seats) == expected
