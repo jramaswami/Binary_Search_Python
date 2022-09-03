@@ -31,7 +31,7 @@ class Solution:
                 if seatslr[i-1] == 0 and seatslr[i] == 0 and seatslr[i+1] == 0:
                     seatslr[i] = 1
                     m += 1
-        if m == n:
+        if m >= n:
             return True
 
         m = 0
@@ -49,7 +49,7 @@ class Solution:
                 if seatsrl[i-1] == 0 and seatsrl[i] == 0 and seatsrl[i+1] == 0:
                     seatsrl[i] = 1
                     m += 1
-        return m == n
+        return m >= n
 
 
 def test_1():
