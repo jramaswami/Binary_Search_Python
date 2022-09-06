@@ -4,6 +4,9 @@ jramaswami
 """
 
 
+import collections
+
+
 class Solution:
     def solve(self, a, b):
         visited = [[False for _ in row] for row in a]
@@ -18,27 +21,33 @@ class Solution:
                 if inbounds(r0, c0):
                     yield r0, c0
 
-        def same_island(r, c):
-            visited[r][c] = True
-            # Does this cell have the same neighhbors in b?
-            result = a[r][c] == b[r][c]
-            for r0, c0 in neighbors(r, c):
-                if a[r0][c0] != b[r0][c0]:
-                    result = False
-            # Recurse
-            for r0, c0 in neighbors(r, c):
-                if a[r][c] == 1 and not visited[r0][c0]:
-                    result = result and same_island(r0, c0)
-
-            return result
+        def get_islands(grid):
+            islands = []
+            visited = [[False for _ in row] for row in grid]
+            for r0, row in enumerate(grid):
+                for c0, _ in enumerate(row):
+                    if not visited[r0][c0] and grid[r0][c0] == 1:
+                        island = []
+                        queue = collections.deque()
+                        queue.append((r0, c0))
+                        visited[r0][c0] = True
+                        while queue:
+                            r1, c1 = queue.popleft()
+                            island.append((r1, c1))
+                            for r2, c2 in neighbors(r1, c1):
+                                if not visited[r2][c2] and grid[r2][c2] == 1:
+                                    visited[r2][c2] = True
+                                    queue.append((r2, c2))
+                        islands.append(tuple(sorted(island)))
+            return islands
 
         soln = 0
-        for r, row in enumerate(a):
-            for c, val in enumerate(row):
-                if not visited[r][c] and val == 1:
-                    if same_island(r, c):
-                        soln += 1
+        for a_island in get_islands(a):
+            for b_island in get_islands(b):
+                if a_island == b_island:
+                    soln += 1
         return soln
+
 
 
 def test_1():
@@ -92,4 +101,19 @@ def test_5():
     a = [[1,0,1]]
     b = [[1,0,0]]
     expected = 1
+    assert Solution().solve(a, b) == expected
+
+def test_5():
+    "WA"
+    a = [[1,0,1]]
+    b = [[1,0,0]]
+    expected = 1
+    assert Solution().solve(a, b) == expected
+
+
+def test_6():
+    "WA"
+    a = [[0,1,1]]
+    b = [[1,1,1]]
+    expected = 0
     assert Solution().solve(a, b) == expected
