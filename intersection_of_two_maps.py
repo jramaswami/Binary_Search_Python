@@ -21,7 +21,7 @@ class Solution:
         def same_island(r, c):
             visited[r][c] = True
             # Does this cell have the same neighhbors in b?
-            result = True
+            result = a[r][c] == b[r][c]
             for r0, c0 in neighbors(r, c):
                 if a[r0][c0] != b[r0][c0]:
                     result = False
@@ -84,4 +84,12 @@ def test_4():
     a = [[1]]
     b = [[0]]
     expected = 0
+    assert Solution().solve(a, b) == expected
+
+
+def test_5():
+    "WA"
+    a = [[1,0,1]]
+    b = [[1,0,0]]
+    expected = 1
     assert Solution().solve(a, b) == expected
