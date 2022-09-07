@@ -21,33 +21,36 @@ class Solution:
                 if inbounds(r0, c0):
                     yield r0, c0
 
-        def get_islands(grid):
-            islands = []
-            visited = [[False for _ in row] for row in grid]
-            for r0, row in enumerate(grid):
-                for c0, _ in enumerate(row):
-                    if not visited[r0][c0] and grid[r0][c0] == 1:
-                        island = []
-                        queue = collections.deque()
-                        queue.append((r0, c0))
-                        visited[r0][c0] = True
-                        while queue:
-                            r1, c1 = queue.popleft()
-                            island.append((r1, c1))
-                            for r2, c2 in neighbors(r1, c1):
-                                if not visited[r2][c2] and grid[r2][c2] == 1:
-                                    visited[r2][c2] = True
-                                    queue.append((r2, c2))
-                        islands.append(tuple(sorted(island)))
-            return islands
+        # Mark the islands in a.
+        a_islands = [[0 for _ in row] for row in a]
+        def mark_island(r, c, curr_id):
+            "DFS to mark island."
+            a_islands[r][c] = curr_id
+            for r0, c0 in neighbors(r, c):
+                if a[r0][c0] == 1 and a_islands[r0][c0] == 0:
+                    mark_island(r0, c0, curr_id)
 
-        soln = 0
-        for a_island in get_islands(a):
-            for b_island in get_islands(b):
-                if a_island == b_island:
-                    soln += 1
-        return soln
+        curr_id = 0
+        for r, row in enumerate(a):
+            for c, _ in enumerate(row):
+                if a[r][c] == 1 and a_islands[r][c] == 0:
+                    curr_id += 1
+                    mark_island(r, c, curr_id)
 
+        # In order for the island to be the same, each neighbor must match.
+        same_island = [True for _ in range(curr_id+1)]
+        same_island[0] = False
+        def same(r, c):
+            return a[r][c] == b[r][c]
+
+        def all_neighbors_match(r, c):
+            return same(r, c) and all(same(r0, c0) for r0, c0 in neighbors(r, c))
+
+        for r, row in enumerate(a):
+            for c, _ in enumerate(row):
+                if a_islands[r][c] != 0 and not all_neighbors_match(r, c):
+                    same_island[a_islands[r][c]] = False
+        return sum(same_island)
 
 
 def test_1():
