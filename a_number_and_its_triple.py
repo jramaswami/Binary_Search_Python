@@ -3,10 +3,20 @@ binarysearch.com :: A Number and Its Triple
 jramaswami
 """
 
+
+import collections
+
+
 class Solution:
     def solve(self, nums):
-        nums0 = set(nums)
-        return any((n * 3 in nums0) for n in nums)
+        freqs = collections.Counter(nums)
+        for n in nums:
+            if n == 0:
+                if freqs[0] > 1:
+                    return True
+            elif freqs[n*3] > 0:
+                return True
+        return False
 
 
 def test_1():
