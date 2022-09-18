@@ -11,7 +11,7 @@ class Solution:
                 # How many missing numbers.
                 d = y - x - 1
                 print(f"{x=} {y=} {d=} {k=}")
-                if d >= k:
+                if d > k:
                     # Our missing number is here
                     return x + 1 + k
                 # Our missing number is still beyond, but count what
@@ -39,5 +39,5 @@ def test_3():
     "WA"
     nums = [2, 5]
     k = 2
-    expected = 5
+    expected = 6
     assert Solution().solve(nums, k) == expected
