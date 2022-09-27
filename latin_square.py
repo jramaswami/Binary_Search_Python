@@ -3,15 +3,34 @@ binarysearch.com :: Latin Square
 jramaswami
 """
 
-import itertools
+
+import collections
 
 
 class Solution:
 
     def solve(self, matrix):
-        row_letters = [set(row) for row in matrix]
-        all_letters = set(itertools.chain(*row_letters))
-        return len(all_letters) == len(matrix) and all(all_letters == r for r in row_letters)
+        column_locs = collections.defaultdict(set)
+        all_letters = set()
+        for row in matrix:
+            row_letters = set()
+            for c, letter in enumerate(row):
+                # Make sure letter is not duplicated in this row.
+                if letter in row_letters:
+                    return False
+                row_letters.add(letter)
+
+                # Make sure we have not exceeded the limit on letters.
+                all_letters.add(letter)
+                if len(all_letters) > len(matrix):
+                    return False
+
+                # Make sure this letter has not appeared in this column before.
+                if c in column_locs[letter]:
+                    return False
+                column_locs[letter].add(c)
+
+        return True
 
 
 def test_1():
