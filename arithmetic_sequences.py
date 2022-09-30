@@ -5,24 +5,32 @@ jramaswami
 
 
 import collections
+import math
 
 
 class Solution:
 
     def solve(self, nums):
+        def summation(n):
+            return (n * (n + 1)) // 2
         soln = 0
         dp = [collections.defaultdict(list) for _ in nums]
+        curr_delta = math.inf
+        curr_length = 0
         for i, left in enumerate(nums[:-1]):
-            j, right = i + 1, nums[i+1]
+            right = nums[i+1]
             delta = right - left
-            # Extend previous
-            if delta in dp[i]:
-                for t in dp[i][delta]:
-                    dp[j][delta].append(t + 1)
-                    if t + 1 >= 3:
-                        soln += 1
-            # Start from here.
-            dp[j][delta].append(2)
+            if curr_delta == delta:
+                curr_length += 1
+            else:
+                # Previous sequence is has ended.  How many could we have.
+                if curr_length >= 3:
+                    soln += (summation(curr_length) - curr_length - (curr_length - 1))
+                curr_length = 2
+            curr_delta = delta
+        # What is left at the end.
+        if curr_length >= 3:
+            soln += (summation(curr_length) - curr_length - (curr_length - 1))
         return soln
 
 
