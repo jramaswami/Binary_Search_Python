@@ -5,6 +5,7 @@ jramaswami
 
 
 import collections
+import heapq
 
 
 class Solution:
@@ -13,15 +14,18 @@ class Solution:
         if len(nums) % k:
             return False
         freqs = collections.Counter(nums)
+        heapq.heapify(nums)
         for _ in range(len(nums) // k):
-            start = min(freqs)
+            # Remove any zero frequency items from heap.
+            while freqs[nums[0]] == 0:
+                heapq.heappop(nums)
+            # Use the smallest item left as our starting point.
+            start = nums[0]
+            # Form the sequence of numbers [start:start+k).
             for x in range(start, start+k):
                 if freqs[x] == 0:
-                    print('failed', seq)
                     return False
                 freqs[x] -= 1
-                if freqs[x] == 0:
-                    del freqs[x]
         return True
 
 
