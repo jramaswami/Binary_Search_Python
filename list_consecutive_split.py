@@ -13,7 +13,16 @@ class Solution:
         if len(nums) % k:
             return False
         freqs = collections.Counter(nums)
-        return max(freqs.values()) <= (len(nums) // k)
+        for _ in range(len(nums) // k):
+            start = min(freqs)
+            for x in range(start, start+k):
+                if freqs[x] == 0:
+                    print('failed', seq)
+                    return False
+                freqs[x] -= 1
+                if freqs[x] == 0:
+                    del freqs[x]
+        return True
 
 
 def test_1():
