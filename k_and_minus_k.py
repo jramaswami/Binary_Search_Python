@@ -3,18 +3,14 @@ binarysearch.com :: K and -K
 jramaswami
 """
 
-
-import math
-
-
 class Solution:
     def solve(self, nums):
-        soln = -math.inf
+        soln = -1
         nums0 = set(nums)
-        for n in nums:
-            if -n in nums:
+        for n in nums0:
+            if -n in nums0:
                 soln = max(soln, abs(n))
-        return soln if soln > -math.inf else -1
+        return soln
 
 
 def test_1():
