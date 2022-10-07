@@ -16,9 +16,8 @@ class Solution:
                 curr_stop = max(stop, curr_stop)
             else:
                 combined.append((curr_start, curr_stop))
-                curr_start, curr_end = start, stop
+                curr_start, curr_stop = start, stop
         combined.append((curr_start, curr_stop))
-
         if len(combined) <= 1:
             return 0
         return combined[-1][0] - combined[0][1]
