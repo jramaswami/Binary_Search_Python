@@ -18,7 +18,7 @@ class Solution:
         # Find the next smallest letter.
         y = len(s)
         for i, c in enumerate(s[x+1:], start=x+1):
-            if ord(c) < ord(a):
+            if ord(c) <= ord(a):
                 y = i
                 a = c
         if y == len(s):
