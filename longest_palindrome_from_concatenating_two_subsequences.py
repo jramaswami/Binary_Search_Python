@@ -14,15 +14,27 @@ class Solution:
 
         @functools.cache
         def rec(i, j):
+            "Return the longest palindromic substring between i and j."
+            result = 0
             if i == j:
-                return 1
-            if i + 1 == j:
-                return 2 if t[i] == t[j] else 0
-            if t[i] == t[j]:
-                return 2 + rec(i+1, j-1)
-            return max(rec(i+1, j), rec(i, j-1))
+                result = 1
+            elif i + 1 == j:
+                 if t[i] == t[j]:
+                     result = 2
+            elif t[i] == t[j]:
+                result = 2 + rec(i+1, j-1)
+            else:
+                result = max(rec(i+1, j), rec(i, j-1))
+            return result
 
-        return rec(0, len(t)-1)
+        soln = 0
+        for i in range(len(a)):
+            for j in range(len(a), len(a)+len(b)):
+                # We must pick a start in a and an end in b.
+                if t[i] == t[j]:
+                    print(i, j)
+                    soln = max(soln , rec(i, j))
+        return soln
 
 
 def test_1():
@@ -37,4 +49,12 @@ def test_2():
     a = "c"
     b = "aa"
     expected = 0
+    assert Solution().solve(a, b) == expected
+
+
+def test_3():
+    "WA"
+    a = "b"
+    b = "bc"
+    expected = 2
     assert Solution().solve(a, b) == expected
