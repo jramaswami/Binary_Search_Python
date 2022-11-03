@@ -10,34 +10,41 @@ import collections
 class Solution:
 
     def solve(self, lists):
+        # TODO: Implied edges ...
         graph = collections.defaultdict(list)
-        nodes = set()
-        # Turn edges into half-open intervals.
+        start_pages = set()
+        end_pages = set()
         for i, (u, v, w) in enumerate(lists):
-            u, v = min(u, v), max(u, v) + 1
+            u, v = min(u, v), max(u, v)
             graph[u].append((v, w))
-            nodes.add(u)
+            start_pages.add(u)
+            end_pages.add(v)
 
-        # DFS Forward only.
-        def dfs(u, parity):
+        # DFS Forward Only.
+        # At any ending point, all paths from the same starting point
+        # must have the same parity.
+        def dfs(u, curr_parity, ending_parity):
             for v, w in graph[u]:
-                if v in parity:
-                    # Parity from root node must be the same.
-                    if (parity[u] + w) % 2 != parity[v]:
+                # You can reach the end of page v from the start of page u.
+                next_parity = (curr_parity + w) % 2
+                if v in ending_parity:
+                    # The parities must match.
+                    if next_parity != ending_parity[v]:
                         return False
                 else:
-                    parity[v] = (parity[u] + w) % 2
-                    if v in nodes:
-                        if not dfs(v, parity):
-                            return False
+                    ending_parity[v] = next_parity
+                    # Having reached the end of page v, we can turn the
+                    # page to the start of page v + 1.
+                    if v + 1 in start_pages:
+                        dfs(v+1, next_parity, ending_parity)
             return True
 
-        for u in sorted(nodes):
-            parity = dict()
-            parity[u] = 0
-            if not dfs(u, parity):
+        for u in start_pages:
+            ending_parity = dict()
+            if not dfs(u, 0, ending_parity):
                 return False
         return True
+
 
 
 def test_1():

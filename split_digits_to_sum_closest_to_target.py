@@ -1,0 +1,55 @@
+"""
+binarysearch.com :: Split Digits to Sum Closest To Target
+jramaswami
+"""
+class Solution:
+    def solve(self, s, target):
+        dp = [set() for _ in s]
+        prev_sums = set([0])
+        for i, c in enumerate(s):
+            ts = [int(c), int(s[i:i+2]), int(s[i:i+3]), int(s[i:i+4])]
+            for j, t in enumerate(ts):
+                if t >= 2000:
+                    continue
+                for p in prev_sums:
+                    if i+j < len(dp) and p + t <= 9000:
+                        dp[i+j].add(p + t)
+            prev_sums = dp[i]
+
+        return min(abs(target - p) for p in dp[-1])
+
+
+def test_1():
+    s = "112"
+    target = 10
+    assert Solution().solve(s, target) == 3
+
+def test_2():
+    s = "500"
+    target = 300
+    assert Solution().solve(s, target) == 200
+
+def test_3():
+    s = "2310"
+    target = 11
+    assert Solution().solve(s, target) == 4
+
+def test_4():
+    s = "00000008000000000000220002000030004000005000000200000000012010000010700000440000001040000070000006000500000007001000804000070000040050000068900004000000005400000000000050000000000000020500000001000050"
+    target = 200
+    assert Solution().solve(s, target) == 3
+
+def test_5():
+    s = "1001"
+    target = 1000
+    assert Solution().solve(s, target) == 1
+
+def test_6():
+    s = "0000050002000000008030690000000000000030007140090000057920000084000060200020006000000000000000300100006000000800000700005090000020070040000000000000000600007000000600900000000000000005003000000600000000000010040000000000060900000090000900000050008082107000000000089050000700000000000001300000260000607806300000240004400200200004000600080600200000003000006000700070000000000000000900060000900000000000000005000000000002000000000000708000000000004000000000000000000000050936000500000000000000000009000000000100000086000000000000700000000009048041000000000080005000006000000000400800000000000000007600040809000000005000020400000000000400060000000000007620000000000000000003000000000000030000060000080800"
+    target = 400
+    assert Solution().solve(s, target) == 273
+
+def test_7():
+    s = "0"
+    target = 1
+    assert Solution().solve(s, target) == 1
